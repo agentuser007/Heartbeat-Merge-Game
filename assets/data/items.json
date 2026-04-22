@@ -1,0 +1,202 @@
+{
+  "lip_1": {
+    "id": "lip_1",
+    "name": "润唇膏",
+    "level": 1,
+    "chain": "lips",
+    "nextId": "lip_2",
+    "sellPrice": 1,
+    "emoji": "💋",
+    "color": "#FFB6C1"
+  },
+  "lip_2": {
+    "id": "lip_2",
+    "name": "变色唇膏",
+    "level": 2,
+    "chain": "lips",
+    "nextId": "lip_3",
+    "sellPrice": 3,
+    "emoji": "💄",
+    "color": "#FF69B4"
+  },
+  "lip_3": {
+    "id": "lip_3",
+    "name": "雾面唇釉",
+    "level": 3,
+    "chain": "lips",
+    "nextId": "lip_4",
+    "sellPrice": 8,
+    "emoji": "👄",
+    "color": "#FF1493"
+  },
+  "lip_4": {
+    "id": "lip_4",
+    "name": "丝绒口红",
+    "level": 4,
+    "chain": "lips",
+    "nextId": "lip_5",
+    "sellPrice": 20,
+    "emoji": "🌹",
+    "color": "#DC143C"
+  },
+  "lip_5": {
+    "id": "lip_5",
+    "name": "气质女王",
+    "level": 5,
+    "chain": "lips",
+    "nextId": null,
+    "sellPrice": 50,
+    "emoji": "❤️‍🔥",
+    "color": "#B22222"
+  },
+  "perf_1": {
+    "id": "perf_1",
+    "name": "试管香水",
+    "level": 1,
+    "chain": "perfume",
+    "nextId": "perf_2",
+    "sellPrice": 1,
+    "emoji": "🧪",
+    "color": "#DDA0DD"
+  },
+  "perf_2": {
+    "id": "perf_2",
+    "name": "走珠香膏",
+    "level": 2,
+    "chain": "perfume",
+    "nextId": "perf_3",
+    "sellPrice": 3,
+    "emoji": "🧴",
+    "color": "#DA70D6"
+  },
+  "perf_3": {
+    "id": "perf_3",
+    "name": "清新淡香",
+    "level": 3,
+    "chain": "perfume",
+    "nextId": "perf_4",
+    "sellPrice": 8,
+    "emoji": "🌸",
+    "color": "#BA55D3"
+  },
+  "perf_4": {
+    "id": "perf_4",
+    "name": "斩男迷香",
+    "level": 4,
+    "chain": "perfume",
+    "nextId": "perf_5",
+    "sellPrice": 20,
+    "emoji": "💐",
+    "color": "#9932CC"
+  },
+  "perf_5": {
+    "id": "perf_5",
+    "name": "致命费洛蒙",
+    "level": 5,
+    "chain": "perfume",
+    "nextId": null,
+    "sellPrice": 50,
+    "emoji": "💜",
+    "color": "#800080"
+  },
+  "study_1": {
+    "id": "study_1",
+    "name": "草稿纸",
+    "level": 1,
+    "chain": "study",
+    "nextId": "study_2",
+    "sellPrice": 1,
+    "emoji": "📝",
+    "color": "#87CEEB"
+  },
+  "study_2": {
+    "id": "study_2",
+    "name": "课堂笔记",
+    "level": 2,
+    "chain": "study",
+    "nextId": "study_3",
+    "sellPrice": 3,
+    "emoji": "📓",
+    "color": "#4682B4"
+  },
+  "study_3": {
+    "id": "study_3",
+    "name": "重点题库",
+    "level": 3,
+    "chain": "study",
+    "nextId": "study_4",
+    "sellPrice": 8,
+    "emoji": "📚",
+    "color": "#4169E1"
+  },
+  "study_4": {
+    "id": "study_4",
+    "name": "满分试卷",
+    "level": 4,
+    "chain": "study",
+    "nextId": "study_5",
+    "sellPrice": 20,
+    "emoji": "💯",
+    "color": "#0000CD"
+  },
+  "study_5": {
+    "id": "study_5",
+    "name": "保送推荐信",
+    "level": 5,
+    "chain": "study",
+    "nextId": null,
+    "sellPrice": 50,
+    "emoji": "🏆",
+    "color": "#00008B"
+  },
+  "food_1": {
+    "id": "food_1",
+    "name": "薄荷糖",
+    "level": 1,
+    "chain": "food",
+    "nextId": "food_2",
+    "sellPrice": 1,
+    "emoji": "🍬",
+    "color": "#98FB98"
+  },
+  "food_2": {
+    "id": "food_2",
+    "name": "夹心巧克力",
+    "level": 2,
+    "chain": "food",
+    "nextId": "food_3",
+    "sellPrice": 3,
+    "emoji": "🍫",
+    "color": "#8B4513"
+  },
+  "food_3": {
+    "id": "food_3",
+    "name": "能量特饮",
+    "level": 3,
+    "chain": "food",
+    "nextId": "food_4",
+    "sellPrice": 8,
+    "emoji": "🥤",
+    "color": "#32CD32"
+  },
+  "food_4": {
+    "id": "food_4",
+    "name": "爱心便当",
+    "level": 4,
+    "chain": "food",
+    "nextId": "food_5",
+    "sellPrice": 20,
+    "emoji": "🍱",
+    "color": "#FF8C00"
+  },
+  "food_5": {
+    "id": "food_5",
+    "name": "满汉全席食盒",
+    "level": 5,
+    "chain": "food",
+    "nextId": null,
+    "sellPrice": 50,
+    "emoji": "🎁",
+    "color": "#FFD700"
+  }
+}

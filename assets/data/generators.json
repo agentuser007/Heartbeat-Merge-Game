@@ -1,0 +1,32 @@
+{
+    "gen_a": {
+        "id": "gen_a",
+        "name": "化妆包",
+        "emoji": "👛",
+        "spawns": [
+            {
+                "itemId": "lip_1",
+                "weight": 50
+            },
+            {
+                "itemId": "perf_1",
+                "weight": 50
+            }
+        ]
+    },
+    "gen_b": {
+        "id": "gen_b",
+        "name": "书包",
+        "emoji": "🎒",
+        "spawns": [
+            {
+                "itemId": "study_1",
+                "weight": 60
+            },
+            {
+                "itemId": "food_1",
+                "weight": 40
+            }
+        ]
+    }
+}

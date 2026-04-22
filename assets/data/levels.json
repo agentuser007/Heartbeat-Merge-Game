@@ -1,0 +1,264 @@
+[
+    {
+        "id": 0,
+        "bossName": "陆之昂",
+        "bossTitle": "高冷校草",
+        "bossAvatar": "avatar/校草.png",
+        "bossColor": "#4A90D9",
+        "bgGradient": "linear-gradient(180deg, #E8F0FE 0%, #B8D4F0 50%, #8BB8E0 100%)",
+        "totalHp": 100,
+        "orders": [
+            {
+                "id": "l1_o1",
+                "name": "引起注意",
+                "required": [
+                    {
+                        "itemId": "study_2",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 20,
+                "dialogue": {
+                    "npc": "你的笔记借我看一下……字还挺好看的。",
+                    "player": "学长，拿去看吧~"
+                }
+            },
+            {
+                "id": "l1_o2",
+                "name": "拉近距离",
+                "required": [
+                    {
+                        "itemId": "lip_2",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_2",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 40,
+                "dialogue": {
+                    "npc": "你今天嘴唇颜色不一样？还有，我不吃甜食……但这次例外。",
+                    "player": "嘿嘿，被你发现啦~"
+                }
+            },
+            {
+                "id": "l1_o3",
+                "name": "初次心动",
+                "required": [
+                    {
+                        "itemId": "study_4",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 40,
+                "dialogue": {
+                    "npc": "又是满分？看来你比我厉害多了，放学一起走吧。",
+                    "player": "是你有点笨哦"
+                }
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "bossName": "雷厉",
+        "bossTitle": "热血体育老师",
+        "bossAvatar": "avatar/体育老师.png",
+        "bossColor": "#E8652A",
+        "bgGradient": "linear-gradient(180deg, #FFF3E0 0%, #FFD9A0 50%, #FFB347 100%)",
+        "totalHp": 250,
+        "orders": [
+            {
+                "id": "l2_o1",
+                "name": "挥洒汗水",
+                "required": [
+                    {
+                        "itemId": "food_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 50,
+                "dialogue": {
+                    "npc": "呼！渴死我了，这水送得真及时！",
+                    "player": "老师辛苦啦！"
+                }
+            },
+            {
+                "id": "l2_o2",
+                "name": "⚡ 急救",
+                "required": [
+                    {
+                        "itemId": "lip_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": true,
+                "timeLimit": 30,
+                "damage": 100,
+                "dialogue": {
+                    "npc": "刚打球撞破了嘴角……你帮我涂的这是什么？有点香……",
+                    "player": "别动，乖乖让我贴上~"
+                },
+                "failText": "老师跑开了……任务失败！"
+            },
+            {
+                "id": "l2_o3",
+                "name": "直男开窍",
+                "required": [
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 100,
+                "dialogue": {
+                    "npc": "你的便当真好吃！那个……周末有空一起看比赛吗？",
+                    "player": "哈哈，这么快就上钩了！"
+                }
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "bossName": "Daniel",
+        "bossTitle": "浪漫外教",
+        "bossAvatar": "avatar/外教.png",
+        "bossColor": "#9B59B6",
+        "bgGradient": "linear-gradient(180deg, #F3E5F5 0%, #CE93D8 50%, #AB47BC 100%)",
+        "totalHp": 500,
+        "orders": [
+            {
+                "id": "l3_o1",
+                "name": "文化交流",
+                "required": [
+                    {
+                        "itemId": "perf_4",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 150,
+                "dialogue": {
+                    "npc": "Wow, what a wonderful scent! 你今天就像一朵盛开的玫瑰。",
+                    "player": "Thank you~ 脸红ing"
+                }
+            },
+            {
+                "id": "l3_o2",
+                "name": "浪漫邀约",
+                "required": [
+                    {
+                        "itemId": "lip_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "study_4",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 150,
+                "dialogue": {
+                    "npc": "不仅美丽，还如此聪慧，今晚能请你喝杯咖啡吗？",
+                    "player": "好的呀！但是我晚上不喝咖啡哦～"
+                }
+            },
+            {
+                "id": "l3_o3",
+                "name": "深情告白",
+                "required": [
+                    {
+                        "itemId": "lip_5",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 200,
+                "dialogue": {
+                    "npc": "你的眼睛里有星星，我已经完全被你俘获了……",
+                    "player": "我也是……"
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "bossName": "司徒渊",
+        "bossTitle": "魅力校长",
+        "bossAvatar": "avatar/校长.png",
+        "bossColor": "#2C3E50",
+        "bgGradient": "linear-gradient(180deg, #2C3E50 0%, #4A6178 50%, #1A1A2E 100%)",
+        "totalHp": 1200,
+        "orders": [
+            {
+                "id": "l4_o1",
+                "name": "例行巡查",
+                "required": [
+                    {
+                        "itemId": "study_5",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 300,
+                "dialogue": {
+                    "npc": "这位同学，表现不错。但想引起我的注意，这还不够。",
+                    "player": "（推眼镜）校长，请看这个。"
+                }
+            },
+            {
+                "id": "l4_o2",
+                "name": "打破防线",
+                "required": [
+                    {
+                        "itemId": "perf_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_5",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 400,
+                "dialogue": {
+                    "npc": "平时看你规规矩矩的……没想到，你竟然敢在校长室……",
+                    "player": "（微笑）校长，这是给您准备的。"
+                }
+            },
+            {
+                "id": "l4_o3",
+                "name": "臣服女王",
+                "required": [
+                    {
+                        "itemId": "lip_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "study_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 500,
+                "dialogue": {
+                    "npc": "规则是我定的，但你……是我的例外。今天不用去上课了，留在这里陪我。",
+                    "player": "遵命，校长大人~ ❤️"
+                }
+            }
+        ]
+    }
+]
