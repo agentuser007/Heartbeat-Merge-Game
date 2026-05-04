@@ -1,0 +1,999 @@
+{
+  "ssr_lip6": {
+    "cgId": "cg_lip_6",
+    "title": "🌸 青涩初吻",
+    "maleLead": "林墨白",
+    "stories": [
+      {
+        "title": "走廊擦肩",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "午后的走廊空无一人，我抱着课本匆匆赶往教室。"
+          },
+          {
+            "speaker": null,
+            "text": "转角处，一堵温暖的「墙」挡住了去路——课本散落一地，我抬头，对上了林墨白那双幽深的眼睛。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "冷淡",
+            "text": "「走路不看路？」"
+          },
+          {
+            "speaker": null,
+            "text": "他冷冷地说，却弯腰帮我捡起了每一本书。"
+          },
+          {
+            "speaker": null,
+            "text": "指尖触碰的瞬间，我的心跳漏了一拍。"
+          }
+        ]
+      },
+      {
+        "title": "天台独处",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "追着跑丢的笔记来到天台，发现林墨白正独自靠在栏杆上。"
+          },
+          {
+            "speaker": null,
+            "text": "夕阳将他冷峻的侧脸镀上了一层柔和的金色。"
+          },
+          {
+            "speaker": null,
+            "text": "他注意到我，罕见地没有转身离开。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "温柔",
+            "text": "「……过来坐。」"
+          },
+          {
+            "speaker": null,
+            "text": "他拍了身旁的位置。那是我第一次看到他表情里的柔软，晚风吹起他的发梢，我的心在寂静中剧烈跳动。"
+          }
+        ]
+      },
+      {
+        "title": "雨中共伞",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "放学突降暴雨，我站在校门口手足无措。"
+          },
+          {
+            "speaker": null,
+            "text": "一把黑色雨伞无声地撑到我头顶。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "面无表情",
+            "text": "「别感冒。」"
+          },
+          {
+            "speaker": null,
+            "text": "林墨白面无表情地说着，伞却大半倾斜在我这边。"
+          },
+          {
+            "speaker": null,
+            "text": "雨声如鼓，我们的肩膀几乎贴在一起。"
+          },
+          {
+            "speaker": null,
+            "text": "走到岔路口时，他突然停下——"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "坚定",
+            "text": "「……明天，我送你。」"
+          },
+          {
+            "speaker": null,
+            "text": "那不是询问，是陈述。"
+          }
+        ]
+      },
+      {
+        "title": "星空告白",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "天台上，林墨白罕见地主动约我。"
+          },
+          {
+            "speaker": "林墨白",
+            "text": "「你看那颗星。」"
+          },
+          {
+            "speaker": null,
+            "text": "他指着远处，我顺着他的手看去，却被他轻轻扳过脸。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "低沉",
+            "text": "「我在说近的。」"
+          },
+          {
+            "speaker": null,
+            "text": "他的声音低沉，第一次带着温度。"
+          },
+          {
+            "speaker": null,
+            "text": "星空下，他缓缓靠近，额头相抵。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "深情",
+            "text": "「从走廊那天起……你就是我唯一的意外。」"
+          },
+          {
+            "speaker": null,
+            "text": "他的唇，带着薄荷的微凉，轻轻落在我的唇上。"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_lip7": {
+    "cgId": "cg_lip_7",
+    "title": "💋 倾心之约",
+    "maleLead": "林墨白",
+    "stories": [
+      {
+        "title": "化妆间的秘密",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "校庆演出后台，我手忙脚乱地补妆。"
+          },
+          {
+            "speaker": null,
+            "text": "门被推开，林墨白穿着演出服站在门口。"
+          },
+          {
+            "speaker": "林墨白",
+            "text": "「你需要帮忙。」"
+          },
+          {
+            "speaker": null,
+            "text": "他拿起唇刷，动作出人意料地轻柔。"
+          },
+          {
+            "speaker": null,
+            "text": "镜子中，他专注的神情像在描摹一件珍品。"
+          },
+          {
+            "speaker": null,
+            "text": "唇上温热的触感让我的手无处安放。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "微笑",
+            "text": "「完美。」"
+          }
+        ]
+      },
+      {
+        "title": "舞会的约定",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "校庆舞会，我独自坐在角落。"
+          },
+          {
+            "speaker": null,
+            "text": "一只修长的手伸来——"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "灼灼",
+            "text": "「这支舞，我只想和你跳。」"
+          },
+          {
+            "speaker": null,
+            "text": "他的手稳稳地放在我腰间，引导我旋转。"
+          },
+          {
+            "speaker": null,
+            "text": "众人的目光中，他的世界里仿佛只有我。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "低语",
+            "text": "「以后每个舞会……都留给我。」"
+          },
+          {
+            "speaker": null,
+            "text": "他在我耳边低语，温热的气息让我的脸更加滚烫。"
+          }
+        ]
+      },
+      {
+        "title": "雨后彩虹",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "又一次在雨中同行，这次我主动挽住了他的手臂。"
+          },
+          {
+            "speaker": null,
+            "text": "他身体微微一僵，随即反手扣住我的手，十指相扣。"
+          },
+          {
+            "speaker": null,
+            "text": "雨后初晴，一道彩虹横跨天际。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "远望",
+            "text": "「你像那道彩虹，闯入我灰白的世界，染上了所有色彩。」"
+          },
+          {
+            "speaker": null,
+            "text": "他低下头，在我额间落下一吻——"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "温柔",
+            "text": "「永远别消失。」"
+          }
+        ]
+      },
+      {
+        "title": "永恒印记",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "毕业典礼上，林墨白当着全校的面走向我。"
+          },
+          {
+            "speaker": null,
+            "text": "他从口袋里取出一枚唇形吊坠，亲手为我戴上。"
+          },
+          {
+            "speaker": "林墨白",
+            "expression": "坚定",
+            "text": "「这是我的印记，从今以后，你的微笑只属于我。」"
+          },
+          {
+            "speaker": null,
+            "text": "在众人的欢呼中，他轻托起我的下巴，一个缠绵而深情的吻落下。"
+          },
+          {
+            "speaker": null,
+            "text": "此刻，整个世界都是我们的。"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_perf6": {
+    "cgId": "cg_perf_6",
+    "title": "🌙 暗昧微醉",
+    "maleLead": "Daniel",
+    "stories": [
+      {
+        "title": "课堂对视",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "Daniel的英语课总是座无虚席。"
+          },
+          {
+            "speaker": null,
+            "text": "他朗读诗歌时，目光不经意扫过教室——却在我身上多停留了三秒。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "微笑",
+            "text": "「This poem reminds me of someone.」"
+          },
+          {
+            "speaker": null,
+            "text": "深邃的蓝眼睛里藏着星光。我低下头，脸颊发烫，周围同学的窃窃私语像隔了一层纱。"
+          }
+        ]
+      },
+      {
+        "title": "课后辅导",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "放学后，教室里只剩我和Daniel。"
+          },
+          {
+            "speaker": null,
+            "text": "他坐到我身旁批改作业，身上传来淡淡的雪松香气。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "轻声",
+            "text": "「You work too hard.」"
+          },
+          {
+            "speaker": null,
+            "text": "修长的手指点在我的错题上。为了看清那行字，我们靠得越来越近。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "深情",
+            "text": "「知道吗？你的眼睛里有整个春天。」"
+          }
+        ]
+      },
+      {
+        "title": "异国思念",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "寒假，Daniel回国探亲。我每天经过他空荡的教室，心里像缺了一块。"
+          },
+          {
+            "speaker": null,
+            "text": "一封手写信从大洋彼岸寄来——"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "思念",
+            "text": "「Chérie, 巴黎的每一朵花都在提醒我想念的人。塞纳河畔的晚风不及你低头微笑的温柔。」"
+          },
+          {
+            "speaker": null,
+            "text": "信纸上有淡淡的香水味，是他标志性的雪松。"
+          },
+          {
+            "speaker": null,
+            "text": "我把信贴在胸口，窗外的雪映出我弯弯的嘴角。"
+          }
+        ]
+      },
+      {
+        "title": "重逢之吻",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "开学第一天，我在校门口冻得直跳脚。"
+          },
+          {
+            "speaker": null,
+            "text": "一件温暖的大衣从身后披上，熟悉的雪松香瞬间将我包裹。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "温柔",
+            "text": "「I am back.」"
+          },
+          {
+            "speaker": null,
+            "text": "他的声音在耳畔响起，低沉而温柔。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "深情",
+            "text": "「在巴黎，我每走一步都在想，要怎样走才能更快回到你身边。」"
+          },
+          {
+            "speaker": null,
+            "text": "他轻轻擦去我眼角的泪，额头相抵——"
+          },
+          {
+            "speaker": null,
+            "text": "一个带着咖啡和雪松味道的吻，在漫天飞雪中落下。"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_perf7": {
+    "cgId": "cg_perf_7",
+    "title": "🌹 沉醉告白",
+    "maleLead": "Daniel",
+    "stories": [
+      {
+        "title": "香氛课堂",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "Daniel破例开设了香水鉴赏课。"
+          },
+          {
+            "speaker": null,
+            "text": "他取出一只古朴的香水瓶，在教室里轻轻走动。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "优雅",
+            "text": "「这款香水叫心跳，它的前调是玫瑰，中调是茉莉，尾调……」"
+          },
+          {
+            "speaker": null,
+            "text": "他在我身旁驻足，微微俯身——"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "低语",
+            "text": "「是雪松和想念。」"
+          },
+          {
+            "speaker": null,
+            "text": "那瓶香水被轻轻放在我桌上，瓶身上刻着我的名字首字母。"
+          }
+        ]
+      },
+      {
+        "title": "月光告白",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "文化节的夜晚，Daniel拉着我来到后花园。"
+          },
+          {
+            "speaker": null,
+            "text": "月光下，他从西装内袋取出一只精致的香水瓶——瓶中液体的颜色在月光下流转如星河。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "颤抖",
+            "text": "「这是我亲手调的，全世界只有一瓶。」"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "深情",
+            "text": "「名字叫……给她的情书。」"
+          },
+          {
+            "speaker": null,
+            "text": "他的目光比瓶中的星光更璀璨。"
+          }
+        ]
+      },
+      {
+        "title": "秘密花园",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "Daniel带我来到学校后山的隐秘花园。"
+          },
+          {
+            "speaker": null,
+            "text": "他亲手种满了玫瑰和茉莉——正是心跳香水的原料。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "温柔",
+            "text": "「每个清晨我都在这里，想着你在做什么，会不会偶尔……也想我。」"
+          },
+          {
+            "speaker": null,
+            "text": "他摘下一朵半开的玫瑰别在我发间。"
+          },
+          {
+            "speaker": null,
+            "text": "夕阳将花园染成金色，他的目光温柔得让人心碎。"
+          }
+        ]
+      },
+      {
+        "title": "永恒之约",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "毕业那天，Daniel将一只古董香水瓶放在我手心。"
+          },
+          {
+            "speaker": null,
+            "text": "瓶中液体在阳光下折射出彩虹。"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "深情",
+            "text": "「这是永恒——没有尾调，因为故事不会结束。」"
+          },
+          {
+            "speaker": null,
+            "text": "他单膝跪地，从瓶底暗格取出一枚戒指——"
+          },
+          {
+            "speaker": "Daniel",
+            "expression": "炽热",
+            "text": "「Will you let me be your forever?」"
+          },
+          {
+            "speaker": null,
+            "text": "他的蓝眼睛里闪着泪光，却笑得比阳光还耀眼。"
+          },
+          {
+            "speaker": null,
+            "text": "我在他的怀抱中，闻到了属于我们两个人的未来。"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_study6": {
+    "cgId": "cg_study_6",
+    "title": "📖 青春启程",
+    "maleLead": "司徒渊",
+    "stories": [
+      {
+        "title": "办公室交锋",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "期末成绩出炉，我被叫到校长办公室。"
+          },
+          {
+            "speaker": null,
+            "text": "推门而入，司徒渊正翻阅文件，银边眼镜下的目光锐利如鹰。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "严厉",
+            "text": "「你的成绩下滑了，我不允许我的学生懈怠。」"
+          },
+          {
+            "speaker": null,
+            "text": "我倔强地与他对视，他眼中闪过一丝意外。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "玩味",
+            "text": "「有骨气，那用实力证明给我看。」"
+          }
+        ]
+      },
+      {
+        "title": "深夜书房",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "连续一周，我发现办公桌旁多了一杯温热的茶和一张手写便签——"
+          },
+          {
+            "speaker": null,
+            "text": "「今天也要加油。」"
+          },
+          {
+            "speaker": null,
+            "text": "笔迹苍劲有力，是司徒渊的。"
+          },
+          {
+            "speaker": null,
+            "text": "某个加班的深夜，他出现在门口——"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "关切",
+            "text": "「还不走？我送你。」"
+          },
+          {
+            "speaker": null,
+            "text": "不容拒绝的语气，却在我走出门口时，默默为我披上了外套。"
+          }
+        ]
+      },
+      {
+        "title": "雨夜真相",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "暴雨夜，我发现司徒渊独自在办公室整理旧照片。"
+          },
+          {
+            "speaker": null,
+            "text": "其中一张，是他年轻时和我父亲的合影。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "脆弱",
+            "text": "「你父亲……曾是我最敬佩的人，他托我照顾你。」"
+          },
+          {
+            "speaker": null,
+            "text": "他罕见地露出脆弱的表情。窗外雷声大作，他摘下眼镜，第一次在我面前不设防。"
+          },
+          {
+            "speaker": null,
+            "text": "我走近他，将手覆在他手背上。"
+          }
+        ]
+      },
+      {
+        "title": "破晓誓言",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "清晨的校长室，阳光穿透百叶窗。"
+          },
+          {
+            "speaker": null,
+            "text": "司徒渊站在窗前，背对着我。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "低沉",
+            "text": "我告诉自己，这只是承诺……"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "温柔",
+            "text": "「但看到你为我熬夜、为我担忧、为我……我没办法再骗自己了。」"
+          },
+          {
+            "speaker": null,
+            "text": "他转过身，眼镜后的目光温柔得不像话。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "深情",
+            "text": "「感受到了吗？它为你跳得有多快。」"
+          },
+          {
+            "speaker": null,
+            "text": "他走向我，牵起我的手放在胸口。"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_study7": {
+    "cgId": "cg_study_7",
+    "title": "🎓 巅峰相守",
+    "maleLead": "司徒渊",
+    "stories": [
+      {
+        "title": "月下漫步",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "校庆晚宴结束，司徒渊带我去校园最深处的百年银杏树下。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "淡然",
+            "text": "「这棵树见证过无数人的青春，但我从没带别人来过。」"
+          },
+          {
+            "speaker": null,
+            "text": "月光穿过叶隙洒落。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "温柔",
+            "text": "「今晚，它只属于我们。」"
+          },
+          {
+            "speaker": null,
+            "text": "他的掌心温暖而干燥，握紧我的手时，仿佛握住了整个世界。"
+          }
+        ]
+      },
+      {
+        "title": "图书馆密语",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "周末的图书馆，司徒渊和我被一本古书吸引。"
+          },
+          {
+            "speaker": null,
+            "text": "他站在我身后翻页，一只手自然地环住我扶住书脊。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "低沉",
+            "text": "「这行拉丁文的意思是……」"
+          },
+          {
+            "speaker": null,
+            "text": "他的声音在耳边响起，低沉得像大提琴。"
+          },
+          {
+            "speaker": null,
+            "text": "我的心跳快得不像话，他一定感觉到了——因为他嘴角弯起了一个极淡的弧度。"
+          }
+        ]
+      },
+      {
+        "title": "校庆之舞",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "校庆舞会，司徒渊穿了一身黑色礼服，摘掉了平时的眼镜。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "温柔",
+            "text": "「今晚，我只是一个普通人。」"
+          },
+          {
+            "speaker": null,
+            "text": "他向我伸出手。舞池中，他的目光专注得让我不敢直视。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "深情",
+            "text": "「知道吗，管理一所学校远没有管理自己的心难。」"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "炽热",
+            "text": "「而你，是我永远无法掌控的变量。」"
+          }
+        ]
+      },
+      {
+        "title": "同心契约",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "毕业典礼上，司徒渊亲手为我拨正流苏。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "低语",
+            "text": "「你毕业了，我的承诺也该兑现了。」"
+          },
+          {
+            "speaker": null,
+            "text": "他在众目睽睽之下取出一枚书形吊坠——里面刻着我们初次交锋的日期。"
+          },
+          {
+            "speaker": "司徒渊",
+            "expression": "温柔",
+            "text": "「从那天起，我就知道，我余生所有的决定，都会有你参与。」"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_food6": {
+    "cgId": "cg_food_6",
+    "title": "🍬 甜蜜邂逅",
+    "maleLead": "陆之昂",
+    "stories": [
+      {
+        "title": "食堂偶遇",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "午餐高峰的食堂人山人海，我端着餐盘找不到座位。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "温暖",
+            "text": "「这里有空。」"
+          },
+          {
+            "speaker": null,
+            "text": "一个温暖的男声传来。陆之昂微笑着推开放在旁边的书包，阳光透过窗户洒在他干净的侧脸上。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "微笑",
+            "text": "「常来这吃吗？我怎么没见过你。」"
+          },
+          {
+            "speaker": null,
+            "text": "他递过来一张纸巾，手指修长白皙，我的心莫名跳快了半拍。"
+          }
+        ]
+      },
+      {
+        "title": "烘焙课堂",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "家政课上，我和陆之昂被分到同一组做蛋糕。"
+          },
+          {
+            "speaker": null,
+            "text": "他系上围裙的样子出奇地好看。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "自然",
+            "text": "「我来打蛋清，你负责搅拌。」"
+          },
+          {
+            "speaker": null,
+            "text": "他自然地分配任务，偶尔凑过来看我的进度，肩膀轻轻碰在一起。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "温柔",
+            "text": "「你嘴角沾了面粉。」"
+          },
+          {
+            "speaker": null,
+            "text": "他笑着伸手帮我擦掉，指尖温热，我连呼吸都忘了。"
+          }
+        ]
+      },
+      {
+        "title": "深夜食堂",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "期末复习到深夜，我饿得胃疼。"
+          },
+          {
+            "speaker": null,
+            "text": "轻轻走进厨房，却发现陆之昂正在煮面。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "微笑",
+            "text": "「也睡不着？」"
+          },
+          {
+            "speaker": null,
+            "text": "他笑着多拿了一只碗。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "温暖",
+            "text": "「我奶奶说，深夜的面要加一个蛋才暖胃。」"
+          },
+          {
+            "speaker": null,
+            "text": "他把热气腾腾的面推到我面前，在昏暗的灯光下，他的笑容比任何美食都让我心动。"
+          }
+        ]
+      },
+      {
+        "title": "甜蜜告白",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "学园祭那天，陆之昂在烘焙摊位前等了我整整一下午。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "期待",
+            "text": "「我做了这个，尝尝看。」"
+          },
+          {
+            "speaker": null,
+            "text": "他递过一只精致的巧克力。我咬开，里面藏着一颗心形糖果和一张纸条——"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "深情",
+            "text": "「每一道甜点都是我想对你说的话，而你是这世上最甜的那道。」"
+          },
+          {
+            "speaker": null,
+            "text": "夕阳下，他轻轻握住我的手——"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "真挚",
+            "text": "「让我做你一辈子的专属厨师，好吗？」"
+          }
+        ]
+      }
+    ]
+  },
+  "ssr_food7": {
+    "cgId": "cg_food_7",
+    "title": "🏮 盛宴倾心",
+    "maleLead": "陆之昂",
+    "stories": [
+      {
+        "title": "米其林之约",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "陆之昂神秘地带我来到一家隐藏在小巷中的米其林餐厅。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "温柔",
+            "text": "「这家店主是我的导师，他说好的食物要和最特别的人分享。」"
+          },
+          {
+            "speaker": null,
+            "text": "烛光摇曳中，他为我一道道讲解菜品，眼神里的专注让人移不开目光。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "深情",
+            "text": "「而你，是我最想分享一切的人。」"
+          }
+        ]
+      },
+      {
+        "title": "星光厨房",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "深夜，陆之昂带我偷偷溜进学校家政教室。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "神秘",
+            "text": "「今晚我们做一道只属于我们的菜。」"
+          },
+          {
+            "speaker": null,
+            "text": "他系上围裙递给我一条，我们在星光下切菜、调味、翻炒。"
+          },
+          {
+            "speaker": null,
+            "text": "他忽然握住我拿锅铲的手——"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "低沉",
+            "text": "「火候到了，和我们一样。」"
+          },
+          {
+            "speaker": null,
+            "text": "那一晚的意面，是我这辈子吃过最好吃的。"
+          }
+        ]
+      },
+      {
+        "title": "百花晚宴",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "校庆晚宴上，陆之昂作为学生代表主厨。"
+          },
+          {
+            "speaker": null,
+            "text": "他在百人面前做了一道法式甜点，最后一步——他在糖艺上刻了我的名字。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "坚定",
+            "text": "「这道甜点叫心动，献给那个让我心跳加速的人。」"
+          },
+          {
+            "speaker": null,
+            "text": "他对着麦克风说，目光穿过人群直直看向我。"
+          },
+          {
+            "speaker": null,
+            "text": "全场沸腾，而我的脸已经烧得像他炉上的火。"
+          }
+        ]
+      },
+      {
+        "title": "永恒之味",
+        "lines": [
+          {
+            "speaker": null,
+            "text": "毕业典礼后，陆之昂带我去了一家新开的餐厅——门牌上写着我的名字。"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "真挚",
+            "text": "「这是我为你开的。」"
+          },
+          {
+            "speaker": null,
+            "text": "他从口袋里取出一把钥匙和一枚戒指——"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "深情",
+            "text": "「钥匙给你，是餐厅的，也是我心的。戒指……如果你愿意的话。」"
+          },
+          {
+            "speaker": null,
+            "text": "他在漫天飘落的花瓣中单膝跪地——"
+          },
+          {
+            "speaker": "陆之昂",
+            "expression": "炽热",
+            "text": "「余生每一餐，我都想和你一起品尝。」"
+          }
+        ]
+      }
+    ]
+  }
+}

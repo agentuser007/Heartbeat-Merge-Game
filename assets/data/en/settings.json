@@ -1,0 +1,60 @@
+{
+  "HEROINE_UPGRADES": [
+    {
+      "id": "energy_cap",
+      "name": "Energy Cap Boost",
+      "description": "Increase max energy",
+      "levels": [
+        {"label": "Cap 120"},
+        {"label": "Cap 150"},
+        {"label": "Cap 200"}
+      ]
+    },
+    {
+      "id": "regen_speed",
+      "name": "Regen Accelerator",
+      "description": "Speed up energy recovery",
+      "levels": [
+        {"label": "100s/point"},
+        {"label": "80s/point"},
+        {"label": "60s/point"}
+      ]
+    },
+    {
+      "id": "recycle_bonus",
+      "name": "Recycle Master",
+      "description": "Bonus energy from recycling items",
+      "levels": [
+        {"label": "+1 Bonus Energy"},
+        {"label": "+2 Bonus Energy"},
+        {"label": "+3 Bonus Energy"}
+      ]
+    },
+    {
+      "id": "gold_bonus",
+      "name": "Gold Rush",
+      "description": "Increase gold earned from daily orders",
+      "levels": [
+        {"label": "Gold ×1.2"},
+        {"label": "Gold ×1.5"},
+        {"label": "Gold ×2.0"}
+      ]
+    }
+  ],
+  "UI_TEXT": {
+    "intro": {
+      "npc": "System",
+      "text": "Welcome to Heart Merge: Queen of Hearts! Tap generators (👛✏️) on the board to produce items, drag to merge them into higher-tier items, and complete orders to conquer the heartthrobs! Tip: Generators can be merged and upgraded too~",
+      "player": "Let the conquest begin~ 💪"
+    },
+    "game_complete": {
+      "title": "Congratulations!",
+      "subtitle": "You've become the Queen of Hearts and conquered all the heartthrobs!",
+      "button": "🔄 Play Again"
+    },
+    "default_fail": {
+      "text": "Time's up... You failed!",
+      "player": "(Sigh... I need to be faster next time...)"
+    }
+  }
+}

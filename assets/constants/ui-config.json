@@ -1,0 +1,36 @@
+{
+  "timers": {
+    "achievementToastDisplay": 3500,
+    "achievementToastFadeOut": 500,
+    "unlockConfirmAutoClose": 5000,
+    "unlockConfirmCloseDelay": 100,
+    "unlockAnimation": 600,
+    "bossDefeatAnim": 2000,
+    "dialogueAutoAdvance": 3000,
+    "orderTimerInterval": 1000,
+    "energyRegenInterval": 5000,
+    "particleLifespan": 800,
+    "mergePopDuration": 400,
+    "transitionDuration": 500,
+    "paradeStepInterval": 1500,
+    "gachaRevealDelay": 300,
+    "gachaCardFlipDuration": 600
+  },
+  "colors": {
+    "hpGradientHigh": "linear-gradient(90deg, #FF6B6B, #EE5A24)",
+    "hpGradientMid": "linear-gradient(90deg, #FECA57, #FF9F43)",
+    "hpGradientLow": "linear-gradient(90deg, #FF3838, #C0392B)",
+    "hpHighThreshold": 50,
+    "hpMidThreshold": 25,
+    "energyHighThreshold": 50,
+    "energyLowThreshold": 20,
+    "energyGradientHigh": "linear-gradient(90deg, #00E676, #69F0AE)",
+    "energyGradientMid": "linear-gradient(90deg, #FFD600, #FFAB00)",
+    "energyGradientLow": "linear-gradient(90deg, #FF5252, #FF1744)"
+  },
+  "layout": {
+    "unlockPopupMinOffset": 80,
+    "unlockParticleCount": 8,
+    "recycleParticleCount": 3
+  }
+}

@@ -1,32 +1,228 @@
 {
-    "gen_a": {
-        "id": "gen_a",
+    "gen_makeup": {
+        "id": "gen_makeup",
         "name": "化妆包",
         "emoji": "👛",
-        "spawns": [
-            {
-                "itemId": "lip_1",
-                "weight": 50
+        "chains": ["lips", "perfume"],
+        "levels": {
+            "1": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 50 },
+                    { "itemId": "perf_1", "weight": 50 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
             },
-            {
-                "itemId": "perf_1",
-                "weight": 50
+            "2": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 50 },
+                    { "itemId": "perf_1", "weight": 50 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "3": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 50 },
+                    { "itemId": "perf_1", "weight": 50 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "4": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 30 },
+                    { "itemId": "perf_1", "weight": 30 },
+                    { "itemId": "lip_2", "weight": 20 },
+                    { "itemId": "perf_2", "weight": 20 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "5": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 30 },
+                    { "itemId": "perf_1", "weight": 30 },
+                    { "itemId": "lip_2", "weight": 20 },
+                    { "itemId": "perf_2", "weight": 20 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "6": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 10 },
+                    { "itemId": "perf_1", "weight": 10 },
+                    { "itemId": "lip_2", "weight": 30 },
+                    { "itemId": "perf_2", "weight": 30 },
+                    { "itemId": "lip_3", "weight": 10 },
+                    { "itemId": "perf_3", "weight": 10 }
+                ],
+                "free_production_chance": 0.05,
+                "capacity": 15,
+                "cooldown": 0, "_cooldownOriginal": 3600000,
+                "special_drop": null
+            },
+            "7": {
+                "drop_pool": [
+                    { "itemId": "lip_1", "weight": 8 },
+                    { "itemId": "perf_1", "weight": 7 },
+                    { "itemId": "lip_2", "weight": 23 },
+                    { "itemId": "perf_2", "weight": 22 },
+                    { "itemId": "lip_3", "weight": 18 },
+                    { "itemId": "perf_3", "weight": 17 },
+                    { "itemId": "lip_4", "weight": 3 },
+                    { "itemId": "perf_4", "weight": 2 }
+                ],
+                "free_production_chance": 0.10,
+                "capacity": 25,
+                "cooldown": 0, "_cooldownOriginal": 3000000,
+                "special_drop": null
+            },
+            "8": {
+                "drop_pool": [
+                    { "itemId": "lip_2", "weight": 30 },
+                    { "itemId": "perf_2", "weight": 30 },
+                    { "itemId": "lip_3", "weight": 18 },
+                    { "itemId": "perf_3", "weight": 17 },
+                    { "itemId": "lip_4", "weight": 3 },
+                    { "itemId": "perf_4", "weight": 2 }
+                ],
+                "free_production_chance": 0.05,
+                "capacity": 40,
+                "cooldown": 0, "_cooldownOriginal": 2400000,
+                "special_drop": {
+                    "chance": 0.05,
+                    "items": [
+                        { "itemId": "joker", "weight": 50 },
+                        { "itemId": "lip_4", "weight": 25 },
+                        { "itemId": "perf_4", "weight": 25 }
+                    ]
+                }
             }
-        ]
+        }
     },
-    "gen_b": {
-        "id": "gen_b",
+    "gen_study": {
+        "id": "gen_study",
         "name": "书包",
         "emoji": "🎒",
-        "spawns": [
-            {
-                "itemId": "study_1",
-                "weight": 60
+        "chains": ["study", "food"],
+        "levels": {
+            "1": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 70 },
+                    { "itemId": "food_1", "weight": 30 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
             },
-            {
-                "itemId": "food_1",
-                "weight": 40
+            "2": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 70 },
+                    { "itemId": "food_1", "weight": 30 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "3": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 70 },
+                    { "itemId": "food_1", "weight": 30 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "4": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 42 },
+                    { "itemId": "food_1", "weight": 18 },
+                    { "itemId": "study_2", "weight": 28 },
+                    { "itemId": "food_2", "weight": 12 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "5": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 42 },
+                    { "itemId": "food_1", "weight": 18 },
+                    { "itemId": "study_2", "weight": 28 },
+                    { "itemId": "food_2", "weight": 12 }
+                ],
+                "free_production_chance": 0,
+                "capacity": 0,
+                "cooldown": 0,
+                "special_drop": null
+            },
+            "6": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 14 },
+                    { "itemId": "food_1", "weight": 6 },
+                    { "itemId": "study_2", "weight": 42 },
+                    { "itemId": "food_2", "weight": 18 },
+                    { "itemId": "study_3", "weight": 14 },
+                    { "itemId": "food_3", "weight": 6 }
+                ],
+                "free_production_chance": 0.05,
+                "capacity": 15,
+                "cooldown": 0, "_cooldownOriginal": 3600000,
+                "special_drop": null
+            },
+            "7": {
+                "drop_pool": [
+                    { "itemId": "study_1", "weight": 11 },
+                    { "itemId": "food_1", "weight": 4 },
+                    { "itemId": "study_2", "weight": 32 },
+                    { "itemId": "food_2", "weight": 13 },
+                    { "itemId": "study_3", "weight": 25 },
+                    { "itemId": "food_3", "weight": 10 },
+                    { "itemId": "study_4", "weight": 4 },
+                    { "itemId": "food_4", "weight": 1 }
+                ],
+                "free_production_chance": 0.10,
+                "capacity": 25,
+                "cooldown": 0, "_cooldownOriginal": 3000000,
+                "special_drop": null
+            },
+            "8": {
+                "drop_pool": [
+                    { "itemId": "study_2", "weight": 42 },
+                    { "itemId": "food_2", "weight": 18 },
+                    { "itemId": "study_3", "weight": 25 },
+                    { "itemId": "food_3", "weight": 10 },
+                    { "itemId": "study_4", "weight": 4 },
+                    { "itemId": "food_4", "weight": 1 }
+                ],
+                "free_production_chance": 0.05,
+                "capacity": 40,
+                "cooldown": 0, "_cooldownOriginal": 2400000,
+                "special_drop": {
+                    "chance": 0.05,
+                    "items": [
+                        { "itemId": "joker", "weight": 50 },
+                        { "itemId": "study_4", "weight": 30 },
+                        { "itemId": "food_4", "weight": 20 }
+                    ]
+                }
             }
-        ]
+        }
     }
 }

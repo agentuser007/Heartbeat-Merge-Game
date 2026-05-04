@@ -1,0 +1,148 @@
+{
+    "achievements": [
+        {
+            "id": "first_merge",
+            "name": "初次合成",
+            "icon": "🔰",
+            "description": "第一次合成两个物品",
+            "condition": "merges",
+            "target": 1,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "merge_10",
+            "name": "合成入门",
+            "icon": "⚗️",
+            "description": "累计合成 10 次",
+            "condition": "merges",
+            "target": 10,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "merge_50",
+            "name": "合成达人",
+            "icon": "🏅",
+            "description": "累计合成 50 次",
+            "condition": "merges",
+            "target": 50,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "merge_200",
+            "name": "合成大师",
+            "icon": "🏆",
+            "description": "累计合成 200 次",
+            "condition": "merges",
+            "target": 200,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "first_boss",
+            "name": "初战告捷",
+            "icon": "⚔️",
+            "description": "击败第一个 Boss",
+            "condition": "bossDefeats",
+            "target": 1,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "boss_3",
+            "name": "攻略高手",
+            "icon": "💘",
+            "description": "击败 3 个 Boss",
+            "condition": "bossDefeats",
+            "target": 3,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "collection_25",
+            "name": "小小收藏家",
+            "icon": "📖",
+            "description": "图鉴完成度达到 25%",
+            "condition": "collectionPct",
+            "target": 25,
+            "reward": {"diamonds": 100}
+        },
+        {
+            "id": "collection_50",
+            "name": "博物学者",
+            "icon": "📚",
+            "description": "图鉴完成度达到 50%",
+            "condition": "collectionPct",
+            "target": 50,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "collection_100",
+            "name": "百科全书",
+            "icon": "👑",
+            "description": "图鉴完成度 100%",
+            "condition": "collectionPct",
+            "target": 100,
+            "reward": {"diamonds": 200}
+        },
+        {
+            "id": "max_level_item",
+            "name": "终极合成",
+            "icon": "⭐",
+            "description": "合成出一个 Lv.8 满级物品",
+            "condition": "maxLevelItems",
+            "target": 1,
+            "reward": {"diamonds": 80}
+        },
+        {
+            "id": "max_level_4",
+            "name": "传说收藏家",
+            "icon": "🌟",
+            "description": "合成出 4 个不同的 Lv.8 满级物品",
+            "condition": "maxLevelItems",
+            "target": 4,
+            "reward": {"diamonds": 200}
+        },
+        {
+            "id": "gold_1000",
+            "name": "小康之家",
+            "icon": "💰",
+            "description": "累计获得 1000 金币",
+            "condition": "totalGoldEarned",
+            "target": 1000,
+            "reward": {"gold": 100}
+        },
+        {
+            "id": "recycle_20",
+            "name": "断舍离",
+            "icon": "♻️",
+            "description": "累计回收 20 个物品",
+            "condition": "recycled",
+            "target": 20,
+            "reward": {"gold": 150}
+        },
+        {
+            "id": "gacha_10",
+            "name": "手气不错",
+            "icon": "🎰",
+            "description": "累计抽卡 10 次",
+            "condition": "gachaPulls",
+            "target": 10,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "unlock_5",
+            "name": "开疆拓土",
+            "icon": "🗺️",
+            "description": "解锁 5 个格子",
+            "condition": "cellsUnlocked",
+            "target": 5,
+            "reward": {"gold": 200}
+        },
+        {
+            "id": "daily_10",
+            "name": "勤劳跑腿",
+            "icon": "📋",
+            "description": "完成 10 个日常订单",
+            "condition": "dailyCompleted",
+            "target": 10,
+            "reward": {"diamonds": 50}
+        }
+    ]
+}

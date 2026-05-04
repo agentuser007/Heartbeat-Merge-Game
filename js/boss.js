@@ -5,13 +5,8 @@
 class BossSystem {
     constructor(game) {
         this.game = game;
-        this.currentLevelIdx = 0;
-        this.currentOrderIdx = 0;
-        this.currentHp = 0;
-        this.totalHp = 0;
+        this.logic = new BossLogic();
         this.timerInterval = null;
-        this.timerRemaining = 0;
-        this.orderFailed = false;
 
         // DOM
         this.bossNameEl = document.getElementById('boss-name');
@@ -19,106 +14,190 @@ class BossSystem {
         this.bossPortraitEl = document.getElementById('boss-portrait');
         this.hpBarEl = document.getElementById('hp-bar-fill');
         this.hpTextEl = document.getElementById('hp-text');
-        this.orderPanel = document.getElementById('order-panel');
-        this.orderNameEl = document.getElementById('order-name');
+        this.bossHeaderEl = document.getElementById('boss-header');
+        this.orderPanel = document.getElementById('main-quest-card');
+        this.orderNameEl = null; // removed in new UI
         this.orderItemsEl = document.getElementById('order-items');
-        this.orderTimerEl = document.getElementById('order-timer');
+        this.orderTimerEl = null; // removed in new UI
         this.submitBtn = document.getElementById('submit-order-btn');
 
         this.submitBtn.addEventListener('click', () => this.trySubmitOrder());
+
+        // Subscribe to logic events
+        globalBus.on('boss:levelLoaded', (data) => this._onLevelLoaded(data));
+        globalBus.on('boss:hpChanged', (data) => this.renderHp(data));
+        globalBus.on('boss:orderLoaded', (data) => this._onOrderLoaded(data));
+        globalBus.on('boss:orderComplete', (data) => this._onOrderComplete(data));
+        globalBus.on('boss:orderFailed', (data) => this._onOrderFailed(data));
+        globalBus.on('boss:defeated', () => this._onDefeated());
+        globalBus.on('boss:gameComplete', () => this._onLoopComplete());
+        globalBus.on('boss:timerTick', (data) => this._onTimerTick(data));
     }
 
     loadLevel(levelIdx) {
-        if (levelIdx >= LEVELS.length) {
-            this.showGameComplete();
-            return;
+        this.clearTimer();
+        // Inject loop config for HP scaling
+        if (this.game.loop && this.game.loop.currentLoopConfig) {
+            this.logic.setLoopConfig(this.game.loop.currentLoopConfig);
         }
-        this.currentLevelIdx = levelIdx;
-        this.currentOrderIdx = 0;
-        const level = LEVELS[levelIdx];
-        this.currentHp = level.totalHp;
-        this.totalHp = level.totalHp;
+        this.logic.loadLevel(levelIdx);
+    }
 
-        // Update UI
-        this.bossNameEl.textContent = level.bossName;
-        this.bossTitleEl.textContent = level.bossTitle;
+    _onLevelLoaded(data) {
+        this.bossNameEl.textContent = data.bossName;
+        this.bossTitleEl.textContent = data.bossTitle;
         const span = this.bossPortraitEl.querySelector('span');
         if (span) span.textContent = '';
-        this.bossPortraitEl.style.backgroundImage = `url('${level.bossAvatar}')`;
+        this.bossPortraitEl.style.backgroundImage = `url('${data.bossAvatar}')`;
         this.bossPortraitEl.style.backgroundSize = 'cover';
         this.bossPortraitEl.style.backgroundPosition = 'center top';
-        this.bossPortraitEl.style.backgroundColor = level.bossColor;
+        this.bossPortraitEl.style.backgroundColor = data.bossColor;
+        document.getElementById('game-container').style.background = data.bgGradient;
 
-        // Change background
-        document.getElementById('game-container').style.background = level.bgGradient;
-
-        this.renderHp();
-        this.loadOrder(0);
+        // Show loop-specific boss intro narrative
+        this._showBossNarrativeIntro(data);
     }
 
-    renderHp() {
-        const pct = Math.max(0, (this.currentHp / this.totalHp) * 100);
-        this.hpBarEl.style.width = pct + '%';
-        this.hpTextEl.textContent = `${Math.max(0, this.currentHp)} / ${this.totalHp}`;
-
-        // Color based on HP
-        if (pct > 50) this.hpBarEl.style.background = 'linear-gradient(90deg, #FF6B6B, #EE5A24)';
-        else if (pct > 25) this.hpBarEl.style.background = 'linear-gradient(90deg, #FECA57, #FF9F43)';
-        else this.hpBarEl.style.background = 'linear-gradient(90deg, #FF3838, #C0392B)';
-    }
-
-    loadOrder(orderIdx) {
-        const level = LEVELS[this.currentLevelIdx];
-        if (orderIdx >= level.orders.length) {
-            // All orders exhausted — but boss might still have HP
-            // This shouldn't happen with correct data, but handle gracefully
-            this.defeatBoss();
-            return;
+    _showBossNarrativeIntro(data) {
+        if (!this.game.loop || !this.game.loop.currentLoopConfig) return;
+        const loopIdx = String(this.game.loop.loopIndex);
+        const narrative = typeof LOOP_NARRATIVES !== 'undefined' ? LOOP_NARRATIVES[loopIdx] : null;
+        if (!narrative) return;
+        const bossKey = 'boss_' + this.logic.currentLevelIdx;
+        const bossNarrative = narrative[bossKey];
+        if (bossNarrative && bossNarrative.intro) {
+            this.game.dialogue.show(data.bossName, data.bossAvatar, bossNarrative.intro, null);
         }
-        this.currentOrderIdx = orderIdx;
-        const order = level.orders[orderIdx];
-        this.orderFailed = false;
+    }
 
-        // Render order
-        this.orderNameEl.textContent = `📋 ${order.name}`;
+    renderHp(data) {
+        const pct = data ? data.pct : Math.max(0, (this.logic.currentHp / this.logic.totalHp) * 100);
+        const hp = data ? data.currentHp : Math.max(0, this.logic.currentHp);
+        const total = data ? data.totalHp : this.logic.totalHp;
+        this.hpBarEl.style.width = pct + '%';
+        this.hpTextEl.textContent = `${Math.max(0, hp)} / ${total}`;
+
+        if (pct > I18n.config('colors.hpHighThreshold')) this.hpBarEl.style.background = I18n.config('colors.hpGradientHigh');
+        else if (pct > I18n.config('colors.hpMidThreshold')) this.hpBarEl.style.background = I18n.config('colors.hpGradientMid');
+        else this.hpBarEl.style.background = I18n.config('colors.hpGradientLow');
+    }
+
+    _onOrderLoaded(data) {
+        const order = data.order;
+        if (this.orderNameEl) this.orderNameEl.textContent = `${I18n.emoji('clipboard')} ${order.name}`;
         this.orderItemsEl.innerHTML = '';
 
         for (const req of order.required) {
             const item = ITEMS[req.itemId];
             const tag = document.createElement('div');
             tag.className = 'order-item-tag';
-            tag.innerHTML = `<span class="order-item-emoji">${item.emoji}</span><span class="order-item-name">${item.name}</span><span class="order-item-count">×${req.count}</span>`;
+            tag.innerHTML = `<span class="order-item-emoji">${item.emoji}</span>`;
             tag.dataset.itemId = req.itemId;
+            tag.addEventListener('click', (e) => {
+                e.stopPropagation();
+                Effects.showChainTooltip(tag, req.itemId);
+            });
             this.orderItemsEl.appendChild(tag);
         }
 
-        // Timer
+        // Timer — DISABLED: no countdown, orders never time out
         this.clearTimer();
-        if (order.isTimed) {
-            this.timerRemaining = order.timeLimit;
-            this.orderTimerEl.style.display = 'block';
-            this.renderTimer();
-            this.timerInterval = setInterval(() => {
-                this.timerRemaining--;
-                this.renderTimer();
-                if (this.timerRemaining <= 5) {
-                    Effects.startTimerWarning(this.orderPanel);
-                }
-                if (this.timerRemaining <= 0) {
-                    this.clearTimer();
-                    this.onOrderFailed(order);
-                }
-            }, 1000);
-        } else {
-            this.orderTimerEl.style.display = 'none';
-        }
+        if (this.orderTimerEl) this.orderTimerEl.style.display = 'none';
 
         this.updateOrderHighlights();
     }
 
+    _onOrderComplete(data) {
+        this.logic.loadOrder(data.nextOrderIdx);
+    }
+
+    _onOrderFailed(data) {
+        const level = this.logic.getCurrentLevel();
+        const order = this.logic.getCurrentOrder();
+        this.game.dialogue.show(
+            level.bossName,
+            level.bossAvatar,
+            (order ? order.failText : null) || I18n.t('boss.orderTimeUp'),
+            I18n.t('boss.orderFailPlayer')
+        ).then(() => {
+            this.logic.loadOrder(data.nextOrderIdx);
+        });
+    }
+
+    _onDefeated() {
+        Effects.celebrate();
+        AudioManager.playSound('task_complete');
+        if (this.game.achievements) {
+            this.game.achievements.increment('bossDefeats');
+        }
+        this._showBossDefeatOutro().then(() => {
+            this._checkLoopEvents().then(() => {
+                setTimeout(() => {
+                    Effects.levelTransition(() => {
+                        this.loadLevel(this.logic.currentLevelIdx + 1);
+                    });
+                }, 1500);
+            });
+        });
+    }
+
+    async _showBossDefeatOutro() {
+        if (!this.game.loop || !this.game.loop.currentLoopConfig) return;
+        const loopIdx = String(this.game.loop.loopIndex);
+        const narrative = typeof LOOP_NARRATIVES !== 'undefined' ? LOOP_NARRATIVES[loopIdx] : null;
+        if (!narrative) return;
+        const bossKey = 'boss_' + this.logic.currentLevelIdx;
+        const bossNarrative = narrative[bossKey];
+        if (bossNarrative && bossNarrative.defeatOutro) {
+            const level = this.logic.getCurrentLevel();
+            await this.game.dialogue.show(
+                level ? level.bossName : '???',
+                level ? level.bossAvatar : null,
+                bossNarrative.defeatOutro,
+                null
+            );
+        }
+    }
+
+    async _checkLoopEvents() {
+        if (!this.game.loop || typeof LOOP_EVENTS === 'undefined') return;
+        const loopIdx = this.game.loop.loopIndex;
+        const bossIdx = this.logic.currentLevelIdx;
+        const eventKey = loopIdx + '_' + bossIdx;
+        const eventData = LOOP_EVENTS[eventKey];
+        if (!eventData) return;
+        const flag = 'event_' + eventKey;
+        if (this.game.loop.hasNarrativeFlag(flag)) return;
+        this.game.loop.unlockNarrativeFlag(flag);
+        await this.game.dialogue.show(
+            eventData.npcName || '📢',
+            eventData.npcAvatar || null,
+            eventData.text,
+            eventData.playerText || null
+        );
+        if (eventData.goldReward && this.game.currency) this.game.currency.addGold(eventData.goldReward);
+        if (eventData.diamondReward && this.game.currency) this.game.currency.addDiamonds(eventData.diamondReward);
+        if (eventData.energyReward && this.game.energy) {
+            this.game.energy.current = Math.min(this.game.energy.regenCap || this.game.energy.max, this.game.energy.current + eventData.energyReward);
+            this.game.energy.render();
+        }
+        if (eventData.goldReward || eventData.diamondReward || eventData.energyReward) {
+            const parts = [];
+            if (eventData.goldReward) parts.push('💰 +' + eventData.goldReward);
+            if (eventData.diamondReward) parts.push('💎 +' + eventData.diamondReward);
+            if (eventData.energyReward) parts.push('⚡ +' + eventData.energyReward);
+            this.game.dailyOrders.showToast(I18n.t('bossEventReward', {items: parts.join(' ')}));
+        }
+    }
+
+    _onTimerTick(data) {
+        // UI timer updates handled in setInterval above
+    }
+
     renderTimer() {
-        this.orderTimerEl.textContent = `⏱️ ${this.timerRemaining}s`;
-        if (this.timerRemaining <= 5) {
+        if (!this.orderTimerEl) return;
+        this.orderTimerEl.textContent = `${I18n.emoji('timer')} ${this.logic.timerRemaining}s`;
+        if (this.logic.timerRemaining <= 5) {
             this.orderTimerEl.classList.add('urgent');
         } else {
             this.orderTimerEl.classList.remove('urgent');
@@ -133,36 +212,13 @@ class BossSystem {
         Effects.stopTimerWarning(this.orderPanel);
     }
 
-    onOrderFailed(order) {
-        this.orderFailed = true;
-        // Show failure message
-        this.game.dialogue.show(
-            LEVELS[this.currentLevelIdx].bossName,
-            LEVELS[this.currentLevelIdx].bossAvatar,
-            order.failText || '时间到了……失败了！',
-            '（唉，下次要更快才行……）'
-        ).then(() => {
-            // Move to next order
-            this.loadOrder(this.currentOrderIdx + 1);
-        });
-    }
-
     // Check if required items exist on board
     canFulfillOrder() {
-        const level = LEVELS[this.currentLevelIdx];
-        const order = level.orders[this.currentOrderIdx];
-        if (!order) return false;
-
-        for (const req of order.required) {
-            const found = this.game.board.findAllItems(req.itemId);
-            if (found.length < req.count) return false;
-        }
-        return true;
+        return this.logic.canFulfillOrder(this.game.board);
     }
 
     updateOrderHighlights() {
-        const level = LEVELS[this.currentLevelIdx];
-        const order = level.orders[this.currentOrderIdx];
+        const order = this.logic.getCurrentOrder();
         if (!order) return;
 
         // Update tag states
@@ -191,12 +247,13 @@ class BossSystem {
     async trySubmitOrder() {
         if (!this.canFulfillOrder()) return;
 
-        const level = LEVELS[this.currentLevelIdx];
-        const order = level.orders[this.currentOrderIdx];
+        const level = this.logic.getCurrentLevel();
+        const order = this.logic.getCurrentOrder();
 
         this.clearTimer();
+        this.logic.beginSubmit();                          // FSM → SUBMITTING
 
-        // Consume items from board & animate
+        // ① Consume items from board & animate
         for (const req of order.required) {
             for (let n = 0; n < req.count; n++) {
                 const idx = this.game.board.findItem(req.itemId);
@@ -208,49 +265,97 @@ class BossSystem {
             }
         }
 
+        // ② Transactional commit: apply damage + advance order + FSM transition
+        const result = this.logic.commitSubmit(order.damage);
+
+        // ③ Award diamonds
+        const diamondReward = order.diamondReward || 0;
+        if (diamondReward > 0 && this.game.currency) {
+            this.game.currency.addDiamonds(diamondReward);
+        }
+
+        // ④ Immediate save — all state is now consistent.
+        // If the player refreshes during the dialogue below, no progress is lost.
+        if (this.game.save) this.game.save.saveAll();
+
+        // ═══════════════════════════════════════════════════════════
+        // Everything below is presentation-only (safe to interrupt)
+        // ═══════════════════════════════════════════════════════════
+
         // Wait for fly animation
         await new Promise(r => setTimeout(r, 700));
 
-        // Deal damage
-        this.currentHp -= order.damage;
-        this.renderHp();
+        // Update daily order highlights since board items changed
+        if (this.game.dailyOrders) this.game.dailyOrders.updateHighlights();
 
-        // Show dialogue
+        // Show dialogue (include reward info) — skipBGM so game_bgm keeps playing
+        const rewardText = diamondReward > 0 ? '\n' + I18n.emoji('diamond') + ' ' + I18n.t('boss.diamondReward', {count: diamondReward}) : '';
         await this.game.dialogue.show(
             level.bossName,
             level.bossAvatar,
-            order.dialogue.npc,
-            order.dialogue.player
+            order.dialogue.npc + rewardText,
+            order.dialogue.player,
+            { skipBGM: true }
         );
 
-        // Check if boss defeated
-        if (this.currentHp <= 0) {
-            this.defeatBoss();
+        // ⑤ Trigger UI progression events (order complete / boss defeated)
+        if (result.isDefeated) {
+            globalBus.emit('boss:defeated', { levelIdx: this.logic.currentLevelIdx });
         } else {
-            // Next order
-            this.loadOrder(this.currentOrderIdx + 1);
+            this.logic.loadOrder(this.logic.currentOrderIdx);
+            this.updateOrderHighlights();
         }
     }
 
     defeatBoss() {
-        Effects.celebrate();
-
-        // Unlock cells
-        if (UNLOCK_PER_BOSS[this.currentLevelIdx]) {
-            this.game.board.unlockCells(UNLOCK_PER_BOSS[this.currentLevelIdx]);
-        }
-
-        // Next level after a delay
-        setTimeout(() => {
-            Effects.levelTransition(() => {
-                this.loadLevel(this.currentLevelIdx + 1);
-            });
-        }, 1500);
+        this.logic.defeatBoss();
     }
 
-    showGameComplete() {
-        const overlay = document.getElementById('game-complete-overlay');
-        overlay.classList.add('active');
+    /**
+     * Called when all 4 bosses are defeated — loop complete!
+     * Instead of ending the game, transition to next loop.
+     */
+    _onLoopComplete() {
         Effects.celebrate();
+
+        // Show parade briefly as celebration
+        const paradeOverlay = document.getElementById('parade-overlay');
+        if (paradeOverlay) {
+            paradeOverlay.classList.add('active');
+            Effects.celebrate();
+            // After parade, trigger loop completion
+            setTimeout(() => {
+                paradeOverlay.classList.remove('active');
+                if (this.game && this.game.completeCurrentLoop) {
+                    this.game.completeCurrentLoop();
+                }
+            }, 3000);
+        } else {
+            // No parade overlay — go straight to loop completion
+            setTimeout(() => {
+                if (this.game && this.game.completeCurrentLoop) {
+                    this.game.completeCurrentLoop();
+                }
+            }, 1500);
+        }
+    }
+
+    // Keep original for reference / future use
+    showGameComplete() {
+        const paradeOverlay = document.getElementById('parade-overlay');
+        if (paradeOverlay) {
+            paradeOverlay.classList.add('active');
+            Effects.celebrate();
+
+            setTimeout(() => {
+                const overlay = document.getElementById('game-complete-overlay');
+                overlay.classList.add('active');
+                Effects.celebrate();
+            }, 6000);
+        } else {
+            const overlay = document.getElementById('game-complete-overlay');
+            overlay.classList.add('active');
+            Effects.celebrate();
+        }
     }
 }

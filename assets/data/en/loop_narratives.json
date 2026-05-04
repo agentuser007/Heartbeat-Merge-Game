@@ -1,0 +1,146 @@
+{
+  "1": {
+    "loopIntro": "September sunlight filters through the ginkgo leaves. I stand at the school gate, taking a deep breath — a new story begins here.",
+    "loopOutro": "The first trial is over. The wind sweeps through the corridor, carrying away fallen leaves and a strange flutter in a corner of my heart..."
+  },
+  "2": {
+    "loopIntro": "October paints the campus in maple red. Walking the familiar path, I can't shake the feeling someone is behind me... I turn, but see only drifting leaves.",
+    "loopOutro": "The second time down this road — the scenery hasn't changed, but some people's gazes seem to linger a little longer.",
+    "boss_0": {
+      "intro": "\"...You again. Can you stop taking that corridor route?\" (Looks away)",
+      "defeatOutro": "\"...Whatever. Go wherever you want.\" (Voice barely audible)"
+    },
+    "boss_1": {
+      "intro": "\"Hey! We meet again! This time I'm serious!\" (Waves with a grin)",
+      "defeatOutro": "\"Ugh... you won again! But losing to you isn't so bad, I guess?\" (Scratches head)"
+    },
+    "boss_2": {
+      "intro": "\"Ah, we meet again. This time, let me get a proper look at you.\" (Leans in slightly)",
+      "defeatOutro": "\"You're even more remarkable than I imagined...\""
+    },
+    "boss_3": {
+      "intro": "\"Second semester already. I hope your performance lives up to this academy.\" (Adjusts glasses)",
+      "defeatOutro": "\"...Not bad. But don't let it go to your head.\" (Faint smile)"
+    }
+  },
+  "3": {
+    "loopIntro": "Festival lanterns line the corridors, and the air is sweet with caramel and osmanthus. Everyone is looking forward to tonight's fireworks — including me.",
+    "loopOutro": "Fireworks bloom across the night sky and in my heart. The warmth of this evening will linger in my palms for a long, long time.",
+    "boss_0": {
+      "intro": "\"School festivals... too noisy. But if you're here, maybe it's not so unbearable.\" (Looks down)",
+      "defeatOutro": "\"...The fireworks were beautiful. Especially with you.\" (Voice almost a whisper)"
+    },
+    "boss_1": {
+      "intro": "\"Happy festival! Don't leave tonight — I have something to tell you... under the fireworks!\"",
+      "defeatOutro": "\"Your smile is prettier than any firework... D-did I say something?!\" (Ears turning red)"
+    },
+    "boss_2": {
+      "intro": "\"School festival! The lights are beautiful, but they pale next to you.\"",
+      "defeatOutro": "\"This night belongs to us, Chérie...\" (Gently touches fingertips)"
+    },
+    "boss_3": {
+      "intro": "\"I maintain order during the festival. But tonight... perhaps I can make an exception.\" (Loosens tie)",
+      "defeatOutro": "\"Tonight's fireworks... and you — I'll remember both.\" (A rare softness)"
+    }
+  },
+  "4": {
+    "loopIntro": "The blizzard lockdown came without warning. Outside is a sea of white, yet the classroom feels warmer than ever — because some people chose to stay.",
+    "loopOutro": "The storm will pass, but the one who draped his coat over my shoulders in the blizzard — I can never unsee him again.",
+    "boss_0": {
+      "intro": "\"It's cold outside. ...Take my coat.\" (Doesn't look at her, hands over the coat)",
+      "defeatOutro": "\"...Don't catch a cold. I'm not used to worrying about anyone. You're the first.\""
+    },
+    "boss_1": {
+      "intro": "\"A blizzard can't stop me! Wait right here — I'll get you hot cocoa!\"",
+      "defeatOutro": "\"Thank goodness you're okay... I-I ran so many trips to find you!\" (Panting, nose bright red)"
+    },
+    "boss_2": {
+      "intro": "\"The storm outside is fierce, but my heart is warmer when you're near.\"",
+      "defeatOutro": "\"Stay with me... just a little longer.\" (Holds her hand tightly)"
+    },
+    "boss_3": {
+      "intro": "\"Blizzard lockdown — all students return to dormitories. You... are the exception.\" (A pause)",
+      "defeatOutro": "\"As principal, I ordered everyone to leave. But as someone else... I want you to stay.\""
+    }
+  },
+  "5": {
+    "loopIntro": "The training camp's ocean breeze carries salt and freedom. Far from school rules, everyone seems to shed their masks — including those who never crack a smile.",
+    "loopOutro": "The bonfire has burned out, but the starry sky remains wide awake. After tonight, we can never be \"just classmates\" again.",
+    "boss_0": {
+      "intro": "\"...Don't walk alone at night. I'll walk you back during camp.\" (After a silence)",
+      "defeatOutro": "\"Stars... I never found them beautiful. But tonight, because you're beside me.\""
+    },
+    "boss_1": {
+      "intro": "\"I'm in charge of the camp BBQ! But... could you help me taste if this is cooked?\"",
+      "defeatOutro": "\"Tonight's starry sky... I want to keep watching it with you, like this, forever.\" (Voice barely audible)"
+    },
+    "boss_2": {
+      "intro": "\"Summer camp under the stars... C'est parfait, especially with you.\"",
+      "defeatOutro": "\"Mon cœur, cette nuit je veux te dire... you are my summer.\""
+    },
+    "boss_3": {
+      "intro": "\"I'm responsible for camp discipline. But if you can't sleep... you can come find me.\"",
+      "defeatOutro": "\"I've spent my life making rules, until I met you... now I'm willing to break them all.\""
+    }
+  },
+  "6": {
+    "loopIntro": "On the cultural festival stage, everyone is playing someone else. But when the curtain falls and the makeup comes off — I only want you to see the real me.",
+    "loopOutro": "Applause roars, but my world has narrowed to a single person. This confession is more real than any script.",
+    "boss_0": {
+      "intro": "\"Cultural festivals... I'm not good at these. But if you're on stage, I'll be in the audience.\"",
+      "defeatOutro": "\"I'm not good with pretty words, but... from now on, my eyes are only on you.\" (First time holding her gaze)"
+    },
+    "boss_1": {
+      "intro": "\"The festival's grand finale — I'm ready! Will you be... my one and only audience?\"",
+      "defeatOutro": "\"I don't want to be just your friend anymore... I-I want to be the one who holds your hand!\""
+    },
+    "boss_2": {
+      "intro": "\"On this stage, I want to perform the most important scene of my life — with you.\"",
+      "defeatOutro": "\"Curtain call? Non. Our story is just beginning, Chérie.\""
+    },
+    "boss_3": {
+      "intro": "\"Everything about the festival requires my approval. But there's one thing... I want to tell you myself, no approval needed.\"",
+      "defeatOutro": "\"You're the first person I've willingly surrendered control to. I... surrender.\" (Takes off glasses)"
+    }
+  },
+  "7": {
+    "loopIntro": "The train rolls past mountains and fields, the scenery ever-changing. But the person sitting across from me never looks away. The school trip is the perfect excuse — an excuse to be closer to you.",
+    "loopOutro": "The sunset on the journey home paints half the sky red, and the face of the one beside me. What he whispered in my ear was warmer than the sunset.",
+    "boss_0": {
+      "intro": "\"Trips... I don't like them. But if it's with you, maybe it's worth a try.\"",
+      "defeatOutro": "\"I've been thinking about one thing this whole trip... When we go back, can we keep walking together like this?\""
+    },
+    "boss_1": {
+      "intro": "\"School trip! I'm great at getting lost — but this time, I only want to follow you.\"",
+      "defeatOutro": "\"This trip taught me one thing: no matter where I go, as long as you're beside me, it's the best destination.\""
+    },
+    "boss_2": {
+      "intro": "\"Voyage... the French say travel reveals the heart. And mine is clear.\"",
+      "defeatOutro": "\"Wherever the road leads, I want to walk it with you, always.\" (Fingers intertwined)"
+    },
+    "boss_3": {
+      "intro": "\"The meaning of travel is escaping the everyday. And my everyday... has been completely upended by you.\"",
+      "defeatOutro": "\"I thought controlling everything was strength. Until I met you, I learned... giving your heart willingly is the truest power.\""
+    }
+  },
+  "8": {
+    "loopIntro": "The night before graduation, the campus is steeped in farewell. Three years of memories flash by like a lantern show — and the brightest moments all have you in them. Tonight, I refuse to leave any regrets.",
+    "loopOutro": "Graduation isn't the end — it's a new beginning. But wherever I go, my heart beats only for you — from our first meeting, to forever.",
+    "boss_0": {
+      "intro": "\"The night before graduation... I've never been reluctant to leave anywhere. But this time... I don't want to go, because you're here.\"",
+      "defeatOutro": "\"From now on, every graduation season, I'll be right here waiting for you. ...Always.\" (Eyes glistening)"
+    },
+    "boss_1": {
+      "intro": "\"The night before graduation, there's something I have to tell you — even if we go our separate ways tomorrow, I need you to know!\"",
+      "defeatOutro": "\"No matter how far apart we are... I'll always run back to you. Because you're my destination — forever!\" (Hands clasped tight)"
+    },
+    "boss_2": {
+      "intro": "\"Graduation is not goodbye. It's the beginning of our forever, mon amour.\"",
+      "defeatOutro": "\"Je t'aime... from the first hello to the last star. Always.\" (Foreheads touching)"
+    },
+    "boss_3": {
+      "intro": "\"Three years. I thought I was cultivating you, but without realizing... you redefined me.\" (Loosens tie)",
+      "defeatOutro": "\"I've spent my life making rules, but tonight I only want to do one thing — let you know you are my one and only exception. Forever.\""
+    }
+  }
+}

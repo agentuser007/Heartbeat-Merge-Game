@@ -1,0 +1,10 @@
+{
+  "gen_makeup": {
+    "id": "gen_makeup",
+    "name": "Makeup Bag"
+  },
+  "gen_study": {
+    "id": "gen_study",
+    "name": "School Bag"
+  }
+}

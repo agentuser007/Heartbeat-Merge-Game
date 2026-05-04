@@ -44,10 +44,40 @@
     "name": "气质女王",
     "level": 5,
     "chain": "lips",
-    "nextId": null,
+    "nextId": "lip_6",
     "sellPrice": 50,
     "emoji": "❤️‍🔥",
     "color": "#B22222"
+  },
+  "lip_6": {
+    "id": "lip_6",
+    "name": "倾城之吻",
+    "level": 6,
+    "chain": "lips",
+    "nextId": "lip_7",
+    "sellPrice": 120,
+    "emoji": "💋",
+    "color": "#FF0055"
+  },
+  "lip_7": {
+    "id": "lip_7",
+    "name": "绝世红颜",
+    "level": 7,
+    "chain": "lips",
+    "nextId": "lip_8",
+    "sellPrice": 300,
+    "emoji": "👑",
+    "color": "#CC0044"
+  },
+  "lip_8": {
+    "id": "lip_8",
+    "name": "魅惑天成",
+    "level": 8,
+    "chain": "lips",
+    "nextId": null,
+    "sellPrice": 800,
+    "emoji": "✨",
+    "color": "#990022"
   },
   "perf_1": {
     "id": "perf_1",
@@ -94,10 +124,40 @@
     "name": "致命费洛蒙",
     "level": 5,
     "chain": "perfume",
-    "nextId": null,
+    "nextId": "perf_6",
     "sellPrice": 50,
     "emoji": "💜",
     "color": "#800080"
+  },
+  "perf_6": {
+    "id": "perf_6",
+    "name": "月下迷雾",
+    "level": 6,
+    "chain": "perfume",
+    "nextId": "perf_7",
+    "sellPrice": 120,
+    "emoji": "🌙",
+    "color": "#6A0DAD"
+  },
+  "perf_7": {
+    "id": "perf_7",
+    "name": "永夜幽香",
+    "level": 7,
+    "chain": "perfume",
+    "nextId": "perf_8",
+    "sellPrice": 300,
+    "emoji": "🦋",
+    "color": "#4B0082"
+  },
+  "perf_8": {
+    "id": "perf_8",
+    "name": "灵魂共鸣",
+    "level": 8,
+    "chain": "perfume",
+    "nextId": null,
+    "sellPrice": 800,
+    "emoji": "💫",
+    "color": "#2E004F"
   },
   "study_1": {
     "id": "study_1",
@@ -144,10 +204,40 @@
     "name": "保送推荐信",
     "level": 5,
     "chain": "study",
-    "nextId": null,
+    "nextId": "study_6",
     "sellPrice": 50,
     "emoji": "🏆",
     "color": "#00008B"
+  },
+  "study_6": {
+    "id": "study_6",
+    "name": "学术论文",
+    "level": 6,
+    "chain": "study",
+    "nextId": "study_7",
+    "sellPrice": 120,
+    "emoji": "📜",
+    "color": "#1A237E"
+  },
+  "study_7": {
+    "id": "study_7",
+    "name": "天才学者",
+    "level": 7,
+    "chain": "study",
+    "nextId": "study_8",
+    "sellPrice": 300,
+    "emoji": "🎓",
+    "color": "#0D1B5E"
+  },
+  "study_8": {
+    "id": "study_8",
+    "name": "传奇校长",
+    "level": 8,
+    "chain": "study",
+    "nextId": null,
+    "sellPrice": 800,
+    "emoji": "🏛️",
+    "color": "#0A0E3A"
   },
   "food_1": {
     "id": "food_1",
@@ -194,9 +284,239 @@
     "name": "满汉全席食盒",
     "level": 5,
     "chain": "food",
-    "nextId": null,
+    "nextId": "food_6",
     "sellPrice": 50,
     "emoji": "🎁",
     "color": "#FFD700"
+  },
+  "food_6": {
+    "id": "food_6",
+    "name": "米其林晚宴",
+    "level": 6,
+    "chain": "food",
+    "nextId": "food_7",
+    "sellPrice": 120,
+    "emoji": "🍷",
+    "color": "#B8860B"
+  },
+  "food_7": {
+    "id": "food_7",
+    "name": "皇家御宴",
+    "level": 7,
+    "chain": "food",
+    "nextId": "food_8",
+    "sellPrice": 300,
+    "emoji": "🏮",
+    "color": "#8B6914"
+  },
+  "food_8": {
+    "id": "food_8",
+    "name": "天宫琼浆",
+    "level": 8,
+    "chain": "food",
+    "nextId": null,
+    "sellPrice": 800,
+    "emoji": "🍾",
+    "color": "#DAA520"
+  },
+  "gen_makeup_1": {
+    "id": "gen_makeup_1",
+    "type": "GENERATOR",
+    "name": "拉链袋",
+    "level": 1,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_2",
+    "sellable": false,
+    "emoji": "👛",
+    "color": "#FF6B9D"
+  },
+  "gen_makeup_2": {
+    "id": "gen_makeup_2",
+    "type": "GENERATOR",
+    "name": "化妆包",
+    "level": 2,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_3",
+    "sellable": true,
+    "emoji": "👜",
+    "color": "#E91E8C"
+  },
+  "gen_makeup_3": {
+    "id": "gen_makeup_3",
+    "type": "GENERATOR",
+    "name": "梳妆盒",
+    "level": 3,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_4",
+    "sellable": true,
+    "emoji": "🪞",
+    "color": "#C2185B"
+  },
+  "gen_makeup_4": {
+    "id": "gen_makeup_4",
+    "type": "GENERATOR",
+    "name": "手提箱",
+    "level": 4,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_5",
+    "sellable": true,
+    "emoji": "🧳",
+    "color": "#AD1457"
+  },
+  "gen_makeup_5": {
+    "id": "gen_makeup_5",
+    "type": "GENERATOR",
+    "name": "梳妆台",
+    "level": 5,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_6",
+    "sellable": true,
+    "emoji": "💄",
+    "color": "#880E4F"
+  },
+  "gen_makeup_6": {
+    "id": "gen_makeup_6",
+    "type": "GENERATOR",
+    "name": "衣帽间",
+    "level": 6,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_7",
+    "sellable": true,
+    "emoji": "🏠",
+    "color": "#6A1B4D"
+  },
+  "gen_makeup_7": {
+    "id": "gen_makeup_7",
+    "type": "GENERATOR",
+    "name": "造型工作室",
+    "level": 7,
+    "chain": "gen_makeup",
+    "nextId": "gen_makeup_8",
+    "sellable": true,
+    "emoji": "✨",
+    "color": "#4A0E3C"
+  },
+  "gen_makeup_8": {
+    "id": "gen_makeup_8",
+    "type": "GENERATOR",
+    "name": "专属保险柜",
+    "level": 8,
+    "chain": "gen_makeup",
+    "nextId": null,
+    "sellable": true,
+    "emoji": "👑",
+    "color": "#FFD700"
+  },
+  "gen_study_1": {
+    "id": "gen_study_1",
+    "type": "GENERATOR",
+    "name": "笔袋",
+    "level": 1,
+    "chain": "gen_study",
+    "nextId": "gen_study_2",
+    "sellable": false,
+    "emoji": "✏️",
+    "color": "#42A5F5"
+  },
+  "gen_study_2": {
+    "id": "gen_study_2",
+    "type": "GENERATOR",
+    "name": "文具盒",
+    "level": 2,
+    "chain": "gen_study",
+    "nextId": "gen_study_3",
+    "sellable": true,
+    "emoji": "📎",
+    "color": "#1E88E5"
+  },
+  "gen_study_3": {
+    "id": "gen_study_3",
+    "type": "GENERATOR",
+    "name": "书包",
+    "level": 3,
+    "chain": "gen_study",
+    "nextId": "gen_study_4",
+    "sellable": true,
+    "emoji": "🎒",
+    "color": "#1565C0"
+  },
+  "gen_study_4": {
+    "id": "gen_study_4",
+    "type": "GENERATOR",
+    "name": "书箱",
+    "level": 4,
+    "chain": "gen_study",
+    "nextId": "gen_study_5",
+    "sellable": true,
+    "emoji": "📦",
+    "color": "#0D47A1"
+  },
+  "gen_study_5": {
+    "id": "gen_study_5",
+    "type": "GENERATOR",
+    "name": "书架",
+    "level": 5,
+    "chain": "gen_study",
+    "nextId": "gen_study_6",
+    "sellable": true,
+    "emoji": "📚",
+    "color": "#0A3D8F"
+  },
+  "gen_study_6": {
+    "id": "gen_study_6",
+    "type": "GENERATOR",
+    "name": "书房",
+    "level": 6,
+    "chain": "gen_study",
+    "nextId": "gen_study_7",
+    "sellable": true,
+    "emoji": "🏛️",
+    "color": "#08306B"
+  },
+  "gen_study_7": {
+    "id": "gen_study_7",
+    "type": "GENERATOR",
+    "name": "图书馆",
+    "level": 7,
+    "chain": "gen_study",
+    "nextId": "gen_study_8",
+    "sellable": true,
+    "emoji": "🏫",
+    "color": "#062555"
+  },
+  "gen_study_8": {
+    "id": "gen_study_8",
+    "type": "GENERATOR",
+    "name": "知识殿堂",
+    "level": 8,
+    "chain": "gen_study",
+    "nextId": null,
+    "sellable": true,
+    "emoji": "🌟",
+    "color": "#FFD700"
+  },
+  "joker": {
+    "id": "joker",
+    "type": "JOKER",
+    "name": "万能百搭牌",
+    "level": 0,
+    "chain": "special",
+    "nextId": null,
+    "sellable": false,
+    "emoji": "🃏",
+    "color": "#FFD700",
+    "description": "拖拽到任意物品上，使其无条件升1级"
+  },
+  "scissor": {
+    "id": "scissor",
+    "type": "SCISSOR",
+    "name": "时空剪刀",
+    "level": 0,
+    "chain": "special",
+    "nextId": null,
+    "sellable": false,
+    "emoji": "✂️",
+    "color": "#9C27B0",
+    "description": "将一个高阶物品拆分为两个低一级物品"
   }
 }

@@ -4,13 +4,17 @@
 
 class EnergySystem {
     constructor() {
-        this.max = GAME_CONFIG.MAX_ENERGY;
-        this.current = this.max;
+        this.regenCap = GAME_CONFIG.ENERGY_REGEN_CAP || GAME_CONFIG.MAX_ENERGY;
+        this.max = this.regenCap;
+        this.current = this.regenCap;
+        this.regenInterval = GAME_CONFIG.ENERGY_REGEN_INTERVAL;
         this.regenTimer = null;
         this.el = document.getElementById('energy-bar-fill');
         this.textEl = document.getElementById('energy-text');
         this.render();
-        this.startRegen();
+        // C-05 fix: Do NOT start regen in constructor — defer until after save load
+        // to prevent the timer from overwriting saved energy state with defaults.
+        // startRegen() is now called explicitly from Game.init() after load.
     }
 
     canSpend(amount = GAME_CONFIG.ENERGY_COST_PER_SPAWN) {
@@ -18,41 +22,77 @@ class EnergySystem {
     }
 
     spend(amount = GAME_CONFIG.ENERGY_COST_PER_SPAWN) {
-        if (!this.canSpend(amount)) return false;
+        if (!this.canSpend(amount)) {
+            if (typeof globalBus !== 'undefined') {
+                globalBus.emit('energy:insufficient', { current: this.current, needed: amount });
+            }
+            return false;
+        }
         this.current -= amount;
         this.render();
         return true;
     }
 
     recover(amount) {
-        this.current = Math.min(this.max, this.current + amount);
+        // No hard cap — items/rewards can push current above regenCap freely
+        this.current = this.current + amount;
         this.render();
+    }
+
+    // Dynamically update max energy (from heroine upgrades)
+    setMax(newMax) {
+        this.max = newMax;
+        this.regenCap = newMax; // sync regenCap so natural recovery & UI reflect new cap
+        // Do NOT cap current — items/rewards may have pushed it above max
+        this.render();
+    }
+
+    setRegenCap(newCap) {
+        this.regenCap = newCap;
+        this.render();
+    }
+
+    // Dynamically update regen interval (from heroine upgrades)
+    setRegenInterval(newInterval) {
+        this.regenInterval = newInterval;
+        // Restart the timer with new interval
+        this.stopRegen();
+        this.startRegen();
     }
 
     startRegen() {
         this.regenTimer = setInterval(() => {
-            if (this.current < this.max) {
+            // Natural regen stops at regenCap, not at max
+            if (this.current < this.regenCap) {
                 this.current++;
                 this.render();
             }
-        }, GAME_CONFIG.ENERGY_REGEN_INTERVAL);
+        }, this.regenInterval);
+    }
+
+    stopRegen() {
+        if (this.regenTimer) {
+            clearInterval(this.regenTimer);
+            this.regenTimer = null;
+        }
     }
 
     render() {
-        const pct = (this.current / this.max) * 100;
+        const pct = Math.min((this.current / this.regenCap) * 100, 100);
         if (this.el) {
             this.el.style.width = pct + '%';
             // color shift: green → yellow → red
-            if (pct > 50) this.el.style.background = 'linear-gradient(90deg, #00E676, #69F0AE)';
-            else if (pct > 20) this.el.style.background = 'linear-gradient(90deg, #FFD600, #FFAB00)';
-            else this.el.style.background = 'linear-gradient(90deg, #FF5252, #FF1744)';
+            if (pct > I18n.config('colors.energyHighThreshold')) this.el.style.background = I18n.config('colors.energyGradientHigh');
+            else if (pct > I18n.config('colors.energyLowThreshold')) this.el.style.background = I18n.config('colors.energyGradientMid');
+            else this.el.style.background = I18n.config('colors.energyGradientLow');
         }
         if (this.textEl) {
-            this.textEl.textContent = `⚡ ${this.current}/${this.max}`;
+            // Show current/regenCap — can display overflow like 130/100
+            this.textEl.textContent = `${I18n.emoji('energy')} ${this.current}/${this.regenCap}`;
         }
     }
 
     destroy() {
-        clearInterval(this.regenTimer);
+        this.stopRegen();
     }
 }
