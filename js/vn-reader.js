@@ -4,13 +4,13 @@
 
 var VNReader = (function() {
     var CHARACTER_MAP = {
-        '林墨白': { avatar: 'assets/avatar/morven.png', color: '#7B68EE', background: 'assets/avatar/morven_bg.png' },
-        'Morven': { avatar: 'assets/avatar/morven.png', color: '#7B68EE', background: 'assets/avatar/morven_bg.png' },
-        'Daniel':  { avatar: 'assets/avatar/daniel.png', color: '#4169E1', background: 'assets/avatar/daniel_bg.png' },
-        '司徒渊': { avatar: 'assets/avatar/vincent.png', color: '#483D8B', background: 'assets/avatar/vincent_bg.png' },
-        'Vincent': { avatar: 'assets/avatar/vincent.png', color: '#483D8B', background: 'assets/avatar/vincent_bg.png' },
-        '陆之昂': { avatar: 'assets/avatar/leo.png', color: '#FF6347', background: 'assets/avatar/leo_bg.png' },
-        'Leo': { avatar: 'assets/avatar/leo.png', color: '#FF6347', background: 'assets/avatar/leo_bg.png' }
+        '林墨白': { avatar: 'assets/avatar/morven.webp', color: '#7B68EE', background: 'assets/avatar/morven_bg.webp' },
+        'Morven': { avatar: 'assets/avatar/morven.webp', color: '#7B68EE', background: 'assets/avatar/morven_bg.webp' },
+        'Daniel':  { avatar: 'assets/avatar/daniel.webp', color: '#4169E1', background: 'assets/avatar/daniel_bg.webp' },
+        '司徒渊': { avatar: 'assets/avatar/vincent.webp', color: '#483D8B', background: 'assets/avatar/vincent_bg.webp' },
+        'Vincent': { avatar: 'assets/avatar/vincent.webp', color: '#483D8B', background: 'assets/avatar/vincent_bg.webp' },
+        '陆之昂': { avatar: 'assets/avatar/leo.webp', color: '#FF6347', background: 'assets/avatar/leo_bg.webp' },
+        'Leo': { avatar: 'assets/avatar/leo.webp', color: '#FF6347', background: 'assets/avatar/leo_bg.webp' }
     };
 
     function VR(game) {

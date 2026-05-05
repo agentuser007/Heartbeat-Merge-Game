@@ -13,16 +13,16 @@ const AudioManager = {
     // Sound registry: logical name → filename (short SFX)
     SOUNDS: {
         btn_click:     'btn_click.ogg',
-        merge:         'merge.wav',
+        merge:         'merge.ogg',
         pop:           'pop.ogg',
-        reward:        'reward.wav',
-        task_complete: 'task_complete.mp3',
+        reward:        'reward.ogg',
+        task_complete: 'task_complete.ogg',
     },
 
     // BGM registry: logical name → filename (long looping tracks)
     BGM: {
         game_bgm:  'game_bgm.ogg',
-        story_bgm: 'story_bgm.mp3',
+        story_bgm: 'story_bgm.ogg',
     },
 
     // ---- Internal state ----

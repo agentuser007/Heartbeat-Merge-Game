@@ -178,7 +178,7 @@ class Game {
     /**
      * Start a brand new meta game (first time or after full reset).
      */
-    startNewMetaGame() {
+    async startNewMetaGame() {
         this.loop = new LoopLogic();
         const config = this.loop.buildLoopConfig(1);
         this.loop.applyLoopConfig(config);
@@ -191,8 +191,10 @@ class Game {
         this.board.placeInitialGenerators();
         this.boss.loadLevel(0);
 
-        // Show intro
-        this.showIntro();
+        // Show generic intro, then Loop 1 narrative
+        await this.showIntro();
+        await this.showLoopIntro();
+
         this.updateLoopUI();
 
         // Save
@@ -347,7 +349,7 @@ class Game {
         if (loopBadge) {
             const config = this.loop.currentLoopConfig;
             if (config) {
-                loopBadge.textContent = I18n.t('loop.badge', {index: config.loopIndex, title: config.title});
+                loopBadge.textContent = I18n.t('loop.titleDefault', {index: config.loopIndex});
                 loopBadge.style.display = 'block';
             }
         }
@@ -367,11 +369,12 @@ class Game {
         const loopIdx = String(this.loop.loopIndex);
         const narrative = LOOP_NARRATIVES[loopIdx];
         if (narrative && narrative.loopIntro) {
-            this.dialogue.show(
+            return this.dialogue.show(
                 '🏫',
                 null,
                 narrative.loopIntro,
-                I18n.t('loop.newStart')
+                I18n.t('loop.newStart'),
+                { skipBGM: true }
             );
         }
     }

@@ -112,7 +112,7 @@ html, body {
 }
 
 #game-container {
-  width: 100%; height: 100%; max-width: 430px;
+  width: 100%; height: 100%; max-width: 500px;
   margin: 0 auto; display: flex; flex-direction: column;
   background: linear-gradient(180deg, var(--bg-game-start) 0%, var(--bg-game-mid) 50%, var(--bg-game-end) 100%);
   position: relative; overflow: hidden; overflow-x: hidden;
@@ -626,7 +626,7 @@ body.sheet-open #game-container {
 .bottom-sheet {
   position: fixed; bottom: 0; left: 50%;
   transform: translateX(-50%) translateY(100%);
-  width: 100%; max-width: 430px; height: 90%;
+  width: 100%; max-width: 500px; height: 90%;
   background: rgba(240, 248, 255, 0.96);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   z-index: 200; border-radius: 20px 20px 0 0;
@@ -1511,9 +1511,36 @@ body.sheet-open #game-container {
   .nav-item .nav-label { font-size: 10px; }
 }
 
-@media (min-width: 431px) {
-  #game-container { border-left: 1px solid rgba(0, 0, 0, 0.1); border-right: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 0 60px rgba(0, 0, 0, 0.15); }
-  body { background: #f0f0f0; display: flex; justify-content: center; }
+@media (min-width: 501px) {
+  #game-container { 
+    border-left: 1px solid rgba(255, 255, 255, 0.1); 
+    border-right: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.6);
+    max-width: min(500px, 92vh * 9 / 16); 
+  }
+  body { 
+    background: #111; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+  }
+  /* Constrain fixed overlays to match game-container width on desktop */
+  #loading-overlay,
+  #lang-select-overlay,
+  #dialogue-overlay,
+  #parade-overlay,
+  #loop-summary-overlay,
+  #game-complete-overlay,
+  #transition-overlay,
+  .bottom-sheet {
+    max-width: min(500px, 92vh * 9 / 16);
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+  /* Preserve translateY for bottom sheets */
+  .bottom-sheet { transform: translateX(-50%) translateY(100%) !important; }
+  .bottom-sheet.open { transform: translateX(-50%) translateY(0) !important; }
 }
 
 /* ========== LANDSCAPE ROTATION WARNING ========== */
@@ -2311,9 +2338,9 @@ body.sheet-open #game-container {
    causing the warning to cover the entire game. */
 body.cg-platform #landscape-warning { display: none !important; }
 
-/* B-02: Remove max-width constraint on CrazyGames — the 430px cap leaves massive
-   whitespace on both sides in landscape iframes. */
-body.cg-platform #game-container { max-width: 100%; }
+/* B-02: Constraint is now handled globally and via desktop media queries.
+   Removed max-width: 100% override to prevent stretching on PC. */
+/* body.cg-platform #game-container { max-width: 100%; } */
 
 /* ===== CRAZYGAMES LANDSCAPE RESPONSIVE BREAKPOINTS (C-07) ===== */
 /* Target resolutions per CrazyGames QA spec (see crazygames/sdk-docs.md):
@@ -2324,7 +2351,7 @@ body.cg-platform #game-container { max-width: 100%; }
 
 /* --- Shared base: small landscape (covers 800×450 and 907×510) --- */
 @media (orientation: landscape) and (min-width: 700px) and (max-height: 570px) {
-  #game-container { max-width: 100%; }
+/* #game-container { max-width: 100%; } */
   #top-status-bar { padding: 2px 8px; gap: 4px; flex-wrap: nowrap; }
   #energy-bar { height: 16px; }
   #energy-text { font-size: 8px; }
@@ -2361,7 +2388,7 @@ body.cg-platform #game-container { max-width: 100%; }
 
 /* --- 800×450: Mobile landscape (smallest CrazyGames resolution) --- */
 @media (orientation: landscape) and (min-width: 700px) and (max-width: 860px) and (max-height: 480px) {
-  #game-container { max-width: 100%; }
+/* #game-container { max-width: 100%; } */
   #top-status-bar { padding: 1px 6px; gap: 3px; }
   #energy-bar { height: 14px; }
   #energy-text { font-size: 7px; }
@@ -2399,7 +2426,7 @@ body.cg-platform #game-container { max-width: 100%; }
 
 /* --- 907×510: Desktop non-fullscreen (typical CrazyGames embedded size) --- */
 @media (orientation: landscape) and (min-width: 860px) and (max-width: 1250px) and (max-height: 570px) {
-  #game-container { max-width: 100%; }
+/* #game-container { max-width: 100%; } */
   #top-status-bar { padding: 2px 10px; gap: 5px; }
   #energy-bar { height: 18px; }
   #energy-text { font-size: 8px; }
@@ -2430,7 +2457,7 @@ body.cg-platform #game-container { max-width: 100%; }
 
 /* --- 1920×1080: Full HD desktop fullscreen --- */
 @media (orientation: landscape) and (min-width: 1200px) and (min-height: 700px) {
-  #game-container { max-width: 900px; margin: 0 auto; }
+  #game-container { max-width: min(900px, 100%); margin: 0 auto; }
   #top-status-bar { padding: 6px 16px; gap: 8px; }
   #energy-bar { height: 22px; }
   #energy-text { font-size: 10px; }
