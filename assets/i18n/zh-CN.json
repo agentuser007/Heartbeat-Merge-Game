@@ -62,19 +62,19 @@
     "energyReward": "⚡ 恢复 {count} 体力！",
     "goldReward": "💰 获得 {count} 金币！",
     "diamondReward": "💎 获得 {count} 钻石！",
-    "energyBtn": "🎬 看广告 +{count}体力 剩余{remaining}次",
-    "diamondBtn": "🎬 看广告 +{count}钻石 剩余{remaining}次",
-    "freePullBtn": "🎬 看广告免费抽卡 剩余{remaining}次",
-    "popupTitle": "看广告得奖励",
+    "energyBtn": "🎬 内测福利 +{count}体力 剩余{remaining}次",
+    "diamondBtn": "🎬 内测福利 +{count}钻石 剩余{remaining}次",
+    "freePullBtn": "🎬 内测福利免费抽卡 剩余{remaining}次",
+    "popupTitle": "内测福利",
     "popupDesc": {
-      "energy": "看广告恢复 {count} 体力！",
-      "gold": "看广告获得 {count} 金币！",
-      "diamonds": "看广告获得 {count} 钻石！",
-      "freePull": "看广告免费抽卡一次！"
+      "energy": "内测福利恢复 {count} 体力！",
+      "gold": "内测福利获得 {count} 金币！",
+      "diamonds": "内测福利获得 {count} 钻石！",
+      "freePull": "内测福利免费抽卡一次！"
     },
     "betaBenefit": "🎁 内测福利，限时开放",
     "popupRemaining": "今日剩余: {remaining}/{limit}",
-    "watchBtn": "看广告",
+    "watchBtn": "领取福利",
     "cancelBtn": "取消"
   },
   "gacha": {

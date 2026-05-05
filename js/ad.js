@@ -3,7 +3,7 @@
 // ============================================================
 
 const AD_CONFIG = {
-    energy: { reward: 20, dailyLimit: 3, cooldownMs: 0, emoji: '⚡' },
+    energy: { reward: 20, dailyLimit: Infinity, cooldownMs: 0, emoji: '⚡' },
     gold: { reward: 50, dailyLimit: 3, cooldownMs: 0, emoji: '💰' },
     diamonds: { reward: 50, dailyLimit: 3, cooldownMs: 0, emoji: '💎', betaBenefit: true },
     freePull: { dailyLimit: 1, cooldownMs: 0, maxRarity: 'SR', emoji: '🃏' }

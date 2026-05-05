@@ -36,10 +36,10 @@ class Game {
         document.addEventListener('click', resumeBGM);
         document.addEventListener('touchstart', resumeBGM);
 
-        // ---- CrazyGames SDK: loading start ----
+        // ---- SDK: loading start ----
         CrazyGamesSDK.loadingStart();
 
-        // ---- CrazyGames SDK: initialize ----
+        // ---- SDK: initialize ----
         await CrazyGamesSDK.init();
 
         // ---- Language selection (before I18n init) ----
@@ -133,6 +133,8 @@ class Game {
                     const config = this.loop.buildLoopConfig(this.loop.loopIndex);
                     this.loop.applyLoopConfig(config);
                 }
+                // Check loop-reached achievements on save load
+                if (this.achievements) this.achievements.checkAll();
                 this.board.renderAll();
                 this.updateLoopUI();
 
@@ -141,7 +143,7 @@ class Game {
                     this.dailyOrders.rollNewOrders();
                 }
 
-                // ---- CrazyGames SDK: loading done, gameplay starts ----
+                // ---- SDK: loading done, gameplay starts ----
                 CrazyGamesSDK.loadingStop();
                 CrazyGamesSDK.gameplayStart();
 
@@ -159,7 +161,7 @@ class Game {
         // Fresh start — new meta game + first run
         this.startNewMetaGame();
 
-        // ---- CrazyGames SDK: loading done, gameplay starts ----
+        // ---- SDK: loading done, gameplay starts ----
         CrazyGamesSDK.loadingStop();
         CrazyGamesSDK.gameplayStart();
 
@@ -182,6 +184,9 @@ class Game {
         this.loop = new LoopLogic();
         const config = this.loop.buildLoopConfig(1);
         this.loop.applyLoopConfig(config);
+
+        // Check loop-reached achievements
+        if (this.achievements) this.achievements.checkAll();
 
         // Reset all run state to fresh
         this.resetRunState();
@@ -209,6 +214,9 @@ class Game {
         const config = this.loop.buildLoopConfig(loopIndex);
         this.loop.applyLoopConfig(config);
 
+        // Check loop-reached achievements
+        if (this.achievements) this.achievements.checkAll();
+
         // Reset run state
         this.resetRunState();
 
@@ -225,7 +233,7 @@ class Game {
         // Save both meta and run
         this.save.saveAll();
 
-        // ---- CrazyGames SDK: gameplay resumes ----
+        // ---- SDK: gameplay resumes ----
         CrazyGamesSDK.gameplayStart();
     }
 
@@ -252,7 +260,7 @@ class Game {
         // Clear old run data
         this.save.clearRun();
 
-        // ---- CrazyGames SDK: celebrate & gameplay stop ----
+        // ---- SDK: celebrate & gameplay stop ----
         CrazyGamesSDK.happytime();
         CrazyGamesSDK.gameplayStop();
 

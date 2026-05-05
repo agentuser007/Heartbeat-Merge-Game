@@ -40,8 +40,6 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap"
     /></noscript>
     <link rel="stylesheet" href="css/style.css" />
-    <!-- CrazyGames SDK — loaded before game code -->
-    <script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>
   </head>
 
   <body
@@ -78,7 +76,10 @@
           <div id="energy-bar-fill"></div>
           <span id="energy-text">100/100</span>
         </div>
-        <button id="reward-energy-btn" class="reward-btn reward-btn-energy"></button>
+        <button
+          id="reward-energy-btn"
+          class="reward-btn reward-btn-energy"
+        ></button>
         <div id="gold-text">💰 0</div>
         <div id="diamond-text">💎 0</div>
         <div
@@ -214,7 +215,9 @@
             <div class="queen-crown" data-emoji="crown"></div>
             <div
               class="queen-avatar-parade"
-              style="background-image: url(&quot;assets/avatar/heroine.webp&quot;)"
+              style="
+                background-image: url(&quot;assets/avatar/heroine.webp&quot;);
+              "
             ></div>
           </div>
         </div>
@@ -223,7 +226,9 @@
             <div class="carrier-pole carrier-pole-left"></div>
             <div
               class="carrier-avatar"
-              style="background-image: url(&quot;assets/avatar/vincent.webp&quot;)"
+              style="
+                background-image: url(&quot;assets/avatar/vincent.webp&quot;);
+              "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier1Speech"></div>
           </div>
@@ -231,9 +236,7 @@
             <div class="carrier-pole carrier-pole-left"></div>
             <div
               class="carrier-avatar"
-              style="
-                background-image: url(&quot;assets/avatar/leo.webp&quot;);
-              "
+              style="background-image: url(&quot;assets/avatar/leo.webp&quot;)"
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier2Speech"></div>
           </div>
@@ -241,7 +244,9 @@
             <div class="carrier-pole carrier-pole-right"></div>
             <div
               class="carrier-avatar"
-              style="background-image: url(&quot;assets/avatar/daniel.webp&quot;)"
+              style="
+                background-image: url(&quot;assets/avatar/daniel.webp&quot;);
+              "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier3Speech"></div>
           </div>
@@ -249,7 +254,9 @@
             <div class="carrier-pole carrier-pole-right"></div>
             <div
               class="carrier-avatar"
-              style="background-image: url(&quot;assets/avatar/morven.webp&quot;)"
+              style="
+                background-image: url(&quot;assets/avatar/morven.webp&quot;);
+              "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier4Speech"></div>
           </div>
@@ -364,8 +371,14 @@
         <button id="gacha-ten" class="gacha-pull-btn ten"></button>
       </div>
       <div class="gacha-reward-buttons">
-        <button id="reward-diamond-btn" class="reward-btn reward-btn-diamond"></button>
-        <button id="reward-freepull-btn" class="reward-btn reward-btn-freepull"></button>
+        <button
+          id="reward-diamond-btn"
+          class="reward-btn reward-btn-diamond"
+        ></button>
+        <button
+          id="reward-freepull-btn"
+          class="reward-btn reward-btn-freepull"
+        ></button>
       </div>
     </div>
 

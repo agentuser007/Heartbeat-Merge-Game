@@ -15,6 +15,22 @@
     { "id": "recycle_20", "name": "Letting Go", "description": "Recycle 20 items" },
     { "id": "gacha_10", "name": "Lucky Draw", "description": "Pull gacha 10 times" },
     { "id": "unlock_5", "name": "Expanding Horizons", "description": "Unlock 5 board cells" },
-    { "id": "daily_10", "name": "Diligent Runner", "description": "Complete 10 daily orders" }
+    { "id": "daily_10", "name": "Diligent Runner", "description": "Complete 10 daily orders" },
+    { "id": "loop1_reached", "name": "New Student", "description": "Enter Loop 1 \"Freshman Trial\"" },
+    { "id": "loop1_challenge", "name": "Trial Complete", "description": "Merge items 30 times in Loop 1" },
+    { "id": "loop2_reached", "name": "Second Start", "description": "Enter Loop 2 \"Second Semester\"" },
+    { "id": "loop2_challenge", "name": "Gold Hunter", "description": "Earn 5,000 gold in total" },
+    { "id": "loop3_reached", "name": "Festival Guest", "description": "Enter Loop 3 \"School Festival\"" },
+    { "id": "loop3_challenge", "name": "Festival Collector", "description": "Pull gacha 20 times" },
+    { "id": "loop4_reached", "name": "Storm Approaching", "description": "Enter Loop 4 \"Final Storm\"" },
+    { "id": "loop4_challenge", "name": "Deadline Master", "description": "Complete 20 daily orders" },
+    { "id": "loop5_reached", "name": "Summer Departure", "description": "Enter Loop 5 \"Summer Camp\"" },
+    { "id": "loop5_challenge", "name": "Eco Pioneer", "description": "Recycle 50 items" },
+    { "id": "loop6_reached", "name": "Cultural Festival", "description": "Enter Loop 6 \"Culture Fest\"" },
+    { "id": "loop6_challenge", "name": "Festival Merger", "description": "Merge items 300 times" },
+    { "id": "loop7_reached", "name": "Traveler's Footsteps", "description": "Enter Loop 7 \"Field Trip\"" },
+    { "id": "loop7_challenge", "name": "Pioneer", "description": "Unlock 12 board cells" },
+    { "id": "loop8_reached", "name": "Eve of Graduation", "description": "Enter Loop 8 \"Graduation Eve\"" },
+    { "id": "loop8_challenge", "name": "Legend Maker", "description": "Merge 6 different max-level items" }
   ]
 }

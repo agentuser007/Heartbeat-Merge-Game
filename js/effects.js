@@ -206,7 +206,7 @@ const Effects = {
         }, 50);
     },
 
-    // ---- Audio Mute/Unmute (for CrazyGames ad integration) ----
+    // ---- Audio Mute/Unmute (for SDK ad integration) ----
 
     _audioMuted: false,
 

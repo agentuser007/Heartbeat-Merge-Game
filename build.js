@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// build.js — Bundle & minify JS/CSS for CrazyGames deployment
+// build.js — Bundle & minify JS/CSS for deployment
 // Usage: node build.js
 
 const fs = require('fs');
@@ -178,4 +178,4 @@ function calcDirSize(dir) {
 }
 calcDirSize(DIST);
 console.log(`  Total dist: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-console.log('\n[build] Done! Upload the "dist" folder to CrazyGames.');
+console.log('\n[build] Done! Upload the "dist" folder for deployment.');

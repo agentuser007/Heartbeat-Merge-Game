@@ -56,6 +56,8 @@ class AchievementSystem {
             let currentValue = 0;
             if (ach.condition === 'collectionPct') {
                 currentValue = this.game.collection ? this.game.collection.getCompletionPercent() : 0;
+            } else if (ach.condition === 'loopReached') {
+                currentValue = this.game.loop ? this.game.loop.loopIndex : 1;
             } else {
                 currentValue = this.stats[ach.condition] || 0;
             }
@@ -198,8 +200,19 @@ class AchievementSystem {
         `;
         this.listEl.appendChild(progress);
 
+        // Sort achievements: completed → unlocked (claimable) → in-progress
+        const sorted = [...ACHIEVEMENT_DATA].sort((a, b) => {
+            const aDone = this.completed.has(a.id);
+            const bDone = this.completed.has(b.id);
+            const aUnlocked = this.unlocked.has(a.id);
+            const bUnlocked = this.unlocked.has(b.id);
+            const aRank = aDone ? 0 : aUnlocked ? 1 : 2;
+            const bRank = bDone ? 0 : bUnlocked ? 1 : 2;
+            return aRank - bRank;
+        });
+
         // Render each achievement
-        for (const ach of ACHIEVEMENT_DATA) {
+        for (const ach of sorted) {
             const isCompleted = this.completed.has(ach.id);
             const isUnlocked = this.unlocked.has(ach.id);
             const isClaimable = isUnlocked && !isCompleted;
@@ -208,6 +221,8 @@ class AchievementSystem {
 
             if (ach.condition === 'collectionPct') {
                 currentValue = this.game.collection ? this.game.collection.getCompletionPercent() : 0;
+            } else if (ach.condition === 'loopReached') {
+                currentValue = this.game.loop ? this.game.loop.loopIndex : 1;
             } else {
                 currentValue = this.stats[ach.condition] || 0;
             }

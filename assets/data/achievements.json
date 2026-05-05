@@ -143,6 +143,150 @@
             "condition": "dailyCompleted",
             "target": 10,
             "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop1_reached",
+            "name": "新生入学",
+            "icon": "🌱",
+            "description": "进入第 1 轮循环「新生试炼」",
+            "condition": "loopReached",
+            "target": 1,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop1_challenge",
+            "name": "试炼初成",
+            "icon": "🔰",
+            "description": "在第 1 轮循环中累计合成 30 次",
+            "condition": "merges",
+            "target": 30,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop2_reached",
+            "name": "二度启程",
+            "icon": "📖",
+            "description": "进入第 2 轮循环「第二学期」",
+            "condition": "loopReached",
+            "target": 2,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop2_challenge",
+            "name": "金币猎手",
+            "icon": "💰",
+            "description": "累计获得 5000 金币",
+            "condition": "totalGoldEarned",
+            "target": 5000,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop3_reached",
+            "name": "校庆来客",
+            "icon": "🎪",
+            "description": "进入第 3 轮循环「校庆季」",
+            "condition": "loopReached",
+            "target": 3,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop3_challenge",
+            "name": "校庆收藏",
+            "icon": "🎰",
+            "description": "累计抽卡 20 次",
+            "condition": "gachaPulls",
+            "target": 20,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop4_reached",
+            "name": "风暴来袭",
+            "icon": "⛈️",
+            "description": "进入第 4 轮循环「期末风暴」",
+            "condition": "loopReached",
+            "target": 4,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop4_challenge",
+            "name": "限时达人",
+            "icon": "⏱️",
+            "description": "完成 20 个日常订单",
+            "condition": "dailyCompleted",
+            "target": 20,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop5_reached",
+            "name": "盛夏出发",
+            "icon": "☀️",
+            "description": "进入第 5 轮循环「盛夏合宿」",
+            "condition": "loopReached",
+            "target": 5,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop5_challenge",
+            "name": "节能先锋",
+            "icon": "♻️",
+            "description": "累计回收 50 个物品",
+            "condition": "recycled",
+            "target": 50,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop6_reached",
+            "name": "文化祭典",
+            "icon": "🎎",
+            "description": "进入第 6 轮循环「文化祭」",
+            "condition": "loopReached",
+            "target": 6,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop6_challenge",
+            "name": "祭典合成",
+            "icon": "🏅",
+            "description": "累计合成 300 次",
+            "condition": "merges",
+            "target": 300,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop7_reached",
+            "name": "旅人足迹",
+            "icon": "🗺️",
+            "description": "进入第 7 轮循环「修学旅行」",
+            "condition": "loopReached",
+            "target": 7,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop7_challenge",
+            "name": "开拓先锋",
+            "icon": "🔓",
+            "description": "解锁 12 个格子",
+            "condition": "cellsUnlocked",
+            "target": 12,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop8_reached",
+            "name": "毕业前夜",
+            "icon": "🎓",
+            "description": "进入第 8 轮循环「毕业前夜」",
+            "condition": "loopReached",
+            "target": 8,
+            "reward": {"diamonds": 50}
+        },
+        {
+            "id": "loop8_challenge",
+            "name": "传说缔造者",
+            "icon": "👑",
+            "description": "合成出 6 个不同的满级物品",
+            "condition": "maxLevelItems",
+            "target": 6,
+            "reward": {"diamonds": 50}
         }
     ]
 }

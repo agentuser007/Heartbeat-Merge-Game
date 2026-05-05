@@ -20,9 +20,9 @@ const PATCH_NESTED = {
   ad: {
     energyReward: { zh: '⚡ 恢复 {count} 体力！', en: '⚡ Recovered {count} energy!' },
     diamondReward: { zh: '💎 获得 {count} 钻石！', en: '💎 Got {count} diamonds!' },
-    energyBtn: { zh: '🎬 看广告 +{count}体力 剩余{remaining}次', en: '🎬 Ad +{count} Energy {remaining} left' },
-    diamondBtn: { zh: '🎬 看广告 +{count}钻石 剩余{remaining}次', en: '🎬 Ad +{count} Diamonds {remaining} left' },
-    freePullBtn: { zh: '🎬 看广告免费抽卡 剩余{remaining}次', en: '🎬 Ad Free Pull {remaining} left' }
+    energyBtn: { zh: '🎬 内测福利 +{count}体力 剩余{remaining}次', en: '🎬 Beta Benefit +{count} Energy {remaining} left' },
+    diamondBtn: { zh: '🎬 内测福利 +{count}钻石 剩余{remaining}次', en: '🎬 Beta Benefit +{count} Diamonds {remaining} left' },
+    freePullBtn: { zh: '🎬 内测福利免费抽卡 剩余{remaining}次', en: '🎬 Beta Benefit Free Pull {remaining} left' }
   },
   inventory: {
     descAddDiamond: { zh: '💎 钻石，使用后获得{amount}钻石', en: '💎 Diamonds, gain {amount} diamonds when used' },
