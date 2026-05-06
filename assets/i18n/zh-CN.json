@@ -56,7 +56,7 @@
   },
   "ad": {
     "freePullReward": "🃏 免费抽卡！",
-    "limitReached": "今日已满",
+    "limitReached": "🎬 今日已满",
     "failed": "广告加载失败，请稍后再试",
     "noFill": "暂无可用广告，请稍后再试！",
     "energyReward": "⚡ 恢复 {count} 体力！",

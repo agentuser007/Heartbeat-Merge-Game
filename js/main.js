@@ -36,12 +36,6 @@ class Game {
         document.addEventListener('click', resumeBGM);
         document.addEventListener('touchstart', resumeBGM);
 
-        // ---- SDK: loading start ----
-        CrazyGamesSDK.loadingStart();
-
-        // ---- SDK: initialize ----
-        await CrazyGamesSDK.init();
-
         // ---- Language selection (before I18n init) ----
         const savedLocale = localStorage.getItem('i18n_locale');
         if (!savedLocale) {
@@ -143,10 +137,6 @@ class Game {
                     this.dailyOrders.rollNewOrders();
                 }
 
-                // ---- SDK: loading done, gameplay starts ----
-                CrazyGamesSDK.loadingStop();
-                CrazyGamesSDK.gameplayStart();
-
                 // Dismiss loading overlay
                 const loadingEl = document.getElementById('loading-overlay');
                 if (loadingEl) { loadingEl.classList.add('fade-out'); setTimeout(() => loadingEl.remove(), 600); }
@@ -160,10 +150,6 @@ class Game {
 
         // Fresh start — new meta game + first run
         this.startNewMetaGame();
-
-        // ---- SDK: loading done, gameplay starts ----
-        CrazyGamesSDK.loadingStop();
-        CrazyGamesSDK.gameplayStart();
 
         // Dismiss loading overlay
         const _loadingEl = document.getElementById('loading-overlay');
@@ -233,8 +219,6 @@ class Game {
         // Save both meta and run
         this.save.saveAll();
 
-        // ---- SDK: gameplay resumes ----
-        CrazyGamesSDK.gameplayStart();
     }
 
     /**
@@ -259,10 +243,6 @@ class Game {
         this.save.saveMeta();
         // Clear old run data
         this.save.clearRun();
-
-        // ---- SDK: celebrate & gameplay stop ----
-        CrazyGamesSDK.happytime();
-        CrazyGamesSDK.gameplayStop();
 
         // Show loop summary UI
         this.showLoopSummary(rewards, nextLoopIndex);

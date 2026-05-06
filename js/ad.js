@@ -1,5 +1,5 @@
 // ============================================================
-// ad.js — Ad Reward System (BASIC / FULL mode)
+// ad.js — Ad Reward System (BASIC mode)
 // ============================================================
 
 const AD_CONFIG = {
@@ -12,7 +12,7 @@ const AD_CONFIG = {
 class AdSystem {
     constructor(game) {
         this.game = game;
-        this.mode = (typeof CrazyGamesSDK !== 'undefined' && CrazyGamesSDK.isAvailable) ? 'FULL' : 'BASIC';
+        this.mode = 'BASIC'; // Always BASIC — no external SDK; set to 'FULL' when a new ad provider is integrated
         this.dailyCounts = { energy: 0, gold: 0, diamonds: 0, freePull: 0 };
         this.lastWatchTime = { energy: 0, gold: 0, diamonds: 0, freePull: 0 };
         this._lastResetDate = this._todayStr();
@@ -135,11 +135,9 @@ class AdSystem {
 
     watchAd(adType) {
         if (!this.canWatch(adType)) return false;
-        if (this.mode === 'BASIC') {
-            this._grantReward(adType);
-        } else {
-            this._showRealAd(adType);
-        }
+        // BASIC mode: grant reward directly (no real ad)
+        // When a new ad provider is integrated, add real-ad logic here
+        this._grantReward(adType);
         return true;
     }
 
@@ -178,30 +176,13 @@ class AdSystem {
         Effects.showToast(I18n.t('ad.freePullReward'), 'info');
     }
 
-    _showRealAd(adType) {
-        if (CrazyGamesSDK.isAdPlaying) return;
-        var self = this;
-        CrazyGamesSDK.showRewardedAd({
-            adStarted: function() { CrazyGamesSDK.gameplayStop(); },
-            adFinished: function() { self._grantReward(adType); CrazyGamesSDK.gameplayStart(); },
-            adError: function(err) {
-                console.warn('[AdSystem] Ad error:', err);
-                if (err && err.code === 'unfilled') Effects.showToast(I18n.t('ad.noFill'), 'info');
-                else Effects.showToast(I18n.t('ad.failed'), 'error');
-                CrazyGamesSDK.gameplayStart();
-            }
-        });
-    }
+    // Placeholder for real ad integration — implement when a new ad provider is available
+    // _showRealAd(adType) { ... }
 
     showMidgameAd(callbacks) {
+        // No real ad to show — just invoke the callback immediately
         callbacks = callbacks || {};
-        if (this.mode === 'BASIC') { if (callbacks.adFinished) callbacks.adFinished(); return; }
-        if (CrazyGamesSDK.isAdPlaying) { if (callbacks.adFinished) callbacks.adFinished(); return; }
-        CrazyGamesSDK.showMidgameAd({
-            adStarted: function() { CrazyGamesSDK.gameplayStop(); },
-            adFinished: function() { CrazyGamesSDK.gameplayStart(); if (callbacks.adFinished) callbacks.adFinished(); },
-            adError: function() { CrazyGamesSDK.gameplayStart(); if (callbacks.adFinished) callbacks.adFinished(); }
-        });
+        if (callbacks.adFinished) callbacks.adFinished();
     }
 
     _bindUI() {
@@ -237,10 +218,10 @@ class AdSystem {
         var rem = this.getRemaining('energy');
         if (rem <= 0) {
             btn.disabled = true; btn.classList.add('reward-btn-disabled');
-            btn.innerHTML = '🎬';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
         } else {
             btn.disabled = false; btn.classList.remove('reward-btn-disabled');
-            btn.innerHTML = '🎬';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.energyBtn', { count: AD_CONFIG.energy.reward, remaining: rem }) + '</span>';
         }
     }
 
@@ -250,10 +231,10 @@ class AdSystem {
         var rem = this.getRemaining('diamonds');
         if (rem <= 0) {
             btn.disabled = true; btn.classList.add('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-icon">🎬</span> <span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
         } else {
             btn.disabled = false; btn.classList.remove('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-icon">🎬</span> <span class="reward-btn-text">' + I18n.t('ad.diamondBtn', { count: AD_CONFIG.diamonds.reward, remaining: rem }) + '</span>';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.diamondBtn', { count: AD_CONFIG.diamonds.reward, remaining: rem }) + '</span>';
         }
     }
 
@@ -263,10 +244,10 @@ class AdSystem {
         var rem = this.getRemaining('freePull');
         if (rem <= 0) {
             btn.disabled = true; btn.classList.add('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-icon">🎬</span> <span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
         } else {
             btn.disabled = false; btn.classList.remove('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-icon">🎬</span> <span class="reward-btn-text">' + I18n.t('ad.freePullBtn', { remaining: rem }) + '</span>';
+            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.freePullBtn', { remaining: rem }) + '</span>';
         }
     }
 

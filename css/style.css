@@ -2095,7 +2095,7 @@ body.sheet-open #game-container {
     border-radius: 12px;
     box-shadow: 0 4px 30px rgba(0,0,0,0.3), 0 0 60px rgba(123,104,238,0.1);
     max-height: 40vh;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .vn-name-tag {

@@ -139,7 +139,10 @@ class GachaSystem {
                 if (fx) {
                     
                     fx.showToast(`👑 SSR！${item.name}${cgStory ? ' — ' + cgStory.title : ''}`, 'ssr');
-                    this.showCGPreview(ssrId);
+                    if (typeof VNReader !== 'undefined') {
+                        var vn = new VNReader(this.game);
+                        vn.open(ssrId, 0);
+                    }
                 }
                 this.game.currency.addDiamonds(100);
                 if (fx) fx.showToast(I18n.t('gachaFirstSSR'), 'ssr');

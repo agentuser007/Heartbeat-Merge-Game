@@ -40,7 +40,6 @@ const JS_FILES = [
   'js/vn-reader.js',
   'js/cg-album.js',
   'js/loop.js',
-  'js/crazygames-sdk.js',
   'js/ad.js',
   'js/save.js',
   'js/main.js',

@@ -56,7 +56,7 @@
   },
   "ad": {
     "freePullReward": "🃏 Free Pull!",
-    "limitReached": "Daily Limit",
+    "limitReached": "🎬 Daily Limit",
     "failed": "Ad failed to load. Please try again later",
     "noFill": "No ad available right now. Try again later!",
     "energyReward": "⚡ Recovered {count} energy!",
