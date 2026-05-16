@@ -62,7 +62,7 @@
     "energyReward": "⚡ Recovered {count} energy!",
     "goldReward": "💰 Got {count} gold!",
     "diamondReward": "💎 Got {count} diamonds!",
-    "energyBtn": "🎬 Beta Benefit +{count} Energy {remaining} left",
+    "energyBtn": "🎬",
     "diamondBtn": "🎬 Beta Benefit +{count} Diamonds {remaining} left",
     "freePullBtn": "🎬 Beta Benefit Free Pull {remaining} left",
     "popupTitle": "Beta Benefit",

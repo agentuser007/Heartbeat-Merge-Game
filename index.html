@@ -19,7 +19,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title data-i18n="gameTitle">心动合成：电眼女王</title>
+    <title data-i18n="gameTitle">心动合成</title>
     <meta
       name="description"
       content=""
@@ -544,6 +544,22 @@
       document.addEventListener("visibilitychange", function () {
         document.body.classList.toggle("app-paused", document.hidden);
       });
+    </script>
+    <!-- DEV MODE (conditionally loaded) -->
+    <script>
+      if (
+        new URLSearchParams(location.search).has("dev") ||
+        localStorage.getItem("dev_mode") === "1"
+      ) {
+        window.__DEV__ = true;
+        var devCSS = document.createElement("link");
+        devCSS.rel = "stylesheet";
+        devCSS.href = "css/dev-panel.css";
+        document.head.appendChild(devCSS);
+        var devJS = document.createElement("script");
+        devJS.src = "js/dev-panel.js";
+        document.body.appendChild(devJS);
+      }
     </script>
   </body>
 </html>

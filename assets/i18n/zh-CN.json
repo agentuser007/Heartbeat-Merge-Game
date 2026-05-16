@@ -62,7 +62,7 @@
     "energyReward": "⚡ 恢复 {count} 体力！",
     "goldReward": "💰 获得 {count} 金币！",
     "diamondReward": "💎 获得 {count} 钻石！",
-    "energyBtn": "🎬 内测福利 +{count}体力 剩余{remaining}次",
+    "energyBtn": "🎬",
     "diamondBtn": "🎬 内测福利 +{count}钻石 剩余{remaining}次",
     "freePullBtn": "🎬 内测福利免费抽卡 剩余{remaining}次",
     "popupTitle": "内测福利",
