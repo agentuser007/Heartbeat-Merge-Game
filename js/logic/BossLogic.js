@@ -162,7 +162,7 @@ class BossLogic {
         globalBus.emit('boss:hpChanged', {
             currentHp: Math.max(0, this.currentHp),
             totalHp: this.totalHp,
-            pct: Math.max(0, (this.currentHp / this.totalHp) * 100)
+            pct: Math.max(0, ((this.totalHp - this.currentHp) / this.totalHp) * 100)
         });
 
         return { hpLeft: Math.max(0, this.currentHp), isDefeated };

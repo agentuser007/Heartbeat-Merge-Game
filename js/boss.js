@@ -54,6 +54,9 @@ class BossSystem {
         this.bossPortraitEl.style.backgroundColor = data.bossColor;
         document.getElementById('game-container').style.background = data.bgGradient;
 
+        // Reset HP bar to 0% (full HP = empty damage bar)
+        this.renderHp();
+
         // Show loop-specific boss intro narrative
         this._showBossNarrativeIntro(data);
     }
@@ -71,15 +74,17 @@ class BossSystem {
     }
 
     renderHp(data) {
-        const pct = data ? data.pct : Math.max(0, (this.logic.currentHp / this.logic.totalHp) * 100);
+        // pct = damage progress: 0% = full HP (empty bar), 100% = defeated (full bar)
+        const pct = data ? data.pct : Math.max(0, ((this.logic.totalHp - this.logic.currentHp) / this.logic.totalHp) * 100);
         const hp = data ? data.currentHp : Math.max(0, this.logic.currentHp);
         const total = data ? data.totalHp : this.logic.totalHp;
         this.hpBarEl.style.width = pct + '%';
         this.hpTextEl.textContent = `${Math.max(0, hp)} / ${total}`;
 
-        if (pct > I18n.config('colors.hpHighThreshold')) this.hpBarEl.style.background = I18n.config('colors.hpGradientHigh');
+        // Color: low damage progress → green, mid → yellow, high (near defeat) → red
+        if (pct > I18n.config('colors.hpHighThreshold')) this.hpBarEl.style.background = I18n.config('colors.hpGradientLow');
         else if (pct > I18n.config('colors.hpMidThreshold')) this.hpBarEl.style.background = I18n.config('colors.hpGradientMid');
-        else this.hpBarEl.style.background = I18n.config('colors.hpGradientLow');
+        else this.hpBarEl.style.background = I18n.config('colors.hpGradientHigh');
     }
 
     _onOrderLoaded(data) {
