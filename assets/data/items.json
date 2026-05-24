@@ -518,5 +518,18 @@
     "emoji": "✂️",
     "color": "#9C27B0",
     "description": "将一个高阶物品拆分为两个低一级物品"
+  },
+  "energy_potion": {
+    "id": "energy_potion",
+    "type": "ENERGY_POTION",
+    "name": "体力药水",
+    "level": 0,
+    "chain": "special",
+    "nextId": null,
+    "sellable": false,
+    "emoji": "🧪",
+    "color": "#4CAF50",
+    "description": "点击使用，恢复20点体力",
+    "energyRecover": 20
   }
 }

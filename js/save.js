@@ -36,7 +36,8 @@ class SaveSystem {
                 } : {},
                 collection: {
                     discovered: this.game.collection ? Array.from(this.game.collection.discovered) : [],
-                    gachaCollected: this.game.collection ? Array.from(this.game.collection.gachaCollected) : []
+                    gachaCollected: this.game.collection ? Array.from(this.game.collection.gachaCollected) : [],
+                    completedChains: this.game.collection ? Array.from(this.game.collection.completedChains) : []
                 },
                 achievements: {
                     unlocked: this.game.achievements ? Array.from(this.game.achievements.unlocked) : [],
@@ -46,7 +47,9 @@ class SaveSystem {
                 // Permanent currency
                 diamonds: this.game.currency ? this.game.currency.diamonds : 0,
                 // Ad system daily counts
-                ad: this.game.ad ? this.game.ad.serialize() : null
+                ad: this.game.ad ? this.game.ad.serialize() : null,
+                // FB-6: Daily buff
+                dailyBuff: this.game.dailyBuff ? this.game.dailyBuff.serialize() : null
             };
             localStorage.setItem(this.SAVE_KEY_META, JSON.stringify(data));
         } catch (e) {
@@ -146,6 +149,9 @@ class SaveSystem {
             if (data.collection.gachaCollected) {
                 this.game.collection.gachaCollected = new Set(data.collection.gachaCollected);
             }
+            if (data.collection.completedChains) {
+                this.game.collection.completedChains = new Set(data.collection.completedChains);
+            }
         }
 
         // Achievements
@@ -167,6 +173,10 @@ class SaveSystem {
         // Ad system daily counts
         if (data.ad && this.game.ad) {
             this.game.ad.deserialize(data.ad);
+        }
+        // FB-6: Daily buff
+        if (data.dailyBuff && this.game.dailyBuff) {
+            this.game.dailyBuff.deserialize(data.dailyBuff);
         }
     }
 
@@ -195,7 +205,7 @@ class SaveSystem {
                     cellsUnlocked: this.game.board.cellsUnlocked,
                     generatorStates: { ...this.game.board.generatorStates }
                 },
-                inventory: this.game.inventory ? { ...this.game.inventory.items } : {},
+                inventory: this.game.inventory ? { items: { ...this.game.inventory.items }, maxSlots: this.game.inventory.maxSlots } : {},
                 buffs: {
                     timeFreezeBonus: this.game._timeFreezeBonus || 0,
                     luckyCoinsLeft: this.game._luckyCoinsLeft || 0,
@@ -300,7 +310,16 @@ class SaveSystem {
 
         // Inventory
         if (data.inventory && this.game.inventory) {
-            this.game.inventory.items = { ...data.inventory };
+            // Support both old format (plain object) and new format (with maxSlots)
+            if (data.inventory.items) {
+                this.game.inventory.items = { ...data.inventory.items };
+                if (data.inventory.maxSlots) {
+                    this.game.inventory.maxSlots = data.inventory.maxSlots;
+                }
+            } else {
+                // Legacy: data.inventory is the items object directly
+                this.game.inventory.items = { ...data.inventory };
+            }
             this.game.inventory.updateBadge();
         }
 

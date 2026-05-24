@@ -83,6 +83,27 @@ const Effects = {
         }, 600);
     },
 
+    // M-3: Damage popup on boss portrait (Figma spec: rgba(0,0,0,0.62) r:6, white text)
+    showDamagePopup(damage, diamondReward) {
+        const bossEl = document.getElementById('boss-portrait');
+        if (!bossEl) return;
+        const container = document.getElementById('particle-layer');
+        const rect = bossEl.getBoundingClientRect();
+
+        const popup = document.createElement('div');
+        popup.className = 'damage-popup';
+        let html = `<span class="damage-number">-${damage}</span>`;
+        if (diamondReward > 0) {
+            html += `<span class="damage-reward">💎 +${diamondReward}</span>`;
+        }
+        popup.innerHTML = html;
+        popup.style.left = (rect.left + rect.width / 2) + 'px';
+        popup.style.top = (rect.top + rect.height / 2) + 'px';
+
+        container.appendChild(popup);
+        setTimeout(() => { if (popup.parentNode) popup.remove(); }, 1500);
+    },
+
     // Timer warning flash
     startTimerWarning(orderEl) {
         orderEl.classList.add('timer-warning');

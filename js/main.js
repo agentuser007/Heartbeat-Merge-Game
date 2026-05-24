@@ -20,10 +20,17 @@ class Game {
         this.achievements = null;
         this.loop = null;  // LoopLogic instance
         this.ad = null;    // AdSystem instance
+        this.dailyBuff = null; // FB-6: DailyBuffSystem instance
         this._timeFreezeBonus = 0;
         this._luckyCoinsLeft = 0;
         this._doubleGenTurns = 0;
         this._actionCount = 0;
+        // FB-6: Daily buff flags (set by DailyBuffSystem)
+        this._dailyBuffMergeBonus = false;
+        this._dailyBuffEnergyDiscount = false;
+        this._dailyBuffSellPriceUp = false;
+        this._dailyBuffGenSpeedUp = false;
+        this._dailyBuffLuckyMerge = false;
     }
 
     async init() {
@@ -83,6 +90,7 @@ class Game {
         this.cgAlbum = new CGAlbumSystem(this);
         this.loop = new LoopLogic();
         this.ad = new AdSystem(this);
+        this.dailyBuff = new DailyBuffSystem(this);
         this.save = new SaveSystem(this);
 
         // Initialize audio manager
@@ -102,6 +110,12 @@ class Game {
 
         // Wire quest card click → open daily orders sheet
         this.setupQuestCarousel();
+
+        // Wire side buttons (left/right of grid)
+        this.setupSideButtons();
+
+        // Wire +buttons (energy/diamond ad buttons)
+        this.setupPlusButtons();
 
         // Populate game complete overlay
         document.querySelector('.complete-emoji').textContent = UI_TEXT.game_complete.emoji;
@@ -137,12 +151,18 @@ class Game {
                     this.dailyOrders.rollNewOrders();
                 }
 
+                // FB-6: Roll daily buff (will re-roll if day changed since last save)
+                if (this.dailyBuff) this.dailyBuff.rollDailyBuff();
+
                 // Dismiss loading overlay
                 const loadingEl = document.getElementById('loading-overlay');
                 if (loadingEl) { loadingEl.classList.add('fade-out'); setTimeout(() => loadingEl.remove(), 600); }
 
                 // Start game BGM
                 AudioManager.playBGM('game_bgm');
+
+                // Initialize Lucide icons after DOM is ready
+                if (typeof lucide !== 'undefined') lucide.createIcons();
 
                 return;
             }
@@ -157,6 +177,9 @@ class Game {
 
         // Start game BGM
         AudioManager.playBGM('game_bgm');
+
+        // Initialize Lucide icons after DOM is ready
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     // ============================================================
@@ -176,6 +199,9 @@ class Game {
 
         // Reset all run state to fresh
         this.resetRunState();
+
+        // FB-6: Roll daily buff for new game
+        if (this.dailyBuff) this.dailyBuff.rollDailyBuff();
 
         // Place initial generators and load first boss
         this.board.renderAll();
@@ -350,6 +376,34 @@ class Game {
             } else {
                 rewardBadge.style.display = 'none';
             }
+        }
+
+        // Figma: Show generation multiplier badge on avatar (e.g. "x32")
+        this._updateGenMultiplierBadge();
+    }
+
+    /**
+     * Figma: Red badge near avatar showing generation multiplier (e.g. "x32").
+     * Shows the reward multiplier from the loop config as a visual indicator.
+     */
+    _updateGenMultiplierBadge() {
+        const avatarBtn = document.getElementById('avatar-btn');
+        if (!avatarBtn) return;
+
+        let badge = avatarBtn.querySelector('.gen-multiplier-badge');
+        const config = this.loop.currentLoopConfig;
+        const multiplier = config ? config.rewardMultiplier : 1;
+
+        if (multiplier > 1) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'gen-multiplier-badge';
+                avatarBtn.style.position = 'relative';
+                avatarBtn.appendChild(badge);
+            }
+            badge.textContent = `x${Math.round(multiplier)}`;
+        } else {
+            if (badge) badge.remove();
         }
     }
 
@@ -544,7 +598,7 @@ class Game {
     }
 
     closeAllSheets() {
-        if (this.heroine) this.heroine.close();
+        if (this.heroine) { this.heroine.close(); this.heroine.closeShop(); }
         if (this.gacha) this.gacha.close();
         if (this.inventory) this.inventory.closeSheet();
         if (this.dailyOrders) this.dailyOrders.close();
@@ -653,6 +707,71 @@ class Game {
         if (mainQuestCard) {
             mainQuestCard.addEventListener('click', () => {
                 if (this.dailyOrders) this.dailyOrders.open();
+            });
+        }
+    }
+
+    // ---- Bottom Bar Buttons (left + right of item info) ----
+    setupSideButtons() {
+        document.querySelectorAll('.bottom-bar-btn, .quest-carousel-backpack').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                if (!tab) return;
+                // Map side button tabs to existing sheet handlers
+                switch (tab) {
+                    case 'collection':
+                        if (this.collection) this.collection.openSheet();
+                        break;
+                    case 'heroine':
+                        if (this.heroine) this.heroine.open();
+                        break;
+                    case 'achievement':
+                        if (this.achievements) this.achievements.openSheet();
+                        break;
+                    case 'cg-album':
+                        if (this.cgAlbum) this.cgAlbum.open();
+                        break;
+                    case 'inventory':
+                        if (this.inventory) this.inventory.openSheet();
+                        break;
+                    case 'gacha':
+                        if (this.gacha) this.gacha.open();
+                        break;
+                }
+            });
+        });
+    }
+
+    // ---- Plus Buttons (energy/diamond → watch ad) ----
+    setupPlusButtons() {
+        const energyPlus = document.getElementById('energy-plus-btn');
+        if (energyPlus && this.ad) {
+            energyPlus.addEventListener('click', () => {
+                this.ad.showAdPopup('energy');
+            });
+        }
+        const diamondPlus = document.getElementById('diamond-plus-btn');
+        if (diamondPlus && this.ad) {
+            diamondPlus.addEventListener('click', () => {
+                this.ad.showAdPopup('diamonds');
+            });
+        }
+
+        // FB-3: Click gold label to open independent shop sheet
+        const goldLabel = document.getElementById('gold-label');
+        if (goldLabel && this.heroine) {
+            goldLabel.style.cursor = 'pointer';
+            goldLabel.addEventListener('click', () => {
+                this.closeAllSheets();
+                this.heroine.openShop();
+            });
+        }
+
+        const shopBtn = document.getElementById('shop-btn');
+        if (shopBtn && this.heroine) {
+            shopBtn.addEventListener('click', () => {
+                this.closeAllSheets();
+                this.heroine.openShop();
             });
         }
     }

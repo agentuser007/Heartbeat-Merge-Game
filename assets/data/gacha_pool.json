@@ -605,6 +605,17 @@
       "value": { "energy": 100 }
     },
     {
+      "id": "r_energy_potion",
+      "rarity": "R",
+      "subCategory": "energy_potion",
+      "weight": 8,
+      "icon": "🧪",
+      "name": "体力药水",
+      "description": "点击使用，恢复20点体力",
+      "effect": "add_energy_item",
+      "value": { "energy": 20 }
+    },
+    {
       "id": "sr_clear_lv1",
       "rarity": "SR",
       "subCategory": "special",

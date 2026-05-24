@@ -53,9 +53,9 @@ class CurrencyManager {
 
     // ---- Compatibility (accessed by save.js) ----
     get gold() { return this.logic.gold; }
-    set gold(v) { this.logic.gold = v; }
+    set gold(v) { this.logic.gold = v; this.logic._emitChanged(); }
     get diamonds() { return this.logic.diamonds; }
-    set diamonds(v) { this.logic.diamonds = v; }
+    set diamonds(v) { this.logic.diamonds = v; this.logic._emitChanged(); }
 
     // ---- Render (called by save.js load) ----
     render() {

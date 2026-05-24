@@ -4,8 +4,8 @@
 
 class CurrencyLogic {
     constructor() {
-        this.gold = 0;
-        this.diamonds = 0;
+        this.gold = 128000;
+        this.diamonds = 100;
     }
 
     addGold(amount) {

@@ -6,7 +6,8 @@
         "ENERGY_REGEN_CAP": 100,
         "ENERGY_REGEN_INTERVAL": 120000,
         "ENERGY_REGEN_AMOUNT": 1,
-        "ENERGY_COST_PER_SPAWN": 1
+        "ENERGY_COST_PER_SPAWN": 1,
+        "STARTING_GOLD": 0
     },
     "RECYCLE_ENERGY_TABLE": {
         "1": 0,

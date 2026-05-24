@@ -7,7 +7,7 @@
             "description": "第一次合成两个物品",
             "condition": "merges",
             "target": 1,
-            "reward": {"diamonds": 50}
+            "reward": {"diamonds": 50, "energy": 20}
         },
         {
             "id": "merge_10",
@@ -16,7 +16,7 @@
             "description": "累计合成 10 次",
             "condition": "merges",
             "target": 10,
-            "reward": {"diamonds": 50}
+            "reward": {"diamonds": 50, "energy": 30}
         },
         {
             "id": "merge_50",
@@ -25,7 +25,7 @@
             "description": "累计合成 50 次",
             "condition": "merges",
             "target": 50,
-            "reward": {"diamonds": 50}
+            "reward": {"diamonds": 50, "energy": 50}
         },
         {
             "id": "merge_200",
@@ -43,7 +43,7 @@
             "description": "击败第一个 Boss",
             "condition": "bossDefeats",
             "target": 1,
-            "reward": {"diamonds": 50}
+            "reward": {"diamonds": 50, "energy": 30}
         },
         {
             "id": "boss_3",

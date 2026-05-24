@@ -2,11 +2,22 @@
 // collection.js — Item Collection Album (图鉴) + Gacha Card Album + Fragment Tab
 // ============================================================
 
+// FB-2: Chain completion reward configuration
+const CHAIN_COMPLETION_REWARDS = {
+    lips:       { diamonds: 50, energy: 30, gold: 500 },
+    perfume:    { diamonds: 50, energy: 30, gold: 500 },
+    study:      { diamonds: 50, energy: 30, gold: 500 },
+    food:       { diamonds: 50, energy: 30, gold: 500 },
+    gen_makeup: { diamonds: 80, energy: 50, gold: 800 },
+    gen_study:  { diamonds: 80, energy: 50, gold: 800 }
+};
+
 class CollectionSystem {
     constructor(game) {
         this.game = game;
         this.discovered = new Set(); // Set of itemIds discovered
         this.gachaCollected = new Set(); // Set of gacha card IDs collected
+        this.completedChains = new Set(); // FB-2: Set of chain IDs that have been completed & rewarded
         this.panelEl = document.getElementById('collection-sheet');
         this.listEl = document.getElementById('collection-list');
         this.pctEl = document.getElementById('collection-pct');
@@ -116,6 +127,11 @@ class CollectionSystem {
                 }
             }
 
+            // FB-2: Check if the chain this item belongs to is now complete
+            if (itemData && itemData.chain) {
+                this._checkChainCompletion(itemData.chain);
+            }
+
             // Check achievements
             if (this.game.achievements) {
                 this.game.achievements.checkAll();
@@ -123,6 +139,56 @@ class CollectionSystem {
             return true; // new discovery
         }
         return false;
+    }
+
+    // FB-2: Check if all items in a chain have been discovered; grant reward on first completion
+    _checkChainCompletion(chainId) {
+        if (this.completedChains.has(chainId)) return; // already rewarded
+
+        // Skip special chain (joker/scissor items)
+        if (chainId === 'special') return;
+
+        const chainItems = Object.entries(ITEMS).filter(([, v]) => v.chain === chainId);
+        if (chainItems.length === 0) return;
+
+        const allDiscovered = chainItems.every(([id]) => this.discovered.has(id));
+        if (!allDiscovered) return;
+
+        // Chain is complete — grant reward
+        this.completedChains.add(chainId);
+        const reward = CHAIN_COMPLETION_REWARDS[chainId] || { diamonds: 30, energy: 20, gold: 300 };
+
+        const parts = [];
+        if (reward.diamonds && this.game.currency) {
+            this.game.currency.addDiamonds(reward.diamonds);
+            parts.push(I18n.t('collection.rewardDiamonds', { amount: reward.diamonds }));
+        }
+        if (reward.energy && this.game.energy) {
+            this.game.energy.recover(reward.energy);
+            parts.push(I18n.t('collection.rewardEnergy', { amount: reward.energy }));
+        }
+        if (reward.gold && this.game.currency) {
+            this.game.currency.addGold(reward.gold);
+            parts.push(I18n.t('collection.rewardGold', { amount: reward.gold }));
+        }
+
+        const chainLabel = this._getChainLabel(chainId);
+        const msg = I18n.t('collection.chainComplete', { chain: chainLabel, rewards: parts.join(' ') });
+        const fx = this.game.effects;
+        if (fx) fx.showToast(msg, 'ssr');
+    }
+
+    // Get display label for a chain
+    _getChainLabel(chainId) {
+        const chainNames = {
+            lips: I18n.t('collection.chainLips'),
+            perfume: I18n.t('collection.chainPerfume'),
+            study: I18n.t('collection.chainStudy'),
+            food: I18n.t('collection.chainFood'),
+            gen_makeup: I18n.t('collectionGenMakeup'),
+            gen_study: I18n.t('collection.genStudy')
+        };
+        return chainNames[chainId] || chainId;
     }
 
     // Call this whenever a gacha card is obtained
@@ -188,8 +254,12 @@ class CollectionSystem {
             const header = document.createElement('div');
             header.className = 'collection-chain-header';
             const discoveredInChain = items.filter(i => i.discovered).length;
+            const isComplete = discoveredInChain === items.length && chainId !== 'special';
+            const completeBadge = isComplete && this.completedChains.has(chainId)
+                ? `<span class="chain-complete-badge">${I18n.t('collection.chainCompleteBadge')}</span>`
+                : (isComplete ? `<span class="chain-complete-badge unclaimed">${I18n.t('collection.chainCompleteBadge')}</span>` : '');
             header.innerHTML = `
-                <span>${chainNames[chainId] || chainId}</span>
+                <span>${chainNames[chainId] || chainId}${completeBadge}</span>
                 <span class="collection-chain-count">${discoveredInChain}/${items.length}</span>
             `;
 

@@ -1,13 +1,13 @@
 {
   "achievement": {
-    "unlocked": "🏆 Achievement Unlocked! Claim your reward",
+    "unlocked": "Achievement Unlocked! Claim your reward",
     "claimed": "Claimed",
     "claim": "Claim",
-    "panelTitle": "🏆 Honors",
+    "panelTitle": "Honors",
     "panelSub": "Complete goals to earn rewards"
   },
   "boss": {
-    "submitOrder": "💝 Submit Item",
+    "submitOrder": "Submit",
     "orderTimeUp": "Time's up… Failed!",
     "orderFailPlayer": "(Sigh, gotta be faster next time…)",
     "diamondReward": "💎 +{count} Diamonds"
@@ -16,14 +16,14 @@
     "luckyCoinBoost": "🍀 Lucky Coin Boost! {count} remaining"
   },
   "collection": {
-    "panelTitle": "📖 Collection",
+    "panelTitle": "Collection",
     "chainLips": "Makeup Series",
     "chainPerfume": "Fragrance Series",
     "chainStudy": "Study Series",
     "chainFood": "Gourmet Series",
-    "tabItems": "📦 Item Album",
-    "tabGacha": "🎁 Card Album",
-    "tabFragments": "🧩 Fragments",
+    "tabItems": "Item Album",
+    "tabGacha": "Card Album",
+    "tabFragments": "Fragments",
     "raritySSR": "👑 SSR Legendary",
     "raritySR": "💜 SR Rare",
     "rarityR": "💙 R Common",
@@ -41,10 +41,15 @@
     "noGachaData": "No card data",
     "genStudy": "✏️ Study Bag Generator",
     "viewCGMemory": "📖 View CG Memory",
-    "gachaCardPct": "🎴 Cards {collected}/{total} {pct}%"
+    "gachaCardPct": "🎴 Cards {collected}/{total} {pct}%",
+    "chainComplete": "🎉 {chain} collection complete! {rewards}",
+    "chainCompleteBadge": "✅ Complete",
+    "rewardDiamonds": "💎+{amount}",
+    "rewardEnergy": "⚡+{amount}",
+    "rewardGold": "🪙+{amount}"
   },
   "dailyOrder": {
-    "panelTitle": "📋 Daily Errands",
+    "panelTitle": "Daily Errands",
     "panelSub": "Submit items to earn coins",
     "submit": "Submit",
     "completed": "✅ Done",
@@ -77,26 +82,38 @@
     "watchBtn": "Claim",
     "cancelBtn": "Cancel"
   },
+  "dailyBuff": {
+    "mergeBonus": "Merge Bonus",
+    "mergeBonusDesc": "Merge produces 1 extra item",
+    "energyDiscount": "Energy Discount",
+    "energyDiscountDesc": "Spawn energy cost reduced by 50%",
+    "sellPriceUp": "Sell Price Up",
+    "sellPriceUpDesc": "Sell items for +50% gold",
+    "genSpeedUp": "Speed Up",
+    "genSpeedUpDesc": "Generator cooldown reduced by 50%",
+    "luckyMerge": "Lucky Merge",
+    "luckyMergeDesc": "Chance to skip a level when merging"
+  },
   "gacha": {
-    "modalTitle": "🎰 Gacha Machine",
+    "modalTitle": "Gacha Machine",
     "hint": "✨ Spend diamonds to draw random items!",
     "singlePullLabel": "Single",
     "tenPullLabel": "×10 Pull"
   },
   "heroine": {
-    "panelTitle": "👑 Heroine Training",
+    "panelTitle": "Heroine Training",
     "panelSub": "Spend coins to boost stats",
     "upgrade": "Upgrade",
     "maxLevel": "✅ Max Level",
     "currentLabel": "Current: ",
     "unlockedLabel": "Locked",
-    "goldShop": "🏪 Gold Shop",
+    "goldShop": "Gold Shop",
     "shopSub": "Buy useful items with gold",
     "restartGame": "🔄 Restart Game",
     "confirmRestart": "Are you sure you want to restart? All progress will be lost!"
   },
   "inventory": {
-    "panelTitle": "🎒 Backpack",
+    "panelTitle": "Backpack",
     "panelSub": "Use items from gacha pulls",
     "use": "Use",
     "empty": "Your backpack is empty",
@@ -144,6 +161,12 @@
     "descSpaceClean": "🧽 Space Clean, clears Lv.1-2 items for energy",
     "descUpgradeItem": "⬆️ Upgrade Card, tap a board item to upgrade it",
     "descDefault": "✨ Item, tap to use",
+    "full": "📦 Inventory full! Use items or unlock more slots",
+    "maxSlotsReached": "📦 Maximum capacity reached!",
+    "notEnoughDiamonds": "💎 Not enough diamonds!",
+    "slotsUnlocked": "🎉 Unlocked {count} slots! (Cost 💎{cost})",
+    "capacity": "Capacity {current}/{max}",
+    "unlockSlots": "+{count} slots 💎{cost}",
     "descAddDiamond": "💎 Diamonds, gain {amount} diamonds when used",
     "descAddGold": "💰 Gold, gain {amount} gold when used",
     "usedItem": "✨ Used {name}",
@@ -229,6 +252,12 @@
     "collection": "Album",
     "achievement": "Awards"
   },
+  "itemInfo": {
+    "placeholder": "Tap an item to see its info here",
+    "sell": "Sell",
+    "sellConfirm": "Sell {name} for {amount} gold?",
+    "sold": "Sold {name}, +{amount} 💰"
+  },
   "landscape": {
     "warning": "Please rotate to portrait mode for the best experience"
   },
@@ -249,6 +278,7 @@
   "boardSplitFailNoPrev": "Can't split",
   "boardSplitFailNoSpace": "Board is full",
   "boardSplitFailDefault": "Split failed",
+  "boardEnergyPotionUsed": "🧪 Used energy potion, recovered {amount} energy!",
   "cg": {
     "albumTitle": "📖 CG Memories",
     "storyDataNotFound": "📖 Story data not found",

@@ -87,12 +87,28 @@ class DailyOrderSystem {
             const card = document.createElement('div');
             card.className = 'quest-card daily-quest-carousel-card';
 
-            // Icon circle (matches quest-card-portrait size & style)
-            const iconEl = document.createElement('div');
-            iconEl.className = 'daily-carousel-icon';
-            iconEl.textContent = '💰';
+            // Boss avatar container — same style as main-quest-card portrait
+            const avatarEl = document.createElement('div');
+            avatarEl.className = 'daily-npc-avatar';
+            avatarEl.style.backgroundImage = "url('assets/avatar/boss_bg.webp')";
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.style.backgroundPosition = 'center bottom';
+            avatarEl.style.backgroundRepeat = 'no-repeat';
 
-            // Body: item icons + submit button (horizontal row)
+            // Details container on the right side of the card
+            const detailsEl = document.createElement('div');
+            detailsEl.className = 'daily-card-details';
+
+            // Row 1: "Daliy" tag pill
+            const tagPill = document.createElement('div');
+            tagPill.className = 'daily-npc-tag-pill';
+            const tagText = document.createElement('span');
+            tagText.className = 'daily-npc-tag-text';
+            tagText.textContent = 'Daliy';
+            tagPill.appendChild(tagText);
+            detailsEl.appendChild(tagPill);
+
+            // Row 2: Required items + submit button
             const bodyEl = document.createElement('div');
             bodyEl.className = 'daily-carousel-body';
 
@@ -122,6 +138,7 @@ class DailyOrderSystem {
             btn.disabled = !canSubmit;
             if (canSubmit) {
                 btn.classList.add('ready');
+                card.classList.add('ready');
             }
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -130,15 +147,34 @@ class DailyOrderSystem {
                     this.submitOrder(idx);
                 }
             });
+            card.addEventListener('click', (e) => {
+                if (!order.fulfilled && this.canFulfill(order)) {
+                    this.submitOrder(idx);
+                }
+            });
 
             bodyEl.appendChild(reqEl);
             bodyEl.appendChild(btn);
+            detailsEl.appendChild(bodyEl);
 
-            card.appendChild(iconEl);
-            card.appendChild(bodyEl);
+            card.appendChild(avatarEl);
+            card.appendChild(detailsEl);
+
+            // Figma: Reward preview tooltip on daily quest card
+            if (order.goldReward) {
+                const preview = document.createElement('div');
+                preview.className = 'order-reward-preview';
+                const line = document.createElement('div');
+                line.className = 'order-reward-line';
+                line.innerHTML = `+${CurrencyUI.formatGold(order.goldReward)} <span style="font-size:10px">💰</span>`;
+                preview.appendChild(line);
+                card.style.position = 'relative';
+                card.appendChild(preview);
+            }
 
             carousel.appendChild(card);
         });
+        this.renderNpcSilhouettes();
     }
 
     renderOrders() {
@@ -299,5 +335,11 @@ class DailyOrderSystem {
     updateHighlights() {
         this.renderOrders();
         this.renderCarouselCards();
+        this.renderNpcSilhouettes();
+    }
+
+    // Render NPC silhouette cards in boss-header area (图2 layout) - Now a no-op
+    renderNpcSilhouettes() {
+        // No-op: Daily silhouettes are now inside the quest carousel cards (.daily-npc-avatar) per Fig 2.
     }
 }

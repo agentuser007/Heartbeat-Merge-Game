@@ -1,13 +1,13 @@
 {
   "achievement": {
-    "unlocked": "🏆 成就解锁！前往领取奖励",
+    "unlocked": "成就解锁！前往领取奖励",
     "claimed": "已领取",
     "claim": "领取",
-    "panelTitle": "🏆 荣誉成就",
+    "panelTitle": "荣誉成就",
     "panelSub": "达成目标赢取奖励"
   },
   "boss": {
-    "submitOrder": "💝 提交物品",
+    "submitOrder": "提交",
     "orderTimeUp": "时间到了……失败了！",
     "orderFailPlayer": "（唉，下次要更快才行……）",
     "diamondReward": "💎 +{count} 钻石"
@@ -16,14 +16,14 @@
     "luckyCoinBoost": "🍀 幸运币翻倍！剩余{count}次"
   },
   "collection": {
-    "panelTitle": "📖 收集图鉴",
+    "panelTitle": "收集图鉴",
     "chainLips": "彩妆系列",
     "chainPerfume": "香氛系列",
     "chainStudy": "学习系列",
     "chainFood": "美食系列",
-    "tabItems": "📦 物品图鉴",
-    "tabGacha": "🎁 卡牌图鉴",
-    "tabFragments": "🧩 碎片",
+    "tabItems": "物品图鉴",
+    "tabGacha": "卡牌图鉴",
+    "tabFragments": "碎片",
     "raritySSR": "👑 SSR 传说",
     "raritySR": "💜 SR 稀有",
     "rarityR": "💙 R 普通",
@@ -41,10 +41,15 @@
     "noGachaData": "暂无卡牌数据",
     "genStudy": "✏️ 书包生成器",
     "viewCGMemory": "📖 查看CG回忆",
-    "gachaCardPct": "🎴 卡牌 {collected}/{total} {pct}%"
+    "gachaCardPct": "🎴 卡牌 {collected}/{total} {pct}%",
+    "chainComplete": "🎉 {chain} 图鉴完成！{rewards}",
+    "chainCompleteBadge": "✅ 已完成",
+    "rewardDiamonds": "💎+{amount}",
+    "rewardEnergy": "⚡+{amount}",
+    "rewardGold": "🪙+{amount}"
   },
   "dailyOrder": {
-    "panelTitle": "📋 日常跑腿",
+    "panelTitle": "日常跑腿",
     "panelSub": "提交物品赚金币",
     "submit": "提交",
     "completed": "✅ 已完成",
@@ -77,26 +82,38 @@
     "watchBtn": "领取福利",
     "cancelBtn": "取消"
   },
+  "dailyBuff": {
+    "mergeBonus": "合成加成",
+    "mergeBonusDesc": "合成时额外产出1个物品",
+    "energyDiscount": "体力折扣",
+    "energyDiscountDesc": "生成物品体力消耗减半",
+    "sellPriceUp": "售价提升",
+    "sellPriceUpDesc": "卖出物品金币+50%",
+    "genSpeedUp": "加速生产",
+    "genSpeedUpDesc": "合成器冷却时间减半",
+    "luckyMerge": "幸运合成",
+    "luckyMergeDesc": "合成时有概率跳级"
+  },
   "gacha": {
-    "modalTitle": "🎰 扣蛋机",
+    "modalTitle": "扣蛋机",
     "hint": "✨ 花费钻石抽取随机道具！",
     "singlePullLabel": "单抽",
     "tenPullLabel": "十连抽"
   },
   "heroine": {
-    "panelTitle": "👑 女主养成",
+    "panelTitle": "女主养成",
     "panelSub": "花金币提升属性",
     "upgrade": "升级",
     "maxLevel": "✅ 已满级",
     "currentLabel": "当前：",
     "unlockedLabel": "未解锁",
-    "goldShop": "🏪 金币商店",
+    "goldShop": "金币商店",
     "shopSub": "用金币购买实用道具",
     "restartGame": "🔄 从头开始游戏",
     "confirmRestart": "确定要从头开始游戏吗？当前所有进度将被清除！"
   },
   "inventory": {
-    "panelTitle": "🎒 道具背包",
+    "panelTitle": "道具背包",
     "panelSub": "使用抽卡获得的道具",
     "use": "使用",
     "empty": "背包空空如也",
@@ -144,6 +161,12 @@
     "descSpaceClean": "🧽 空间清理，清除Lv.1-2物品回收体力",
     "descUpgradeItem": "⬆️ 升级卡，点击棋盘物品使其升级",
     "descDefault": "✨ 道具，点击使用",
+    "full": "📦 背包已满！请使用或解锁更多栏位",
+    "maxSlotsReached": "📦 已达最大容量！",
+    "notEnoughDiamonds": "💎 钻石不足！",
+    "slotsUnlocked": "🎉 解锁 {count} 个栏位！（花费 💎{cost}）",
+    "capacity": "容量 {current}/{max}",
+    "unlockSlots": "+{count}栏位 💎{cost}",
     "descAddDiamond": "💎 钻石，使用后获得{amount}钻石",
     "descAddGold": "💰 金币，使用后获得{amount}金币",
     "usedItem": "✨ 使用了 {name}",
@@ -229,6 +252,12 @@
     "collection": "图鉴",
     "achievement": "成就"
   },
+  "itemInfo": {
+    "placeholder": "点击道具，在这里查看它的信息",
+    "sell": "卖出",
+    "sellConfirm": "卖出 {name} 获得 {amount} 金币？",
+    "sold": "已卖出 {name}，+{amount} 💰"
+  },
   "landscape": {
     "warning": "请旋转回竖屏模式以获得最佳体验"
   },
@@ -250,6 +279,7 @@
   "boardSplitFailNoPrev": "无法拆分",
   "boardSplitFailNoSpace": "棋盘已满",
   "boardSplitFailDefault": "拆分失败",
+  "boardEnergyPotionUsed": "🧪 使用体力药水，恢复 {amount} 体力！",
   "cg": {
     "albumTitle": "📖 CG回忆录",
     "storyDataNotFound": "📖 找不到剧情数据",

@@ -11,6 +11,10 @@ class EnergySystem {
         this.regenTimer = null;
         this.el = document.getElementById('energy-bar-fill');
         this.textEl = document.getElementById('energy-text');
+        this.valueEl = document.getElementById('energy-value'); // New status bar value
+        this.regenTimerEl = document.getElementById('energy-regen-timer'); // Regen countdown
+        this._regenStartTime = null;
+        this._regenDisplayTimer = null;
         this.render();
         // C-05 fix: Do NOT start regen in constructor — defer until after save load
         // to prevent the timer from overwriting saved energy state with defaults.
@@ -61,13 +65,22 @@ class EnergySystem {
     }
 
     startRegen() {
+        this._regenStartTime = Date.now();
         this.regenTimer = setInterval(() => {
             // Natural regen stops at regenCap, not at max
             if (this.current < this.regenCap) {
                 this.current++;
                 this.render();
+                this._regenStartTime = Date.now(); // Reset countdown
             }
         }, this.regenInterval);
+
+        // Start countdown display timer (updates every second)
+        if (this.regenTimerEl) {
+            this._regenDisplayTimer = setInterval(() => {
+                this._updateRegenCountdown();
+            }, 1000);
+        }
     }
 
     stopRegen() {
@@ -75,6 +88,26 @@ class EnergySystem {
             clearInterval(this.regenTimer);
             this.regenTimer = null;
         }
+        if (this._regenDisplayTimer) {
+            clearInterval(this._regenDisplayTimer);
+            this._regenDisplayTimer = null;
+        }
+        if (this.regenTimerEl) this.regenTimerEl.style.display = 'none';
+    }
+
+    _updateRegenCountdown() {
+        if (!this.regenTimerEl) return;
+        if (this.current >= this.regenCap) {
+            this.regenTimerEl.style.display = 'none';
+            return;
+        }
+        this.regenTimerEl.style.display = '';
+        const elapsed = Date.now() - (this._regenStartTime || Date.now());
+        const remaining = Math.max(0, this.regenInterval - elapsed);
+        const totalSecs = Math.ceil(remaining / 1000);
+        const m = Math.floor(totalSecs / 60);
+        const s = totalSecs % 60;
+        this.regenTimerEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
     }
 
     render() {
@@ -90,9 +123,17 @@ class EnergySystem {
             // Show current/regenCap — can display overflow like 130/100
             this.textEl.textContent = `${I18n.emoji('energy')} ${this.current}/${this.regenCap}`;
         }
+        // Update new status bar value display
+        if (this.valueEl) {
+            this.valueEl.textContent = `${this.current}`;
+        }
     }
 
     destroy() {
         this.stopRegen();
+        if (this._regenDisplayTimer) {
+            clearInterval(this._regenDisplayTimer);
+            this._regenDisplayTimer = null;
+        }
     }
 }

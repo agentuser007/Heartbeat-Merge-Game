@@ -17,7 +17,7 @@
     </script>
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
     />
     <title data-i18n="gameTitle">心动合成</title>
     <meta
@@ -40,6 +40,11 @@
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap"
     /></noscript>
     <link rel="stylesheet" href="css/style.css" />
+    <!-- Lucide Icons CDN -->
+    <script
+      src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"
+      defer
+    ></script>
   </head>
 
   <body
@@ -69,107 +74,180 @@
     </div>
 
     <div id="game-container">
-      <!-- ===== TOP STATUS BAR: Energy + Gold + Diamond + Loop ===== -->
+      <!-- ===== TOP STATUS BAR: Avatar + Energy + Gold + Diamond + Loop ===== -->
       <div id="top-status-bar">
-        <div id="loop-badge" style="display: none"></div>
-        <div id="energy-bar">
-          <div id="energy-bar-fill"></div>
-          <span id="energy-text">100/100</span>
+        <div id="gold-label" class="top-bar-pill composite-gold-pill">
+          <div class="composite-gold-icon">
+            <i data-lucide="star"></i>
+          </div>
+          <div class="composite-gold-text">
+            <span id="gold-value">0</span>
+          </div>
+          <span id="gold-multiplier" class="gold-multiplier-badge">x32</span>
         </div>
-        <button
-          id="reward-energy-btn"
-          class="reward-btn reward-btn-energy"
-        ></button>
-        <div id="gold-text">💰 0</div>
-        <div id="diamond-text">💎 0</div>
+
+        <div id="energy-pill" class="top-bar-pill">
+          <i data-lucide="zap"></i>
+          <span class="status-value" id="energy-value">100</span>
+          <span class="status-value" id="energy-regen-timer"></span>
+          <button class="plus-btn" id="energy-plus-btn" title="Watch Ad">
+            <i data-lucide="plus"></i>
+          </button>
+        </div>
+
+        <div id="diamond-pill" class="top-bar-pill">
+          <i data-lucide="gem"></i>
+          <span class="status-value" id="diamond-value">0</span>
+          <button class="plus-btn" id="diamond-plus-btn" title="Watch Ad">
+            <i data-lucide="plus"></i>
+          </button>
+        </div>
+
+        <button class="status-icon-btn" id="shop-btn" title="商店">
+          <i data-lucide="shopping-cart"></i>
+        </button>
+
+        <div id="loop-badge" style="display: none"></div>
         <div
           id="reward-badge"
           style="display: none"
           data-i18n="loop.rewardBadge"
         >
-          奖励 x1.0
+          0
         </div>
+        <!-- H-3: Rank badge — Figma style: "Rank" text + numbered circle -->
+        <div id="rank-badge">
+          Rank<span id="rank-circle"><span id="rank-value">1</span></span>
+        </div>
+        <!-- FB-6: Daily Buff indicator -->
+        <div id="daily-buff-indicator" style="display: none"></div>
+        <!-- L-1: Legacy hidden elements kept for JS compatibility -->
+        <div id="energy-bar" style="display: none">
+          <div id="energy-bar-fill"></div>
+          <span id="energy-text">100/100</span>
+        </div>
+        <div id="gold-text" style="display: none">💰 0</div>
+        <div id="diamond-text" style="display: none">💎 0</div>
+        <button
+          id="reward-energy-btn"
+          class="reward-btn reward-btn-energy"
+          style="display: none"
+        ></button>
       </div>
 
-      <!-- ===== BOSS HEADER: Portrait + Name + HP ===== -->
-      <div id="boss-header">
-        <div id="boss-portrait">
-          <div id="boss-blush"></div>
-        </div>
-        <div id="boss-info">
-          <div id="boss-header-name">
-            <span id="boss-name">Loading...</span>
-            <span id="boss-title">...</span>
-          </div>
-          <div class="hp-bar-container">
-            <div id="hp-bar-fill"></div>
-            <span id="hp-text"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== QUEST CAROUSEL: Main Quest + Daily Orders ===== -->
-      <div id="quest-carousel">
-        <!-- Main Quest Card (items + submit only) -->
-        <div id="main-quest-card" class="quest-card">
-          <div class="main-quest-icon">💎</div>
-          <div class="quest-card-body">
-            <div class="quest-card-items" id="order-items">
-              <!-- filled by JS -->
-            </div>
-            <button
-              id="submit-order-btn"
-              disabled
-              data-i18n="boss.submitOrder"
-            ></button>
-          </div>
-        </div>
-
-        <!-- Daily Order Cards inserted directly here by JS (no wrapper, avoids display:contents) -->
-      </div>
-
-      <!-- ===== GAME GRID with SIDE RECYCLE BINS ===== -->
+      <!-- ===== GAME GRID (board only) ===== -->
       <div class="grid-container">
-        <div id="recycle-bin-left" class="side-recycle-bin">
-          <span class="recycle-icon">♻️</span>
-          <span class="recycle-label" data-i18n="nav.recycle">回收</span>
+        <!-- C-2: Boss header — outside board-frame to avoid warm background bleed -->
+        <div id="boss-header">
+          <!-- Quest row containing the scrollable carousel -->
+          <div class="quest-row">
+            <div id="quest-carousel">
+              <!-- Main Quest Card (Milo / Boss Card) -->
+              <div id="main-quest-card" class="quest-card">
+                <!-- Boss portrait inside the quest card -->
+                <div id="boss-portrait">
+                  <div id="boss-blush"></div>
+                  <!-- Backpack button attached to portrait lower-left -->
+                  <button
+                    class="quest-carousel-backpack portrait-attached"
+                    id="backpack-btn"
+                    data-tab="inventory"
+                    title="背包"
+                  >
+                    <i data-lucide="package"></i>
+                  </button>
+                </div>
+                <!-- Details on the right side of the card -->
+                <div class="quest-card-details">
+                  <div class="quest-card-header-row">
+                    <div id="boss-header-name">
+                      <span id="boss-name">Loading...</span>
+                      <span id="boss-title" style="display: none">...</span>
+                    </div>
+                    <div class="hp-bar-container">
+                      <div id="hp-bar-fill"></div>
+                      <span id="hp-text"></span>
+                    </div>
+                  </div>
+                  <div class="quest-card-body">
+                    <div class="quest-card-items" id="order-items">
+                      <!-- filled by JS -->
+                    </div>
+                    <button id="submit-order-btn" data-i18n="boss.submitOrder">
+                      提交
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <!-- Daily Order Cards inserted here dynamically by JS -->
+            </div>
+          </div>
         </div>
-        <div id="game-grid">
-          <!-- 7x9 cells generated by JS -->
-        </div>
-        <div id="recycle-bin-right" class="side-recycle-bin">
-          <span class="recycle-icon">♻️</span>
-          <span class="recycle-label" data-i18n="nav.recycle">回收</span>
+
+        <!-- C-3: Board outer frame (salmon wrapper) -->
+        <div class="board-frame">
+          <!-- Inner grid (caramel) -->
+          <div id="game-grid">
+            <!-- 7x9 cells generated by JS -->
+          </div>
         </div>
       </div>
 
-      <!-- ===== BOTTOM NAVIGATION ===== -->
-      <nav id="bottom-nav">
-        <button class="nav-item" data-tab="inventory">
-          <span class="nav-icon">🎒</span>
-          <span class="nav-label" data-i18n="nav.inventory">背包</span>
-          <span id="inventory-badge" class="nav-badge" style="display: none"
-            >0</span
+      <!-- ===== BOTTOM BAR: Left Buttons + Item Info + Right Buttons ===== -->
+      <div id="bottom-bar">
+        <div class="bottom-bar-left">
+          <button class="bottom-bar-btn" data-tab="gacha" title="扭蛋">
+            <i data-lucide="cards"></i>
+          </button>
+          <button class="bottom-bar-btn" data-tab="heroine" title="养成">
+            <i data-lucide="crown"></i>
+          </button>
+        </div>
+
+        <div id="item-info-bar">
+          <span id="item-info-text" data-i18n="itemInfo.placeholder"
+            >点击道具，在这里查看它的信息</span
           >
+          <button id="item-sell-btn" data-i18n="itemInfo.sell">卖出</button>
+        </div>
+
+        <div class="bottom-bar-right">
+          <button class="bottom-bar-btn" data-tab="collection" title="图鉴">
+            <i data-lucide="notebook-pen"></i>
+          </button>
+          <button class="bottom-bar-btn" data-tab="achievement" title="成就">
+            <i data-lucide="trophy"></i>
+            <span
+              id="achievement-badge"
+              class="side-badge"
+              style="display: none"
+              >0</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== BOTTOM NAVIGATION (hidden — replaced by side buttons) ===== -->
+      <nav id="bottom-nav" style="display: none">
+        <button class="nav-item" data-tab="inventory">
+          <span class="nav-icon"><i data-lucide="backpack"></i></span>
+          <span class="nav-label" data-i18n="nav.inventory">背包</span>
         </button>
         <button class="nav-item" data-tab="heroine">
-          <span class="nav-icon">👑</span>
+          <span class="nav-icon"><i data-lucide="crown"></i></span>
           <span class="nav-label" data-i18n="nav.heroine">养成</span>
         </button>
         <button class="nav-item" data-tab="gacha">
-          <span class="nav-icon">🎁</span>
+          <span class="nav-icon"><i data-lucide="gift"></i></span>
           <span class="nav-label" data-i18n="nav.gacha">扭蛋</span>
         </button>
         <button class="nav-item" data-tab="collection">
-          <span class="nav-icon">📖</span>
+          <span class="nav-icon"><i data-lucide="book-open"></i></span>
           <span class="nav-label" data-i18n="nav.collection">图鉴</span>
         </button>
         <button class="nav-item" data-tab="achievement">
-          <span class="nav-icon">🏆</span>
+          <span class="nav-icon"><i data-lucide="trophy"></i></span>
           <span class="nav-label" data-i18n="nav.achievement">成就</span>
-          <span id="achievement-badge" class="nav-badge" style="display: none"
-            >0</span
-          >
         </button>
       </nav>
     </div>
@@ -227,7 +305,7 @@
             <div
               class="carrier-avatar"
               style="
-                background-image: url(&quot;assets/avatar/vincent.webp&quot;);
+                background-image: url(&quot;assets/avatar/vincent_no_bg.png&quot;);
               "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier1Speech"></div>
@@ -236,7 +314,9 @@
             <div class="carrier-pole carrier-pole-left"></div>
             <div
               class="carrier-avatar"
-              style="background-image: url(&quot;assets/avatar/leo.webp&quot;)"
+              style="
+                background-image: url(&quot;assets/avatar/leo_no_bg.png&quot;);
+              "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier2Speech"></div>
           </div>
@@ -245,7 +325,7 @@
             <div
               class="carrier-avatar"
               style="
-                background-image: url(&quot;assets/avatar/daniel.webp&quot;);
+                background-image: url(&quot;assets/avatar/daniel_no_bg.png&quot;);
               "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier3Speech"></div>
@@ -255,7 +335,7 @@
             <div
               class="carrier-avatar"
               style="
-                background-image: url(&quot;assets/avatar/morven.webp&quot;);
+                background-image: url(&quot;assets/avatar/morven_no_bg.png&quot;);
               "
             ></div>
             <div class="carrier-speech" data-i18n="parade.carrier4Speech"></div>
@@ -284,7 +364,16 @@
           学园声望: 10
         </div>
         <div class="summary-shop-title" data-i18n="loop.shopTitle">
-          🏪 学园声望商店
+          <i
+            data-lucide="store"
+            style="
+              width: 16px;
+              height: 16px;
+              vertical-align: middle;
+              margin-right: 2px;
+            "
+          ></i
+          >学园声望商店
         </div>
         <div class="meta-shop-list">
           <!-- filled by JS -->
@@ -322,17 +411,27 @@
     <div class="bottom-sheet" id="heroine-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="heroine.panelTitle"></span>
+        <div class="sheet-header-left">
+          <i data-lucide="crown" class="sheet-header-icon"></i>
+          <span data-i18n="heroine.panelTitle"></span>
+        </div>
         <button class="sheet-close" data-close="heroine-sheet">✕</button>
       </div>
       <div class="sheet-sub" data-i18n="heroine.panelSub"></div>
       <div id="heroine-upgrade-list" class="sheet-body">
         <!-- filled by JS -->
       </div>
-      <!-- ===== SHOP SECTION (inside heroine sheet) ===== -->
-      <div class="sheet-section-divider"></div>
+    </div>
+
+    <!-- FB-3: Gold Shop — independent bottom sheet (separated from heroine) -->
+    <div class="bottom-sheet" id="shop-sheet">
+      <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="heroine.goldShop">🏪 金币商店</span>
+        <div class="sheet-header-left">
+          <i data-lucide="store" class="sheet-header-icon"></i>
+          <span data-i18n="heroine.goldShop"></span>
+        </div>
+        <button class="sheet-close" data-close="shop-sheet">✕</button>
       </div>
       <div class="sheet-sub" data-i18n="heroine.shopSub">
         用金币购买实用道具
@@ -346,7 +445,10 @@
     <div class="bottom-sheet" id="daily-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="dailyOrder.panelTitle"></span>
+        <div class="sheet-header-left">
+          <i data-lucide="clipboard-list" class="sheet-header-icon"></i>
+          <span data-i18n="dailyOrder.panelTitle"></span>
+        </div>
         <button class="sheet-close" data-close="daily-sheet">✕</button>
       </div>
       <div class="sheet-sub" data-i18n="dailyOrder.panelSub"></div>
@@ -359,7 +461,10 @@
     <div class="bottom-sheet" id="gacha-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="gacha.modalTitle"></span>
+        <div class="sheet-header-left">
+          <i data-lucide="sparkles" class="sheet-header-icon"></i>
+          <span data-i18n="gacha.modalTitle"></span>
+        </div>
         <button class="sheet-close" data-close="gacha-sheet">✕</button>
       </div>
       <div id="gacha-pity-display" class="gacha-pity-area"></div>
@@ -386,31 +491,25 @@
     <div class="bottom-sheet" id="collection-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="collection.panelTitle"></span>
+        <div class="sheet-header-left">
+          <i data-lucide="book-open" class="sheet-header-icon"></i>
+          <span data-i18n="collection.panelTitle"></span>
+        </div>
         <button class="sheet-close" data-close="collection-sheet">✕</button>
       </div>
       <!-- Tab Switcher -->
       <div class="collection-tabs">
-        <button
-          class="collection-tab active"
-          data-tab="items"
-          data-i18n="collection.tabItems"
-        >
-          📦 物品图鉴
+        <button class="collection-tab active" data-tab="items">
+          <i data-lucide="package" class="collection-tab-icon"></i>
+          <span data-i18n="collection.tabItems">物品图鉴</span>
         </button>
-        <button
-          class="collection-tab"
-          data-tab="gacha"
-          data-i18n="collection.tabGacha"
-        >
-          🎁 卡牌图鉴
+        <button class="collection-tab" data-tab="gacha">
+          <i data-lucide="gift" class="collection-tab-icon"></i>
+          <span data-i18n="collection.tabGacha">卡牌图鉴</span>
         </button>
-        <button
-          class="collection-tab"
-          data-tab="fragments"
-          data-i18n="collection.tabFragments"
-        >
-          🧩 碎片
+        <button class="collection-tab" data-tab="fragments">
+          <i data-lucide="puzzle" class="collection-tab-icon"></i>
+          <span data-i18n="collection.tabFragments">碎片</span>
         </button>
       </div>
       <div class="sheet-sub" id="collection-pct">0/0 (0%)</div>
@@ -433,7 +532,10 @@
     <div class="bottom-sheet" id="inventory-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="inventory.panelTitle">🎒 背包</span>
+        <div class="sheet-header-left">
+          <i data-lucide="backpack" class="sheet-header-icon"></i>
+          <span data-i18n="inventory.panelTitle"></span>
+        </div>
         <button class="sheet-close" data-close="inventory-sheet">✕</button>
       </div>
       <div class="sheet-sub" data-i18n="inventory.panelSub">
@@ -448,7 +550,10 @@
     <div class="bottom-sheet" id="cg-album-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="cg.albumTitle">📖 CG回忆录</span>
+        <div class="sheet-header-left">
+          <i data-lucide="book-image" class="sheet-header-icon"></i>
+          <span data-i18n="cg.albumTitle"></span>
+        </div>
         <button class="sheet-close" data-close="cg-album-sheet">✕</button>
       </div>
       <div id="cg-album-content" class="sheet-body"></div>
@@ -458,7 +563,10 @@
     <div class="bottom-sheet" id="achievement-sheet">
       <div class="sheet-drag-handle"></div>
       <div class="sheet-header">
-        <span data-i18n="achievement.panelTitle"></span>
+        <div class="sheet-header-left">
+          <i data-lucide="trophy" class="sheet-header-icon"></i>
+          <span data-i18n="achievement.panelTitle"></span>
+        </div>
         <button class="sheet-close" data-close="achievement-sheet">✕</button>
       </div>
       <div class="sheet-sub" data-i18n="achievement.panelSub"></div>
@@ -477,11 +585,11 @@
     <script src="js/logic/BossLogic.js"></script>
     <script src="js/logic/BoardLogic.js"></script>
     <script src="js/logic/GachaLogic.js"></script>
-    <script src="js/ui/EnergyUI.js"></script>
+    <script src="js/ui/EnergyUI.js?v=figma-upper-2"></script>
     <script src="js/ui/CurrencyUI.js"></script>
     <script src="js/ui/ConfirmDialog.js"></script>
     <script src="js/effects.js"></script>
-    <script src="js/energy.js"></script>
+    <script src="js/energy.js?v=figma-upper-2"></script>
     <script src="js/audio.js"></script>
     <script src="js/currency.js"></script>
     <script src="js/dialogue.js"></script>
@@ -498,6 +606,7 @@
     <script src="js/cg-album.js"></script>
     <script src="js/loop.js"></script>
     <script src="js/ad.js"></script>
+    <script src="js/daily-buff.js"></script>
     <script src="js/save.js"></script>
     <script src="js/main.js"></script>
     <script>

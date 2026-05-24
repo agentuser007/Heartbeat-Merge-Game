@@ -22,6 +22,11 @@ class BossSystem {
         this.submitBtn = document.getElementById('submit-order-btn');
 
         this.submitBtn.addEventListener('click', () => this.trySubmitOrder());
+        this.orderPanel.addEventListener('click', () => {
+            if (this.canFulfillOrder()) {
+                this.trySubmitOrder();
+            }
+        });
 
         // Subscribe to logic events
         globalBus.on('boss:levelLoaded', (data) => this._onLevelLoaded(data));
@@ -49,10 +54,10 @@ class BossSystem {
         const span = this.bossPortraitEl.querySelector('span');
         if (span) span.textContent = '';
         this.bossPortraitEl.style.backgroundImage = `url('${data.bossAvatar}')`;
-        this.bossPortraitEl.style.backgroundSize = 'cover';
-        this.bossPortraitEl.style.backgroundPosition = 'center top';
-        this.bossPortraitEl.style.backgroundColor = data.bossColor;
-        document.getElementById('game-container').style.background = data.bgGradient;
+        this.bossPortraitEl.style.backgroundSize = 'contain';
+        this.bossPortraitEl.style.backgroundPosition = 'center';
+        this.bossPortraitEl.style.backgroundRepeat = 'no-repeat';
+        // document.getElementById('game-container').style.background = data.bgGradient;
 
         // Reset HP bar to 0% (full HP = empty damage bar)
         this.renderHp();
@@ -105,11 +110,49 @@ class BossSystem {
             this.orderItemsEl.appendChild(tag);
         }
 
+        // Figma: Reward preview tooltip on quest card
+        this._renderRewardPreview(order);
+
         // Timer — DISABLED: no countdown, orders never time out
         this.clearTimer();
         if (this.orderTimerEl) this.orderTimerEl.style.display = 'none';
 
         this.updateOrderHighlights();
+    }
+
+    /**
+     * Render the floating reward preview tooltip near the boss portrait.
+     * 图2 layout: shows "+1020 💎" / "+10 ❤" near character avatar.
+     */
+    _renderRewardPreview(order) {
+        // Mount on main-quest-card (same pattern as daily cards)
+        const card = document.getElementById('main-quest-card');
+        if (!card) return;
+
+        // Remove previous preview from card or portrait
+        document.querySelectorAll('.order-reward-preview').forEach(el => el.remove());
+
+        const diamondReward = order.diamondReward || 0;
+        const damage = order.damage || 0;
+        if (diamondReward <= 0 && damage <= 0) return;
+
+        const preview = document.createElement('div');
+        preview.className = 'order-reward-preview';
+
+        if (diamondReward > 0) {
+            const line = document.createElement('div');
+            line.className = 'order-reward-line';
+            line.innerHTML = `<span style="font-size:10px">💎</span>+${CurrencyUI.formatGold(diamondReward)}`;
+            preview.appendChild(line);
+        }
+        if (damage > 0) {
+            const line2 = document.createElement('div');
+            line2.className = 'order-reward-line';
+            line2.innerHTML = `<span style="font-size:10px">❤️</span>+${damage}`;
+            preview.appendChild(line2);
+        }
+
+        card.appendChild(preview);
     }
 
     _onOrderComplete(data) {
@@ -226,6 +269,13 @@ class BossSystem {
         const order = this.logic.getCurrentOrder();
         if (!order) return;
 
+        // FB-4: Clear previous order-match highlights from board
+        document.querySelectorAll('.grid-cell.order-match').forEach(c => {
+            c.classList.remove('order-match');
+            const badge = c.querySelector('.merge-badge.order-badge');
+            if (badge) badge.remove();
+        });
+
         // Update tag states
         const tags = this.orderItemsEl.querySelectorAll('.order-item-tag');
         tags.forEach(tag => {
@@ -234,6 +284,20 @@ class BossSystem {
             const found = this.game.board.findAllItems(itemId);
             if (found.length >= req.count) {
                 tag.classList.add('fulfilled');
+                // FB-4: Highlight matching cells on board with pink + checkmark
+                found.slice(0, req.count).forEach(idx => {
+                    const cellEl = this.game.board.getCellEl(idx);
+                    if (cellEl) {
+                        cellEl.classList.add('order-match');
+                        // Add checkmark badge if not already present
+                        if (!cellEl.querySelector('.merge-badge.order-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'merge-badge order-badge';
+                            badge.textContent = '✓';
+                            cellEl.querySelector('.item')?.appendChild(badge);
+                        }
+                    }
+                });
             } else {
                 tag.classList.remove('fulfilled');
             }
@@ -243,9 +307,11 @@ class BossSystem {
         if (this.canFulfillOrder()) {
             this.submitBtn.classList.add('ready');
             this.submitBtn.disabled = false;
+            this.orderPanel.classList.add('ready');
         } else {
             this.submitBtn.classList.remove('ready');
             this.submitBtn.disabled = true;
+            this.orderPanel.classList.remove('ready');
         }
     }
 
@@ -278,6 +344,9 @@ class BossSystem {
         if (diamondReward > 0 && this.game.currency) {
             this.game.currency.addDiamonds(diamondReward);
         }
+
+        // M-3: Show damage popup on boss portrait
+        Effects.showDamagePopup(order.damage, diamondReward);
 
         // ④ Immediate save — all state is now consistent.
         // If the player refreshes during the dialogue below, no progress is lost.

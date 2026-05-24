@@ -10,6 +10,7 @@ class EnergyUI {
         this.el = document.getElementById('energy-bar-fill');
         this.textEl = document.getElementById('energy-text');
         this.barEl = document.getElementById('energy-bar');
+        this.valueEl = document.getElementById('energy-value'); // New status bar value
 
         // Subscribe to energy changes
         this._onChanged = (data) => this.render(data);
@@ -45,6 +46,11 @@ class EnergyUI {
         if (this.textEl) {
             // Show current/max — can display overflow like 120/100
             this.textEl.textContent = `${I18n.emoji('energy')} ${current}/${max}`;
+        }
+
+        // Update new status bar value display
+        if (this.valueEl) {
+            this.valueEl.textContent = `${current}`;
         }
     }
 

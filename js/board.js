@@ -12,7 +12,12 @@ class Board {
         this.dragGhost = null;
         this._isDragging = false;
         this._dragThreshold = 8;
+        this._selectedCellIndex = null; // Currently selected cell for item info bar
+        this.infoBarEl = document.getElementById('item-info-bar');
+        this.infoTextEl = document.getElementById('item-info-text');
+        this.sellBtnEl = document.getElementById('item-sell-btn');
         this.buildGrid();
+        this._initInfoBar();
     }
 
     // Proxy properties to logic for backward compat (save system etc.)
@@ -35,6 +40,10 @@ class Board {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
             cell.dataset.index = i;
+            // Alternating cell colors (checkerboard pattern)
+            const row = Math.floor(i / this.cols);
+            const col = i % this.cols;
+            if ((row + col) % 2 === 1) cell.classList.add('cell-alt');
             if (this.locked.has(i)) cell.classList.add('locked');
             cell.addEventListener('pointerdown', (e) => this.onPointerDown(e, i));
             this.gridEl.appendChild(cell);
@@ -62,6 +71,7 @@ class Board {
         if (itemData.type === 'GENERATOR') { itemEl.classList.add('generator'); itemEl.dataset.level = itemData.level; }
         if (itemData.type === 'JOKER') itemEl.classList.add('joker-item');
         if (itemData.type === 'SCISSOR') itemEl.classList.add('scissor-item');
+        if (itemData.type === 'ENERGY_POTION') itemEl.classList.add('energy-potion-item');
 
         const emojiEl = document.createElement('span');
         emojiEl.className = 'item-emoji';
@@ -171,12 +181,15 @@ class Board {
 
     handleCellClick(index) {
         const itemId = this.cells[index];
-        if (!itemId) return;
+        if (!itemId) { this.clearItemInfo(); return; }
         const d = ITEMS[itemId];
-        if (!d) return;
+        if (!d) { this.clearItemInfo(); return; }
         if (this.logic.scissorMode) { this.useScissorOnCell(index); return; }
-        if (d.type === 'GENERATOR') { this.handleGeneratorClick(index); return; }
+        if (d.type === 'GENERATOR') { this.handleGeneratorClick(index); this.showItemInfo(index); return; }
         if (d.type === 'SCISSOR') { this.activateScissorMode(); return; }
+        if (d.type === 'ENERGY_POTION') { this.useEnergyPotion(index); return; }
+        // Show item info in the info bar for all clickable items
+        this.showItemInfo(index);
     }
 
     // ============================================================
@@ -285,8 +298,13 @@ class Board {
         this.logic.clearGeneratorState(index);
         this.renderCell(index);
 
-        if (amt > 0) { this.game.energy.recover(amt); Effects.energyRecycle(cel, amt); }
+        // Sell for gold instead of energy recovery
+        if (amt > 0) {
+            this.game.currency.addGold(amt);
+            Effects.showToast(`${I18n.emoji('coin')} +${amt}`);
+        }
         if (this.game.achievements) this.game.achievements.increment('recycled');
+        this.clearItemInfo();
         this.game.checkOrderCompletion();
         if (this.game.dailyOrders) this.game.dailyOrders.updateHighlights();
         if (this.game.save) this.game.save.saveAll();
@@ -317,7 +335,7 @@ class Board {
             '<button class="unlock-yes ' + (canAfford ? '' : 'disabled') + '" ' + (canAfford ? '' : 'disabled') + '>' + I18n.t('boardUnlock') + '</button>' +
             '</div>';
 
-        document.getElementById('game-container').appendChild(popup);
+        document.body.appendChild(popup);
         popup.querySelector('.unlock-no').addEventListener('click', () => popup.remove());
         popup.querySelector('.unlock-yes').addEventListener('click', () => {
             if (!canAfford) return;
@@ -372,6 +390,31 @@ class Board {
         if (this.game.save) this.game.save.saveAll();
     }
 
+    // FB-8: Use energy potion on the board
+    useEnergyPotion(index) {
+        const d = this.logic.grid[index];
+        if (!d || d.type !== 'ENERGY_POTION') return;
+        const itemData = ITEMS[d.id];
+        const energyAmount = (itemData && itemData.energyRecover) || 20;
+        
+        // Recover energy
+        if (this.game.energy) {
+            this.game.energy.recover(energyAmount);
+        }
+        
+        // Remove the potion from the board
+        this.logic.grid[index] = null;
+        this.renderCell(index);
+        
+        // Visual feedback
+        const cellEl = this.getCellEl(index);
+        if (cellEl) Effects.spawnParticles(cellEl, 6, '⚡');
+        Effects.showToast(I18n.t('boardEnergyPotionUsed', { amount: energyAmount }), 'info');
+        
+        // Save
+        if (this.game.save) this.game.save.saveAll();
+    }
+
     // ============================================================
     // PLACE INITIAL GENERATORS
     // ============================================================
@@ -412,6 +455,65 @@ class Board {
 
     spawnItemById(itemId) {
         return this.spawnItem(itemId);
+    }
+
+    // ============================================================
+    // ITEM INFO BAR — Show item details & sell button
+    // ============================================================
+
+    _initInfoBar() {
+        if (this.sellBtnEl) {
+            this.sellBtnEl.addEventListener('click', () => {
+                if (this._selectedCellIndex !== null) {
+                    this.handleRecycle(this._selectedCellIndex);
+                }
+            });
+        }
+    }
+
+    showItemInfo(index) {
+        this._selectedCellIndex = index;
+        const itemId = this.cells[index];
+        if (!itemId) { this.clearItemInfo(); return; }
+        const d = ITEMS[itemId];
+        if (!d) { this.clearItemInfo(); return; }
+
+        const sellValue = this.logic.getRecycleEnergy(index);
+        const canSell = this.logic.canSellItem(index);
+
+        if (this.infoTextEl) {
+            this.infoTextEl.textContent = `${d.emoji} ${d.name} (Lv.${d.level})`;
+            this.infoTextEl.removeAttribute('data-i18n'); // Override i18n placeholder
+        }
+        if (this.sellBtnEl) {
+            this.sellBtnEl.style.display = canSell ? '' : 'none';
+            if (canSell) {
+                this.sellBtnEl.textContent = `${I18n.t('itemInfo.sell')} ${I18n.emoji('coin')}${sellValue}`;
+                this.sellBtnEl.removeAttribute('data-i18n');
+            }
+        }
+        if (this.infoBarEl) {
+            this.infoBarEl.classList.add('has-item');
+        }
+
+        // Highlight the selected cell
+        document.querySelectorAll('.grid-cell.cell-highlight').forEach(c => c.classList.remove('cell-highlight'));
+        const cel = this.getCellEl(index);
+        if (cel) cel.classList.add('cell-highlight');
+    }
+
+    clearItemInfo() {
+        this._selectedCellIndex = null;
+        if (this.infoTextEl) {
+            this.infoTextEl.textContent = I18n.t('itemInfo.placeholder');
+        }
+        if (this.sellBtnEl) {
+            this.sellBtnEl.style.display = 'none';
+        }
+        if (this.infoBarEl) {
+            this.infoBarEl.classList.remove('has-item');
+        }
+        document.querySelectorAll('.grid-cell.cell-highlight').forEach(c => c.classList.remove('cell-highlight'));
     }
 
     // ============================================================

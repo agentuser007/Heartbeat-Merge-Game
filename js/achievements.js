@@ -105,6 +105,10 @@ class AchievementSystem {
         if (ach.reward.diamonds) {
             this.game.currency.addDiamonds(ach.reward.diamonds);
         }
+        // FB-1: Achievement rewards can now include energy
+        if (ach.reward.energy) {
+            this.game.energy.recover(ach.reward.energy);
+        }
 
         // Show claim feedback toast
         this.showClaimToast(ach);
@@ -126,6 +130,7 @@ class AchievementSystem {
         let rewardText = '';
         if (ach.reward.gold) rewardText = `${I18n.emoji('coin')} +${ach.reward.gold}`;
         if (ach.reward.diamonds) rewardText = `${I18n.emoji('diamond')} +${ach.reward.diamonds}`;
+        if (ach.reward.energy) rewardText = `${I18n.emoji('energy')} +${ach.reward.energy}`;
 
         toast.innerHTML = `
             <div class="achievement-toast-icon">${ach.icon}</div>
@@ -152,6 +157,7 @@ class AchievementSystem {
         let rewardText = '';
         if (ach.reward.gold) rewardText = `${I18n.emoji('coin')} +${ach.reward.gold}`;
         if (ach.reward.diamonds) rewardText = `${I18n.emoji('diamond')} +${ach.reward.diamonds}`;
+        if (ach.reward.energy) rewardText = `${I18n.emoji('energy')} +${ach.reward.energy}`;
 
         toast.innerHTML = `
             <div class="achievement-toast-icon">${ach.icon}</div>
@@ -235,6 +241,7 @@ class AchievementSystem {
             let rewardText = '';
             if (ach.reward.gold) rewardText = `${I18n.emoji('coin')} ${ach.reward.gold}`;
             if (ach.reward.diamonds) rewardText = `${I18n.emoji('diamond')} ${ach.reward.diamonds}`;
+            if (ach.reward.energy) rewardText = `${I18n.emoji('energy')} ${ach.reward.energy}`;
 
             // Right side: claimable → claim button; completed → claimed label; else → reward preview
             let rightHtml = '';

@@ -9,6 +9,8 @@ class HeroineSystem {
         this.panelEl = document.getElementById('heroine-sheet');
         this.listEl = document.getElementById('heroine-upgrade-list');
         this.shopListEl = document.getElementById('shop-list');
+        // FB-3: Shop is now an independent sheet
+        this.shopPanelEl = document.getElementById('shop-sheet');
 
         // Initialize upgrade levels to -1 (none purchased)
         for (const upg of HEROINE_UPGRADES) {
@@ -24,13 +26,27 @@ class HeroineSystem {
         if (this.panelEl) {
             this.panelEl.classList.add('open');
             this.renderUpgrades();
-            this.renderShop();
         }
     }
 
     close() {
         if (this.panelEl) {
             this.panelEl.classList.remove('open');
+        }
+    }
+
+    // FB-3: Open the independent gold shop sheet
+    openShop() {
+        if (this.shopPanelEl) {
+            this.shopPanelEl.classList.add('open');
+            this.renderShop();
+        }
+    }
+
+    // FB-3: Close the independent gold shop sheet
+    closeShop() {
+        if (this.shopPanelEl) {
+            this.shopPanelEl.classList.remove('open');
         }
     }
 

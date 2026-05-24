@@ -3,10 +3,20 @@
 // All gacha results go here; player uses items manually.
 // ============================================================
 
+// FB-7: Inventory slot expansion config
+const INVENTORY_SLOT_CONFIG = {
+    baseSlots: 20,           // Default free slots
+    maxSlots: 50,            // Maximum expandable slots
+    slotsPerUnlock: 5,       // Slots gained per unlock
+    baseDiamondCost: 10,     // First unlock cost in diamonds
+    costIncrement: 5         // Cost increase per unlock
+};
+
 class InventorySystem {
     constructor(game) {
         this.game = game;
         this.items = {};
+        this.maxSlots = INVENTORY_SLOT_CONFIG.baseSlots; // FB-7: current max capacity
         this.panelEl = document.getElementById('inventory-sheet');
         this.listEl = document.getElementById('inventory-list');
         this.badgeEl = document.getElementById('inventory-badge');
@@ -21,12 +31,48 @@ class InventorySystem {
     }
 
     addItem(gachaItem) {
+        // FB-7: Check capacity before adding
+        if (this.getTotalCount() >= this.maxSlots) {
+            if (this.game.effects) this.game.effects.showToast(I18n.t('inventory.full'), 'info');
+            return false;
+        }
         const id = gachaItem.id;
         this.items[id] = (this.items[id] || 0) + 1;
         this.updateBadge();
         if (this.panelEl && this.panelEl.classList.contains('open')) {
             this.renderItems();
         }
+        return true;
+    }
+
+    // FB-7: Get diamond cost for next slot unlock
+    getUnlockCost() {
+        const unlocksDone = Math.floor((this.maxSlots - INVENTORY_SLOT_CONFIG.baseSlots) / INVENTORY_SLOT_CONFIG.slotsPerUnlock);
+        return INVENTORY_SLOT_CONFIG.baseDiamondCost + unlocksDone * INVENTORY_SLOT_CONFIG.costIncrement;
+    }
+
+    // FB-7: Unlock additional slots with diamonds
+    unlockSlot() {
+        if (this.maxSlots >= INVENTORY_SLOT_CONFIG.maxSlots) {
+            if (this.game.effects) this.game.effects.showToast(I18n.t('inventory.maxSlotsReached'), 'info');
+            return false;
+        }
+        const cost = this.getUnlockCost();
+        if (!this.game.currency || this.game.currency.diamonds < cost) {
+            if (this.game.effects) this.game.effects.showToast(I18n.t('inventory.notEnoughDiamonds'), 'info');
+            return false;
+        }
+        this.game.currency.spendDiamonds(cost);
+        this.maxSlots = Math.min(this.maxSlots + INVENTORY_SLOT_CONFIG.slotsPerUnlock, INVENTORY_SLOT_CONFIG.maxSlots);
+        if (this.game.effects) this.game.effects.showToast(I18n.t('inventory.slotsUnlocked', { count: INVENTORY_SLOT_CONFIG.slotsPerUnlock, cost: cost }), 'ssr');
+        this.renderItems();
+        if (this.game.save) this.game.save.saveAll();
+        return true;
+    }
+
+    // FB-7: Check if more slots can be unlocked
+    canUnlockMore() {
+        return this.maxSlots < INVENTORY_SLOT_CONFIG.maxSlots;
     }
 
     removeItem(id) {
@@ -63,9 +109,37 @@ class InventorySystem {
     renderItems() {
         if (!this.listEl) return;
         this.listEl.innerHTML = '';
+
+        // FB-7: Capacity bar + unlock button at top
+        const total = this.getTotalCount();
+        const capBar = document.createElement('div');
+        capBar.className = 'inventory-capacity-bar';
+        const pct = Math.min(100, Math.round((total / this.maxSlots) * 100));
+        const pctClass = pct >= 90 ? 'capacity-critical' : (pct >= 70 ? 'capacity-warning' : '');
+        capBar.innerHTML = `
+            <div class="capacity-info">
+                <span class="capacity-text">${I18n.t('inventory.capacity', {current: total, max: this.maxSlots})}</span>
+                ${this.canUnlockMore() ? `<button class="unlock-slot-btn" type="button">💎 ${I18n.t('inventory.unlockSlots', {count: INVENTORY_SLOT_CONFIG.slotsPerUnlock, cost: this.getUnlockCost()})}</button>` : ''}
+            </div>
+            <div class="capacity-track ${pctClass}"><div class="capacity-fill" style="width:${pct}%"></div></div>
+        `;
+        this.listEl.appendChild(capBar);
+
+        // Bind unlock button
+        const unlockBtn = capBar.querySelector('.unlock-slot-btn');
+        if (unlockBtn) {
+            unlockBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.unlockSlot();
+            });
+        }
+
         const itemIds = Object.keys(this.items);
         if (itemIds.length === 0) {
-            this.listEl.innerHTML = '<div class="inventory-empty">' + I18n.emoji('backpack') + ' ' + I18n.t('inventory.empty') + '<br>' + I18n.t('inventory.emptyHint') + '</div>';
+            const emptyEl = document.createElement('div');
+            emptyEl.className = 'inventory-empty';
+            emptyEl.innerHTML = I18n.emoji('backpack') + ' ' + I18n.t('inventory.empty') + '<br>' + I18n.t('inventory.emptyHint');
+            this.listEl.appendChild(emptyEl);
             return;
         }
         for (const id of itemIds) {
