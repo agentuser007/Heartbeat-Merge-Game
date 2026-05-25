@@ -83,7 +83,6 @@
           <div class="composite-gold-text">
             <span id="gold-value">0</span>
           </div>
-          <span id="gold-multiplier" class="gold-multiplier-badge">x32</span>
         </div>
 
         <div id="energy-pill" class="top-bar-pill">
@@ -144,7 +143,7 @@
             <div id="quest-carousel">
               <!-- Main Quest Card (Milo / Boss Card) -->
               <div id="main-quest-card" class="quest-card">
-                <!-- Boss portrait inside the quest card -->
+                <!-- Boss portrait at the top of the card -->
                 <div id="boss-portrait">
                   <div id="boss-blush"></div>
                   <!-- Backpack button attached to portrait lower-left -->
@@ -157,8 +156,8 @@
                     <i data-lucide="package"></i>
                   </button>
                 </div>
-                <!-- Details on the right side of the card -->
-                <div class="quest-card-details">
+                <!-- Quest card body below the portrait -->
+                <div class="quest-card-body">
                   <div class="quest-card-header-row">
                     <div id="boss-header-name">
                       <span id="boss-name">Loading...</span>
@@ -169,7 +168,7 @@
                       <span id="hp-text"></span>
                     </div>
                   </div>
-                  <div class="quest-card-body">
+                  <div class="quest-card-items-row">
                     <div class="quest-card-items" id="order-items">
                       <!-- filled by JS -->
                     </div>
@@ -197,7 +196,7 @@
       <div id="bottom-bar">
         <div class="bottom-bar-left">
           <button class="bottom-bar-btn" data-tab="gacha" title="扭蛋">
-            <i data-lucide="cards"></i>
+            <i data-lucide="sparkles"></i>
           </button>
           <button class="bottom-bar-btn" data-tab="heroine" title="养成">
             <i data-lucide="crown"></i>

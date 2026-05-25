@@ -204,12 +204,12 @@ const Effects = {
             }
         });
 
-        // Position near anchor
+        // Position near anchor — mount to #particle-layer (fixed, non-flex) to avoid
+        // triggering flex reflow in #game-container when inserting absolute children
         const rect = anchorEl.getBoundingClientRect();
-        const container = document.getElementById('game-container');
-        const containerRect = container.getBoundingClientRect();
-        tooltip.style.left = (rect.left - containerRect.left + rect.width / 2) + 'px';
-        tooltip.style.top = (rect.bottom - containerRect.top + 6) + 'px';
+        const container = document.getElementById('particle-layer') || document.body;
+        tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+        tooltip.style.top = (rect.bottom + 6) + 'px';
 
         container.appendChild(tooltip);
 

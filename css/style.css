@@ -110,7 +110,7 @@
   --cell-border: #FFD3B4;
   --board-bg: #DDAA8B;
   --board-border: #E3B084;
-  --board-frame-border: #FEDAB2;
+  --board-frame-border: #ddaa8b;
   --board-frame-bg: #FFCCAC;
   --locked-bg: rgba(0, 0, 0, 0.25);
   --transition-fast: 0.15s ease;
@@ -329,6 +329,7 @@ html, body {
   border-radius: 12px; border: 1px solid var(--pale-peach);
   padding: 8px 10px; display: flex; gap: 8px; align-items: center;
   box-shadow: var(--shadow-neu-up);
+  overflow: visible !important;
 }
 
 /* ========== BOSS HEADER (above board, contains quest carousel) ========== */
@@ -413,7 +414,7 @@ html, body {
 }
 
 .quest-card-body {
-  flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 4px;
+  flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 4px;
 }
 
 .quest-card-header { display: flex; align-items: baseline; gap: 6px; }
@@ -450,9 +451,19 @@ html, body {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 3px; background: var(--off-white);
   border-radius: 999px; border: 1px solid var(--pale-peach);
-  transition: all var(--transition-fast); width: 28px; height: 28px;
+  transition: background var(--transition-fast), border-color var(--transition-fast); width: 28px; height: 28px;
 }
 .order-item-tag.fulfilled { background: rgba(91, 173, 125, 0.2); border-color: var(--color-success); }
+/* Fix layout shift: reset :focus outline on tag clicks, preserve :focus-visible for keyboard a11y */
+.order-item-tag:focus:not(:focus-visible),
+.carousel-req-tag:focus:not(:focus-visible) {
+  outline: none;
+}
+.order-item-tag:focus-visible,
+.carousel-req-tag:focus-visible {
+  outline: 2px solid var(--accent-pink);
+  outline-offset: 2px;
+}
 .order-item-emoji { font-size: 16px; line-height: 1; }
 
 #submit-order-btn {
@@ -496,7 +507,7 @@ html, body {
 
 /* Daily quest body (matches quest-card-body structure) */
 .daily-carousel-body {
-  flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 4px;
+  flex: 1; min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 4px; margin-left: 1px;
 }
 
 .daily-carousel-header {
@@ -518,7 +529,7 @@ html, body {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 3px; background: var(--off-white);
   border-radius: 999px; border: 1px solid var(--pale-peach);
-  transition: all var(--transition-fast); width: 28px; height: 28px;
+  transition: background var(--transition-fast), border-color var(--transition-fast); width: 28px; height: 28px;
 }
 .carousel-req-tag.has-item {
   background: rgba(91, 173, 125, 0.2); border-color: var(--color-success); color: #2E7D32;
@@ -542,6 +553,7 @@ html, body {
 /* ---- Chain Tooltip ---- */
 .chain-tooltip {
   position: absolute; z-index: 300;
+  pointer-events: auto; /* override #particle-layer's pointer-events:none so tooltip is interactive */
   transform: translateX(-50%);
   background: rgb(255, 255, 255); /* VA-3: solid white, no blur */
   border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 14px;
@@ -572,7 +584,7 @@ html, body {
 /* ========== GAME GRID ========== */
 .grid-container {
   flex: 1; padding: 4px 4px;
-  display: flex; align-items: stretch; justify-content: center;
+  display: flex; align-items: stretch; justify-content: flex-end;
   flex-direction: row; gap: 0;
   min-height: 0; overflow: hidden;
   position: relative;
@@ -621,7 +633,7 @@ html, body {
 /* Board outer frame — salmon wrapper matching Figma two-layer board structure */
 .board-frame {
   background: var(--board-frame-bg);
-  border: 1px solid var(--board-frame-border);
+  border: 2px solid var(--board-frame-border);
   border-radius: 12px;
   padding: 6px; /* Symmetric padding for iPhone 15 393pt fit */
   display: flex; flex-direction: column;
@@ -2991,7 +3003,7 @@ body.cg-platform #landscape-warning { display: none !important; }
   display: flex;
   align-items: center;
   gap: 1.5cqw;
-  padding: 2.5cqw 3cqw 1.5cqw;
+  padding: 9.5cqw 3cqw 1.5cqw;
   background: transparent;
   border: 0;
   box-shadow: none;
@@ -3152,10 +3164,10 @@ body.cg-platform #landscape-warning { display: none !important; }
 .grid-container {
   position: relative;
   width: 100%;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   margin: 0;
   padding: 16cqw 0 0 0;
@@ -3170,9 +3182,9 @@ body.cg-platform #landscape-warning { display: none !important; }
   height: auto;
   max-width: none;
   min-height: 0;
-  flex: 0 0 auto;
-  padding: 1cqw;
-  border: 1.5px solid rgba(255,255,255,0.4);
+  flex: 0 1 auto;
+  padding: 0cqw;
+  border: 2px solid rgba(221,170,139,1);
   border-radius: 3cqw;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(8px);
@@ -3237,7 +3249,7 @@ body.cg-platform #landscape-warning { display: none !important; }
   position: relative;
   width: 100cqw;
   height: auto;
-  padding: 0 3cqw 1cqw 3cqw;
+  padding: 0 0cqw 0cqw 1cqw;
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -3288,7 +3300,7 @@ body.cg-platform #landscape-warning { display: none !important; }
   gap: 1cqw;
   background: var(--accent-purple);
   border-radius: 99px;
-  padding: 0.8cqw 2.5cqw;
+  padding: 1cqw 1cqw;
   width: fit-content;
   color: #fff;
   flex-shrink: 0;
@@ -3360,9 +3372,10 @@ html, body {
   display: flex;
   align-items: stretch;
   width: 100%;
-  padding: 0 0 2cqw 0;
+  padding: 0 0 0cqw 0;
   box-sizing: border-box;
   position: relative; /* anchor for donut slot */
+  overflow: visible !important;
 }
 
 #quest-carousel {
@@ -3372,7 +3385,7 @@ html, body {
   display: flex;
   gap: 2cqw;
   align-items: flex-end; /* align card bottoms for consistent baseline */
-  padding: 1cqw 0;
+  padding: 1cqw 0 0 0;
   overflow-x: auto;
   overflow-y: hidden;
   max-height: none !important;
@@ -3381,6 +3394,7 @@ html, body {
   z-index: 1;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  overflow: visible !important;
 }
 
 #quest-carousel::-webkit-scrollbar {
@@ -3402,26 +3416,26 @@ html, body {
 }
 
 #main-quest-card {
-  width: 65cqw !important;
-  min-height: 29cqw !important;
-  padding-left: 23cqw !important;
-  position: relative !important; /* containing block for #boss-portrait */
+  width: 45cqw !important;
+  min-height: 0 !important;
+  padding-left: 0 !important;
+  position: relative !important;
+  overflow: visible !important;
 }
 
 .daily-quest-carousel-card {
   width: 38cqw !important;
   min-height: 29cqw !important;
   position: relative !important;
-  padding-left: 13cqw !important;
 }
 
 #boss-portrait {
-  position: absolute !important;
-  left: 0 !important;
-  bottom: -8cqw !important; /* stands directly on background and overlaps the grid */
-  width: 38cqw !important;
-  height: 52cqw !important;
-  z-index: 60 !important; /* ABOVE board grid z:1 and boss-header z:55 — character overlaps board edge */
+  position: relative !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  height: 30cqw !important;
+  z-index: 60 !important;
   border: none !important;
   border-radius: 0 !important;
   background-color: transparent !important;
@@ -3431,7 +3445,9 @@ html, body {
   background-repeat: no-repeat !important;
   overflow: visible !important;
   transition: transform 0.3s ease;
-  pointer-events: none !important; /* CRITICAL: allows player to click/drag grid items behind the character! */
+  pointer-events: none !important;
+  flex-shrink: 0;
+  transform: scale(1.5) !important;
 }
 
 /* Blush overlay inside portrait */
@@ -3447,8 +3463,8 @@ html, body {
 /* Daily quest card avatar — matches #boss-portrait style */
 .daily-npc-avatar {
   position: absolute !important;
-  left: 0 !important;
-  bottom: -5cqw !important;
+  left: 3cqw !important;
+  bottom: 10cqw !important; /* bottom edge aligns with board-frame top border */
   width: 22cqw !important;
   height: 30cqw !important;
   z-index: 60 !important;
@@ -3464,14 +3480,13 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Details and alignment */
-.quest-card-details,
+/* Details and alignment (daily cards only — main card no longer uses quest-card-details) */
 .daily-card-details {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: end;
   padding-left: 1.5cqw;
   box-sizing: border-box;
 }
@@ -3537,7 +3552,6 @@ html, body {
   flex-shrink: 0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   align-self: flex-start;
-  margin-left: 0.75cqw;
 }
 
 .daily-npc-tag-text {
@@ -3547,27 +3561,40 @@ html, body {
   white-space: nowrap;
 }
 
-/* Body row (items requirements capsule) — dark semi-transparent capsule */
+/* Body column (header + items capsule) — dark semi-transparent capsule */
 .quest-card-body,
 .daily-carousel-body {
   display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
   justify-content: center !important;
-  gap: 1cqw !important;
+  gap: 0.5cqw !important;
   width: auto !important;
   margin-top: 0.5cqw !important;
   margin-left: 0.75cqw !important;
   flex: 0 1 auto !important;
-  background: rgba(30, 24, 38, 0.65) !important;
+  background: rgba(30, 24, 38, 0.09) !important;
   backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(1px) !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 99px !important; /* Capsule style! */
+  border-radius: 10px !important; /* Capsule style! */
   padding: 0.5cqw 0.75cqw !important;
   box-sizing: border-box !important;
   height: auto !important;
   transition: background 0.2s ease, box-shadow 0.2s ease;
+  position: relative !important;   /* 前置条件：必须设置定位，relative 最安全，不破坏原有排版 */
+  z-index: 61 !important;
+}
+
+/* Items row wrapper — keeps items + submit button in a horizontal row inside the column body */
+.quest-card-items-row,
+.daily-carousel-items-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1cqw;
+  width: 100%;
 }
 
 /* Glow card when ready to submit */
@@ -3601,6 +3628,8 @@ html, body {
   height: auto !important;
   min-height: 5cqw !important;
   padding: 0.5cqw 0.5cqw 0.5cqw 1cqw !important;
+  margin-left: 0 !important;
+  width: 100% !important;
 }
 
 /* Daily quest items: compact, wrapping content with small margin */
@@ -3611,7 +3640,7 @@ html, body {
 .daily-quest-carousel-card .daily-carousel-body {
   height: auto !important;
   min-height: 5cqw !important;
-  padding: 0.5cqw 1cqw !important;
+  margin-left: 0.75cqw !important;
 }
 
 /* Required Item slots */
@@ -3640,6 +3669,7 @@ html, body {
   background: rgba(76, 175, 80, 0.25) !important;
   border-color: #4caf50 !important;
   box-shadow: 0 0 8px rgba(76, 175, 80, 0.4) !important;
+  overflow: hidden; /* prevent ::after pseudo-element from affecting scroll/layout calculation */
 }
 
 .order-item-tag.fulfilled::after,
@@ -3659,6 +3689,7 @@ html, body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  pointer-events: none; /* prevent pseudo-element from interfering with layout/interaction */
 }
 
 
@@ -3694,7 +3725,7 @@ html, body {
 .order-reward-preview {
   position: absolute !important;
   top: 8cqw !important;
-  right: 2cqw !important;
+  right: 0cqw !important;
   left: auto !important;
   background: rgba(30, 24, 38, 0.75) !important;
   backdrop-filter: blur(8px) !important;
@@ -3910,7 +3941,7 @@ html, body {
 /* Reputation value (128k) floating below the circle */
 #gold-label .composite-gold-text {
   position: absolute !important;
-  bottom: -4.5cqw !important;
+  bottom: -2.5cqw !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
   display: flex !important;
@@ -3949,10 +3980,12 @@ html, body {
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-  flex: 1 1 auto;
-  min-height: 0;
-  gap: 0.5cqw;
-  padding: 0.5cqw 2cqw 1cqw;
+  flex: 0 0 auto;
+  margin-top: auto;
+  min-height: min-content;
+  max-height: max-content;
+  gap: 1.5cqw;
+  padding: 4cqw 2cqw 4cqw;
   box-sizing: border-box;
   z-index: 44;
 }
