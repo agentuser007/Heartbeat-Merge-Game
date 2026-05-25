@@ -244,10 +244,18 @@ class AdSystem {
         var rem = this.getRemaining('freePull');
         if (rem <= 0) {
             btn.disabled = true; btn.classList.add('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.limitReached') + '</span>';
+            btn.innerHTML = '<i data-lucide="video" class="free-pull-cam-icon"></i> <span>免费0/1</span>';
         } else {
             btn.disabled = false; btn.classList.remove('reward-btn-disabled');
-            btn.innerHTML = '<span class="reward-btn-text">' + I18n.t('ad.freePullBtn', { remaining: rem }) + '</span>';
+            btn.innerHTML = '<i data-lucide="video" class="free-pull-cam-icon"></i> <span>免费1/1</span>';
+        }
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons({
+                attrs: {
+                    class: 'lucide'
+                },
+                nameAttr: 'data-lucide'
+            });
         }
     }
 

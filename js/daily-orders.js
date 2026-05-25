@@ -99,18 +99,22 @@ class DailyOrderSystem {
             const detailsEl = document.createElement('div');
             detailsEl.className = 'daily-card-details';
 
-            // Row 1: "Daliy" tag pill
+            // Body container (column: tag pill on top, items row below)
+            const bodyEl = document.createElement('div');
+            bodyEl.className = 'daily-carousel-body';
+
+            // Row 1: "Daliy" tag pill — inside body as first child
             const tagPill = document.createElement('div');
             tagPill.className = 'daily-npc-tag-pill';
             const tagText = document.createElement('span');
             tagText.className = 'daily-npc-tag-text';
             tagText.textContent = 'Daliy';
             tagPill.appendChild(tagText);
-            detailsEl.appendChild(tagPill);
+            bodyEl.appendChild(tagPill);
 
-            // Row 2: Required items + submit button
-            const bodyEl = document.createElement('div');
-            bodyEl.className = 'daily-carousel-body';
+            // Row 2: Required items + submit button (wrapped in items-row)
+            const itemsRow = document.createElement('div');
+            itemsRow.className = 'daily-carousel-items-row';
 
             // Required items — icon only, no name/count
             const reqEl = document.createElement('div');
@@ -153,8 +157,9 @@ class DailyOrderSystem {
                 }
             });
 
-            bodyEl.appendChild(reqEl);
-            bodyEl.appendChild(btn);
+            itemsRow.appendChild(reqEl);
+            itemsRow.appendChild(btn);
+            bodyEl.appendChild(itemsRow);
             detailsEl.appendChild(bodyEl);
 
             card.appendChild(avatarEl);

@@ -456,33 +456,75 @@
       </div>
     </div>
 
-    <!-- ===== GACHA BOTTOM SHEET ===== -->
-    <div class="bottom-sheet" id="gacha-sheet">
-      <div class="sheet-drag-handle"></div>
-      <div class="sheet-header">
-        <div class="sheet-header-left">
-          <i data-lucide="sparkles" class="sheet-header-icon"></i>
-          <span data-i18n="gacha.modalTitle"></span>
+    <!-- ===== GACHA PANEL (Redesigned per Mockup) ===== -->
+    <div class="bottom-sheet gacha-redesign-panel" id="gacha-sheet">
+      <!-- Drag handle kept for swipe-to-close logic compatibility -->
+      <div class="sheet-drag-handle" style="display: none;"></div>
+      
+      <!-- Premium Custom Gacha Header -->
+      <div class="gacha-redesign-header">
+        <button class="gacha-header-back-btn sheet-close" data-close="gacha-sheet" title="返回">
+          <i data-lucide="undo"></i>
+        </button>
+        <div class="gacha-header-title-wrapper">
+          <div class="gacha-header-title-pill">扭蛋</div>
         </div>
-        <button class="sheet-close" data-close="gacha-sheet">✕</button>
+        <button class="gacha-header-help-btn" id="gacha-help-btn" title="帮助">
+          <i data-lucide="help-circle"></i>
+        </button>
       </div>
-      <div id="gacha-pity-display" class="gacha-pity-area"></div>
-      <div id="gacha-result" class="sheet-body">
-        <div class="gacha-hint" data-i18n="gacha.hint"></div>
+
+      <!-- Main Nested Framing -->
+      <div class="gacha-outer-frame">
+        <div class="gacha-inner-frame">
+          
+          <!-- Charcoal Results Box -->
+          <div class="gacha-result-container">
+            <div id="gacha-result" class="gacha-grid-results">
+              <div class="gacha-hint" data-i18n="gacha.hint">✨ 花费钻石抽取随机道具！</div>
+            </div>
+          </div>
+
+          <!-- Pull Controls Section -->
+          <div class="gacha-redesign-controls">
+            <!-- Single Pull -->
+            <div class="gacha-pull-option">
+              <button id="gacha-single" class="gacha-rhombus-btn">
+                <div class="gacha-rhombus-text">单抽</div>
+              </button>
+              <div class="gacha-cost-pill">
+                <i data-lucide="gem" class="gacha-gem-icon"></i>
+                <span id="gacha-single-cost">x100</span>
+              </div>
+            </div>
+
+            <!-- Ten Pull -->
+            <div class="gacha-pull-option">
+              <button id="gacha-ten" class="gacha-rhombus-btn ten">
+                <div class="gacha-rhombus-text">十连抽</div>
+              </button>
+              <div class="gacha-cost-pill">
+                <i data-lucide="gem" class="gacha-gem-icon"></i>
+                <span id="gacha-ten-cost">x900</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Free Pull Area -->
+          <div class="gacha-free-pull-container">
+            <button id="reward-freepull-btn" class="gacha-free-pull-btn">
+              <i data-lucide="video" class="free-pull-cam-icon"></i>
+              <span>免费1/1</span>
+            </button>
+          </div>
+
+        </div>
       </div>
-      <div class="gacha-buttons">
-        <button id="gacha-single" class="gacha-pull-btn"></button>
-        <button id="gacha-ten" class="gacha-pull-btn ten"></button>
-      </div>
-      <div class="gacha-reward-buttons">
-        <button
-          id="reward-diamond-btn"
-          class="reward-btn reward-btn-diamond"
-        ></button>
-        <button
-          id="reward-freepull-btn"
-          class="reward-btn reward-btn-freepull"
-        ></button>
+      
+      <!-- Kept hidden for compatibility with other game code if they check for it -->
+      <div id="gacha-pity-display" style="display: none;"></div>
+      <div class="gacha-reward-buttons" style="display: none;">
+        <button id="reward-diamond-btn" style="display: none;"></button>
       </div>
     </div>
 

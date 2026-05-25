@@ -35,11 +35,17 @@ class GachaSystem {
     updateButtons() {
         if (this.singleBtn) {
             this.singleBtn.disabled = !this.logic.canAffordSingle(this.game.currency);
-            this.singleBtn.textContent = `💎 ${GACHA_COST.singleCost} ${I18n.t('gacha.singlePullLabel')}`;
         }
         if (this.tenBtn) {
             this.tenBtn.disabled = !this.logic.canAffordTen(this.game.currency);
-            this.tenBtn.textContent = `💎 ${GACHA_COST.tenCost} ${I18n.t('gacha.tenPullLabel')}`;
+        }
+        const singleCostEl = document.getElementById('gacha-single-cost');
+        if (singleCostEl) {
+            singleCostEl.textContent = `x${GACHA_COST.singleCost}`;
+        }
+        const tenCostEl = document.getElementById('gacha-ten-cost');
+        if (tenCostEl) {
+            tenCostEl.textContent = `x${GACHA_COST.tenCost}`;
         }
     }
 
@@ -91,7 +97,8 @@ class GachaSystem {
             card.style.animationDelay = `${idx * 0.08}s`;
             if (item.rarity === 'SSR') card.classList.add('gacha-ssr-reveal');
             const rc = GACHA_RARITY_CONFIG[item.rarity];
-            card.innerHTML = `<div class="gacha-card-icon">${item.icon}</div>
+            card.innerHTML = `<div class="gacha-card-rarity-badge rarity-${item.rarity.toLowerCase()}">${item.rarity}</div>
+                <div class="gacha-card-icon">${item.icon}</div>
                 <div class="gacha-card-name">${item.name}</div>
                 <div class="gacha-card-rarity" style="color:${rc.color}">${item.rarity}</div>`;
             this.resultArea.appendChild(card);
