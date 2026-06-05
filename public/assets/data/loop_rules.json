@@ -1,0 +1,10 @@
+{
+  "1": { "title": "新生试炼", "specialRules": [] },
+  "2": { "title": "第二学期", "specialRules": ["dailyGoldUp"] },
+  "3": { "title": "校庆季", "specialRules": ["perfumeBoost"] },
+  "4": { "title": "期末风暴", "specialRules": ["timedOrdersUp"] },
+  "5": { "title": "盛夏合宿", "specialRules": ["energyRegenDown"] },
+  "6": { "title": "文化祭", "specialRules": ["dailyGoldUp", "perfumeBoost"] },
+  "7": { "title": "修学旅行", "specialRules": ["timedOrdersUp", "energyRegenDown"] },
+  "8": { "title": "毕业前夜", "specialRules": ["dailyGoldUp", "perfumeBoost", "timedOrdersUp"] }
+}

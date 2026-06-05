@@ -1,0 +1,87 @@
+{
+  "1_0": {
+    "npcName": "🏫",
+    "text": "You were late to the opening ceremony. Rushing into the hall, the door banged loudly in the silence — all eyes turned to you, but only one person didn't laugh. He simply watched you, and pulled out a chair.",
+    "playerText": "The most embarrassing start ever... but that gaze — I'll remember it."
+  },
+  "1_2": {
+    "npcName": "📚",
+    "text": "The new foreign tutor walked into the classroom, golden hair gleaming in the sunlight. He scanned the room and his gaze lingered on you for three seconds — 'You must be the one everyone talks about.' His smile was like a spring breeze.",
+    "playerText": "He noticed me... Is this nervousness, or excitement?"
+  },
+  "2_0": {
+    "npcName": "🍂",
+    "text": "Late autumn on campus, ginkgo leaves paved a golden path. You crouched down to pick one up, and someone stopped behind you — a leaf was lifted from your hair. '...You had a leaf in your hair.' His voice was as cold as the first winter wind.",
+    "playerText": "Thanks... Even though you look so stern. But I don't really mind?"
+  },
+  "2_3": {
+    "npcName": "🍵",
+    "text": "Called to the principal's office, you nervously pushed open the door. Vincent simply handed you a cup of tea: 'I read your enrollment report — impressive. But don't just focus on grades. Sometimes, you need to learn to rest too.'",
+    "playerText": "The Principal... is unexpectedly gentle? No, it must be my imagination!"
+  },
+  "3_0": {
+    "npcName": "🎪",
+    "text": "School festival prep was exhausting. You were struggling to carry decorations down the corridor when someone grabbed the other end — 'I'll help.' Morven didn't look at you, but he slowed his pace.",
+    "playerText": "Hey, the school heartthrob helps carry stuff too? Character breaking, much~"
+  },
+  "3_1": {
+    "npcName": "🎆",
+    "text": "Festival fireworks lit up the night sky, and you were pushed onto the center stage — as the spotlight hit, you spotted a familiar gaze in the audience. 'Next up, our special festival performance!'",
+    "playerText": "This is my moment! I'll make sure those eyes are only watching me!"
+  },
+  "4_0": {
+    "npcName": "❄️",
+    "text": "The blizzard grew fiercer, and only you and one other person remained in the classroom. The world outside was a white blur, but his gaze cut through the storm and landed on you — 'Cold? Come sit here.' He pointed to the spot beside him.",
+    "playerText": "No matter how fierce the storm... I'm not afraid, because you're right here."
+  },
+  "4_1": {
+    "npcName": "🌙",
+    "text": "Finals week — the library was packed. You fell asleep at your desk and woke to find a jacket on your shoulders, a warm cup of cocoa beside it, and a note: 'Keep going.'",
+    "playerText": "Such warmth... I definitely won't let everyone down! ...And thank you."
+  },
+  "5_0": {
+    "npcName": "🏃",
+    "text": "Day one of training camp, the PE teacher blew his whistle — 'Sports day officially begins! On your marks!' The sun blazed overhead, sweat rolled down, and as you sprinted down the track, you heard someone shouting your name from the stands.",
+    "playerText": "Full speed ahead! I'll show him my best!"
+  },
+  "5_2": {
+    "npcName": "🔥",
+    "text": "The last night of camp, the bonfire painted everyone's faces red. You slipped away to the beach alone, but footsteps followed — 'Watching the sea by yourself? Aren't you lonely?' The firelight behind him stretched his shadow long.",
+    "playerText": "Not lonely. Because I knew you'd follow."
+  },
+  "6_0": {
+    "npcName": "🎭",
+    "text": "The Culture Festival is officially open! Your class booth has a huge line. While you're run off your feet, someone hands you a water bottle — 'You haven't eaten lunch.' It sounded like an order, but his eyes were full of concern.",
+    "playerText": "Thanks for caring! Once I'm done... want to walk around together?"
+  },
+  "6_2": {
+    "npcName": "🎭",
+    "text": "The festival play rehearsal entered the final stretch, and you were cast as the lead. One line in the script read 'I love you' — when you rehearsed that line, someone in the audience was burning holes with their gaze.",
+    "playerText": "A minute on stage, a decade of practice! ...But that line is only for one person!"
+  },
+  "7_0": {
+    "npcName": "🚂",
+    "text": "The school trip train slowly pulled out of the station, classmates excitedly chatting about the destination. You leaned against the window watching the scenery, but someone across from you was watching you instead — by the time you noticed, he'd already looked away.",
+    "playerText": "Let's go! New adventures await... with him!"
+  },
+  "7_1": {
+    "npcName": "⛩️",
+    "text": "During the school trip, you stopped in front of an ancient temple. What should you write on the wishing plaque? As you hesitated, someone beside you whispered: 'If the person your wish is about is standing right next to you... do you still need to write it?'",
+    "playerText": "...What did you just say?! The wind was too loud, I didn't catch that!"
+  },
+  "8_0": {
+    "npcName": "🎓",
+    "text": "24 hours until graduation. You stood on the rooftop watching the sunset, and familiar footsteps approached from behind — closer and closer. 'There's something I need to say. I've waited three years — I can't wait anymore.'",
+    "playerText": "I'm listening... I've been listening all along."
+  },
+  "8_1": {
+    "npcName": "💐",
+    "text": "At the graduation ceremony, he walked through the crowd toward you. In his hand was a letter with your name on the envelope. 'This is my final assignment — on how to fall for someone. Teacher, please grade it.'",
+    "playerText": "Full marks. From the very first day, it's been full marks."
+  },
+  "8_3": {
+    "npcName": "💍",
+    "text": "The ceremony ended, and the campus emptied. You walked alone down the ginkgo-lined path, and he was waiting at the other end. 'From here, walk with me. Not for three years — forever.' He reached out his hand —",
+    "playerText": "I will. From the day we met, it was already decided."
+  }
+}

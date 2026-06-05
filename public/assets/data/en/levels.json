@@ -1,0 +1,129 @@
+[
+  {
+    "id": 0,
+    "bossName": "Morven",
+    "bossTitle": "The Aloof Heartthrob",
+    "orders": [
+      {
+        "id": "l1_o1",
+        "name": "Catch His Eye",
+        "dialogue": {
+          "npc": "\"...Your notes fell. (Pause) Your handwriting is... decent. Neater than mine.\"",
+          "player": "\"Was that a compliment? I'll take it~\""
+        }
+      },
+      {
+        "id": "l1_o2",
+        "name": "Close the Distance",
+        "dialogue": {
+          "npc": "\"Your lips... different color. (Looks away) And that dessert — I don't like sweets. But... if you made it, I wouldn't mind next time.\"",
+          "player": "\"Hehe, caught you looking~ Next time I'll make something even better!\""
+        }
+      },
+      {
+        "id": "l1_o3",
+        "name": "First Flutter",
+        "dialogue": {
+          "npc": "\"Another perfect score? ... (Silent pause) Let's walk home together. Don't get the wrong idea — it's just on my way. ...It's on my way every day.\"",
+          "player": "\"Every day, huh? What a convenient route, senior~\""
+        }
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "bossName": "Leo",
+    "bossTitle": "The Passionate Coach",
+    "orders": [
+      {
+        "id": "l2_o1",
+        "name": "Work Up a Sweat",
+        "dialogue": {
+          "npc": "\"Phew —! I'm dying of thirst! This water is a lifesaver! ...Hey, why are your hands so cold? Here, let me warm them up!\"",
+          "player": "\"Coach, your hands are so hot! Just finished a game, right?~\""
+        }
+      },
+      {
+        "id": "l2_o2",
+        "name": "⚡ First Aid",
+        "dialogue": {
+          "npc": "\"I bumped my lip during the game... What are you putting on it? Smells nice... (Ears suddenly red) You're too close! No wait — I didn't say I hated it —\"",
+          "player": "\"Hold still! Let me put this on, or it won't heal properly~\""
+        },
+        "failText": "The coach got pulled away to deal with other injuries... Your feelings didn't reach him."
+      },
+      {
+        "id": "l2_o3",
+        "name": "Clueless No More",
+        "dialogue": {
+          "npc": "\"Your bento is so good! I want to make it for you every day! Wait no — I mean, I want to eat your — NO! Um... are you free this weekend? Let's watch a game! Just the two of us!\"",
+          "player": "\"Haha, Coach, your face is so red! Sure, just the two of us~\""
+        }
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "bossName": "Daniel",
+    "bossTitle": "The Romantic Tutor",
+    "orders": [
+      {
+        "id": "l3_o1",
+        "name": "Cultural Exchange",
+        "dialogue": {
+          "npc": "\"What a wonderful scent... You look like you stepped out of a Monet painting today. (Leans in slightly) Do you know the language of roses? It means 'heartbeat.' Just like how I feel right now.\"",
+          "player": "\"Thank you~ Daniel always knows how to make a girl blush...\""
+        }
+      },
+      {
+        "id": "l3_o2",
+        "name": "⚡ Romantic Invitation",
+        "dialogue": {
+          "npc": "\"Beautiful, and so brilliant too. (Fingers lightly touch) Could I buy you a coffee tonight? No shop talk — just... you.\"",
+          "player": "\"I'd love to! But I don't drink coffee at night~ How about hot cocoa instead?\""
+        },
+        "failText": "The romantic atmosphere slowly faded... Daniel smiled with regret: 'Maybe next time.'"
+      },
+      {
+        "id": "l3_o3",
+        "name": "Heartfelt Confession",
+        "dialogue": {
+          "npc": "\"Chérie... Your eyes hold an entire galaxy, and I have completely fallen into them. From now on, every poem I write will be for you alone.\"",
+          "player": "\"Me too... My heart beats only for you.\""
+        }
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "bossName": "Vincent",
+    "bossTitle": "The Charismatic Principal",
+    "orders": [
+      {
+        "id": "l4_o1",
+        "name": "Routine Inspection",
+        "dialogue": {
+          "npc": "\"Young lady, your performance is indeed impressive. (Adjusts glasses) But if you want to catch my attention, this is far from enough. ...Keep trying. I'm watching you.\"",
+          "player": "\"(Smiles) Principal, please keep watching. I won't disappoint you.\""
+        }
+      },
+      {
+        "id": "l4_o2",
+        "name": "⚡ Break the Defense",
+        "dialogue": {
+          "npc": "\"You always seem so proper... I never expected you to barge into my office. (Swallows hard) ...Do you know what this means?\"",
+          "player": "\"(Smiles) It means... the Principal will make an exception for me?\""
+        },
+        "failText": "The Principal's defenses remain impenetrable... Your feelings couldn't pierce that calm facade."
+      },
+      {
+        "id": "l4_o3",
+        "name": "Bow to the Queen",
+        "dialogue": {
+          "npc": "\"I make the rules, but you... are my only exception. (Loosens tie) No classes today. Stay here — with me. That's not an order. It's a request.\"",
+          "player": "\"As you wish, Principal~ ❤️ This time, it's entirely voluntary.\""
+        }
+      }
+    ]
+  }
+]

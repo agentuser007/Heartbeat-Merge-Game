@@ -52,6 +52,7 @@
     "panelTitle": "日常跑腿",
     "panelSub": "提交物品赚金币",
     "submit": "提交",
+    "fulfill": "提交",
     "completed": "✅ 已完成",
     "refreshed": "新的日常订单已刷新！",
     "orderComplete": "订单完成！"
@@ -83,6 +84,9 @@
     "cancelBtn": "取消"
   },
   "dailyBuff": {
+    "todayBuff": "今日增益",
+    "activate": "激活",
+    "dismiss": "暂不使用",
     "mergeBonus": "合成加成",
     "mergeBonusDesc": "合成时额外产出1个物品",
     "energyDiscount": "体力折扣",
@@ -94,11 +98,21 @@
     "luckyMerge": "幸运合成",
     "luckyMergeDesc": "合成时有概率跳级"
   },
+  "game_complete": {
+    "emoji": "👑",
+    "title": "🎉 通关成功 🎉",
+    "subtitle": "你就是永远的电眼女王！",
+    "button": "🔄 重新开始"
+  },
   "gacha": {
+    "panelTitle": "扣蛋机",
     "modalTitle": "扣蛋机",
     "hint": "✨ 花费钻石抽取随机道具！",
+    "singlePull": "单抽",
     "singlePullLabel": "单抽",
-    "tenPullLabel": "十连抽"
+    "tenPull": "十连抽",
+    "tenPullLabel": "十连抽",
+    "freePull": "🎥 免费"
   },
   "heroine": {
     "panelTitle": "女主养成",
@@ -212,6 +226,7 @@
     "celebrateEmojis": "🎉,🥳,💖,✨,🌟,🎊"
   },
   "gameTitle": "心动合成：电眼女王",
+  "loading": "加载中...",
   "loop": {
     "rewardBadge": "奖励 x{multiplier}",
     "newStart": "新的开始！",

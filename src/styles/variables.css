@@ -1,0 +1,127 @@
+/* ============================================================
+   variables.css — CSS Custom Properties (Design Tokens)
+   Extracted from css/style.css :root block
+   ============================================================ */
+
+:root {
+  /* --- Background (warm peach/caramel) --- */
+  --bg-game-start: #FFE1CC;
+  --bg-game-mid: #FFCCAC;
+  --bg-game-end: #DDAA8B;
+
+  /* --- Text --- */
+  --text-heading: #5a3e2b;
+  --text-primary: #fff;
+  --text-secondary: rgba(90, 62, 43, 0.65);
+  --text-sheet: #5a3e2b;
+  --text-muted: #B28265;
+
+  /* --- Warm solid panels (replacing glass) --- */
+  --panel-bg: #FFCCAC;
+  --panel-border: #FEDAB2;
+  --glass-blur: 0px;
+
+  /* --- Warm color palette --- */
+  --caramel: #DDAA8B;
+  --peach-light: #E9C3A8;
+  --salmon: #FFCCAC;
+  --cream: #FFE1CC;
+  --warm-brown: #A88664;
+  --warm-brown-icon: #C99270;
+  --warm-border: #CDA080;
+  --light-peach: #FFD3B4;
+  --pale-peach: #FEDAB2;
+  --off-white: #FAF5F8;
+  --deep-brown-text: #B28265;
+
+  /* --- Neumorphic shadows --- */
+  --shadow-neu-up: -5px -5px 10px rgba(255,255,255,0.6), 5px 5px 10px rgba(160,120,80,0.25);
+  --shadow-neu-down: 5px 5px 10px rgba(255,255,255,0.6), -5px -5px 10px rgba(160,120,80,0.25);
+
+  /* --- Accent colors --- */
+  --accent-pink: #F35683;
+  --accent-purple: #A38CCC;
+  --accent-gold: #DDAA8B;
+  --color-success: #5BAD7D;
+  --color-danger: #D32F2F;
+  --color-danger-bright: #FF1744;
+  --color-reward: #F57F17;
+  --rarity-r: #4A90D9;
+  --rarity-sr: #9b59b6;
+  --rarity-ssr: #f1c40f;
+  --daily-icon-start: #FFD54F;
+  --daily-icon-end: #FFB300;
+  --scissor-color: #9C27B0;
+  --energy-color: #5BAD7D;
+  --highlight-pink: #FFA1CA;
+
+  /* --- VN / CG accent colors --- */
+  --vn-accent: #7B68EE;
+  --vn-accent-light: #9B88FF;
+  --vn-pink: #FF6B9D;
+  --vn-pink-light: #FF8E9E;
+
+  /* --- Semantic text colors --- */
+  --text-dark: #333;
+  --text-medium: #555;
+  --text-light: #999;
+  --text-muted-alt: #666;
+  --text-inverse: #fff;
+
+  /* --- Surfaces & overlays --- */
+  --overlay-bg: rgba(0, 0, 0, 0.55);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --divider: rgba(0, 0, 0, 0.08);
+  --surface-raised: #fff;
+  --surface-muted: #f5f5f5;
+
+  /* --- Figma design tokens --- */
+  --status-bar-bg: #F5F5FA;
+  --status-bar-pill-shadow: 5px 5px 10px rgba(170, 170, 204, 0.5), -5px -5px 10px #fff;
+  --status-bar-pill-radius: 32px;
+  --currency-pill-bg: #F5F5FA;
+  --currency-text: #DDAA8B;
+  --energy-text: #5BAD7D;
+  --info-bar-bg: #968173;
+  --info-bar-highlight: #BC9E8C;
+  --cell-highlight: #A3E4EB;
+  --rank-text: #DDAA8B;
+  --rank-number: #fff;
+  --avatar-border: #DDAA8B;
+  --grid-area-bg: #A88664;
+  --progress-track: #F5F5FA;
+  --progress-fill: #F35683;
+  --name-tag-bg: #A38CCC;
+  --name-tag-text: #E3DAFF;
+  --reward-bubble-bg: rgba(0, 0, 0, 0.62);
+  --reward-bubble-border: #FCEFFF;
+  --bottom-action-bg: #968173;
+  --bottom-action-left: #BC9E8C;
+  --hint-text: rgba(250, 245, 248, 0.7);
+  --divider-line: rgba(244, 219, 215, 0.45);
+  --sell-btn-bg: #F35683;
+  --sell-btn-border: #E9C3A8;
+
+  /* --- Grid / Board --- */
+  --board-max-width: 393px;
+  --grid-gap: 1px;
+  --cell-radius: 6px;
+  --cell-bg: #E9C3A8;
+  --cell-bg-alt: #DDAA8B;
+  --cell-border: #FFD3B4;
+  --board-bg: #DDAA8B;
+  --board-border: #E3B084;
+  --board-frame-border: #FEDAB2;
+  --board-frame-bg: #FFCCAC;
+  --locked-bg: rgba(0, 0, 0, 0.25);
+
+  /* --- Transitions --- */
+  --transition-fast: 0.15s ease;
+  --transition-med: 0.35s ease;
+
+  /* --- Layout --- */
+  --nav-height: 56px;
+
+  /* --- Figma scale (container query) --- */
+  --figma-scale: min(calc(100vw / 402), calc(100vh / 874));
+}

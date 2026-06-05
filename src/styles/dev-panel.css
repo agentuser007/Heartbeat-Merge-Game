@@ -1,0 +1,303 @@
+/* ============================================================
+   DEV PANEL — Developer Mode UI Navigator Styles
+   All classes prefixed with `dev-` to avoid game style conflicts
+   ============================================================ */
+
+/* --- Toggle Button --- */
+.dev-toggle-btn {
+  position: fixed !important;
+  top: 10px !important;
+  right: 10px !important;
+  width: 44px !important;
+  height: 44px !important;
+  z-index: 999999 !important;
+  border-radius: 12px;
+  background: rgba(20, 20, 30, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 20px;
+  line-height: 44px;
+  text-align: center;
+  cursor: pointer !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s, transform 0.15s;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+.dev-toggle-btn:hover {
+  background: rgba(40, 40, 60, 0.95);
+  transform: scale(1.08);
+}
+.dev-toggle-btn:active {
+  transform: scale(0.95);
+}
+.dev-toggle-btn.dev-hidden {
+  display: none !important;
+}
+
+/* --- Main Panel --- */
+.dev-panel {
+  position: fixed !important;
+  top: 60px !important;
+  right: 10px !important;
+  width: 320px !important;
+  max-height: 80vh;
+  z-index: 999998 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  clip: auto !important;
+  clip-path: none !important;
+  visibility: visible !important;
+  background: rgba(20, 20, 30, 0.95);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none !important;
+  font-family: 'Jiangcheng Yuanti', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e0e0e0;
+  font-size: 13px;
+}
+.dev-panel.dev-hidden {
+  display: none !important;
+}
+
+/* --- Panel Header --- */
+.dev-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(30, 30, 50, 0.98);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: grab;
+  flex-shrink: 0;
+}
+.dev-panel-header:active {
+  cursor: grabbing;
+}
+.dev-panel-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.dev-panel-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #aaa;
+  font-size: 16px;
+  line-height: 28px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.dev-panel-close:hover {
+  background: rgba(255, 80, 80, 0.3);
+  color: #ff6666;
+}
+
+/* --- Tab Bar --- */
+.dev-tab-bar {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-shrink: 0;
+  background: rgba(25, 25, 40, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.dev-tab-bar::-webkit-scrollbar {
+  display: none;
+}
+.dev-tab-btn {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.dev-tab-btn:hover {
+  color: #bbb;
+  background: rgba(255, 255, 255, 0.04);
+}
+.dev-tab-btn.dev-active {
+  color: #fff;
+  border-bottom-color: #4A90D9;
+  background: rgba(74, 144, 217, 0.12);
+}
+
+/* --- Tab Content Area --- */
+.dev-tab-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 10px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+.dev-tab-content::-webkit-scrollbar {
+  width: 5px;
+}
+.dev-tab-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dev-tab-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+.dev-tab-page {
+  display: none;
+}
+.dev-tab-page.dev-active {
+  display: block;
+}
+
+/* --- Close All Button --- */
+.dev-close-all-btn {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: rgba(255, 60, 60, 0.15);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  border-radius: 8px;
+  color: #ff6666;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+.dev-close-all-btn:hover {
+  background: rgba(255, 60, 60, 0.25);
+}
+
+/* --- Section Headers --- */
+.dev-section-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ddd;
+  padding: 8px 10px 4px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+  border-left: 3px solid #4A90D9;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0 6px 6px 0;
+}
+.dev-section-header.dev-boss-header {
+  border-left-color: inherit;
+}
+
+/* --- Action Buttons --- */
+.dev-action-btn {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  line-height: 1.4;
+}
+.dev-action-btn:hover {
+  background: rgba(74, 144, 217, 0.18);
+  border-color: rgba(74, 144, 217, 0.3);
+  color: #fff;
+}
+.dev-action-btn:active {
+  background: rgba(74, 144, 217, 0.28);
+  transform: scale(0.98);
+}
+.dev-action-btn.dev-resource-btn {
+  background: rgba(255, 200, 50, 0.12);
+  border-color: rgba(255, 200, 50, 0.25);
+  color: #f1c40f;
+}
+.dev-action-btn.dev-resource-btn:hover {
+  background: rgba(255, 200, 50, 0.22);
+  color: #ffd700;
+}
+
+/* --- Boss Avatar in Section --- */
+.dev-boss-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* --- Panel Footer --- */
+.dev-panel-footer {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  background: rgba(25, 25, 40, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #666;
+}
+.dev-persist-btn {
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #888;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.dev-persist-btn:hover {
+  background: rgba(74, 144, 217, 0.15);
+  color: #bbb;
+}
+.dev-persist-btn.dev-persist-on {
+  background: rgba(74, 144, 217, 0.2);
+  border-color: rgba(74, 144, 217, 0.35);
+  color: #4A90D9;
+}
+
+/* --- Dragging State --- */
+.dev-dragging {
+  opacity: 0.85;
+  transition: none;
+}
+
+/* --- Data Pending Indicator --- */
+.dev-data-pending {
+  display: block;
+  padding: 12px 16px;
+  color: #888;
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+}

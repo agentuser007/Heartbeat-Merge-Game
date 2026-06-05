@@ -1,4 +1,4 @@
- {
+{
   "achievement": {
     "unlocked": "Achievement Unlocked! Claim your reward",
     "claimed": "Claimed",
@@ -52,6 +52,7 @@
     "panelTitle": "Daily Errands",
     "panelSub": "Submit items to earn coins",
     "submit": "Submit",
+    "fulfill": "Submit",
     "completed": "✅ Done",
     "refreshed": "New daily orders refreshed!",
     "orderComplete": "Order Complete!"
@@ -83,6 +84,9 @@
     "cancelBtn": "Cancel"
   },
   "dailyBuff": {
+    "todayBuff": "Today's Buff",
+    "activate": "Activate",
+    "dismiss": "Skip",
     "mergeBonus": "Merge Bonus",
     "mergeBonusDesc": "Merge produces 1 extra item",
     "energyDiscount": "Energy Discount",
@@ -94,11 +98,21 @@
     "luckyMerge": "Lucky Merge",
     "luckyMergeDesc": "Chance to skip a level when merging"
   },
+  "game_complete": {
+    "emoji": "👑",
+    "title": "🎉 Victory! 🎉",
+    "subtitle": "You are the eternal Queen of Hearts!",
+    "button": "🔄 Play Again"
+  },
   "gacha": {
+    "panelTitle": "Gacha Machine",
     "modalTitle": "Gacha Machine",
     "hint": "✨ Spend diamonds to draw random items!",
+    "singlePull": "Single",
     "singlePullLabel": "Single",
-    "tenPullLabel": "×10 Pull"
+    "tenPull": "×10 Pull",
+    "tenPullLabel": "×10 Pull",
+    "freePull": "🎥 Free"
   },
   "heroine": {
     "panelTitle": "Heroine Training",
@@ -212,6 +226,7 @@
     "celebrateEmojis": "🎉,🥳,💖,✨,🌟,🎊"
   },
   "gameTitle": "Heartbeat Merge: Queen of Hearts",
+  "loading": "Loading...",
   "loop": {
     "rewardBadge": "Reward x{multiplier}",
     "newStart": "A New Beginning!",

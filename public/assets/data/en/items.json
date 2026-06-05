@@ -1,0 +1,204 @@
+{
+  "lip_1": {
+    "id": "lip_1",
+    "name": "Lip Balm"
+  },
+  "lip_2": {
+    "id": "lip_2",
+    "name": "Color-Changing Lipstick"
+  },
+  "lip_3": {
+    "id": "lip_3",
+    "name": "Matte Lip Glaze"
+  },
+  "lip_4": {
+    "id": "lip_4",
+    "name": "Velvet Lipstick"
+  },
+  "lip_5": {
+    "id": "lip_5",
+    "name": "Queen's Aura"
+  },
+  "lip_6": {
+    "id": "lip_6",
+    "name": "Kiss of Beauty"
+  },
+  "lip_7": {
+    "id": "lip_7",
+    "name": "Timeless Beauty"
+  },
+  "lip_8": {
+    "id": "lip_8",
+    "name": "Born to Charm"
+  },
+  "perf_1": {
+    "id": "perf_1",
+    "name": "Sample Vial"
+  },
+  "perf_2": {
+    "id": "perf_2",
+    "name": "Roll-On Fragrance"
+  },
+  "perf_3": {
+    "id": "perf_3",
+    "name": "Fresh Mist"
+  },
+  "perf_4": {
+    "id": "perf_4",
+    "name": "Irresistible Scent"
+  },
+  "perf_5": {
+    "id": "perf_5",
+    "name": "Fatal Pheromone"
+  },
+  "perf_6": {
+    "id": "perf_6",
+    "name": "Moonlit Mist"
+  },
+  "perf_7": {
+    "id": "perf_7",
+    "name": "Eternal Night Fragrance"
+  },
+  "perf_8": {
+    "id": "perf_8",
+    "name": "Soul Resonance"
+  },
+  "study_1": {
+    "id": "study_1",
+    "name": "Scratch Paper"
+  },
+  "study_2": {
+    "id": "study_2",
+    "name": "Class Notes"
+  },
+  "study_3": {
+    "id": "study_3",
+    "name": "Key Study Guide"
+  },
+  "study_4": {
+    "id": "study_4",
+    "name": "Perfect Exam Paper"
+  },
+  "study_5": {
+    "id": "study_5",
+    "name": "Recommendation Letter"
+  },
+  "study_6": {
+    "id": "study_6",
+    "name": "Academic Thesis"
+  },
+  "study_7": {
+    "id": "study_7",
+    "name": "Genius Scholar"
+  },
+  "study_8": {
+    "id": "study_8",
+    "name": "Legendary Principal"
+  },
+  "food_1": {
+    "id": "food_1",
+    "name": "Mint Candy"
+  },
+  "food_2": {
+    "id": "food_2",
+    "name": "Filled Chocolate"
+  },
+  "food_3": {
+    "id": "food_3",
+    "name": "Energy Boost Drink"
+  },
+  "food_4": {
+    "id": "food_4",
+    "name": "Love Bento"
+  },
+  "food_5": {
+    "id": "food_5",
+    "name": "Grand Feast Box"
+  },
+  "food_6": {
+    "id": "food_6",
+    "name": "Michelin Dinner"
+  },
+  "food_7": {
+    "id": "food_7",
+    "name": "Royal Banquet"
+  },
+  "food_8": {
+    "id": "food_8",
+    "name": "Nectar of Heaven"
+  },
+  "gen_makeup_1": {
+    "id": "gen_makeup_1",
+    "name": "Zip Pouch"
+  },
+  "gen_makeup_2": {
+    "id": "gen_makeup_2",
+    "name": "Makeup Bag"
+  },
+  "gen_makeup_3": {
+    "id": "gen_makeup_3",
+    "name": "Vanity Box"
+  },
+  "gen_makeup_4": {
+    "id": "gen_makeup_4",
+    "name": "Suitcase"
+  },
+  "gen_makeup_5": {
+    "id": "gen_makeup_5",
+    "name": "Vanity Desk"
+  },
+  "gen_makeup_6": {
+    "id": "gen_makeup_6",
+    "name": "Walk-in Closet"
+  },
+  "gen_makeup_7": {
+    "id": "gen_makeup_7",
+    "name": "Style Studio"
+  },
+  "gen_makeup_8": {
+    "id": "gen_makeup_8",
+    "name": "Private Vault"
+  },
+  "gen_study_1": {
+    "id": "gen_study_1",
+    "name": "Pencil Case"
+  },
+  "gen_study_2": {
+    "id": "gen_study_2",
+    "name": "Stationery Box"
+  },
+  "gen_study_3": {
+    "id": "gen_study_3",
+    "name": "School Bag"
+  },
+  "gen_study_4": {
+    "id": "gen_study_4",
+    "name": "Book Crate"
+  },
+  "gen_study_5": {
+    "id": "gen_study_5",
+    "name": "Bookshelf"
+  },
+  "gen_study_6": {
+    "id": "gen_study_6",
+    "name": "Study Room"
+  },
+  "gen_study_7": {
+    "id": "gen_study_7",
+    "name": "Library"
+  },
+  "gen_study_8": {
+    "id": "gen_study_8",
+    "name": "Hall of Knowledge"
+  },
+  "joker": {
+    "id": "joker",
+    "name": "Wild Card",
+    "description": "Drag onto any item to instantly upgrade it by 1 level"
+  },
+  "scissor": {
+    "id": "scissor",
+    "name": "Time Scissors",
+    "description": "Split a high-level item into two items of one level lower"
+  }
+}

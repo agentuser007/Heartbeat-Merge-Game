@@ -1,0 +1,332 @@
+[
+    {
+        "id": 0,
+        "bossName": "林墨白",
+        "bossTitle": "高冷校草",
+        "bossAvatar": "assets/avatar/morven_no_bg.png",
+        "bossColor": "#4A90D9",
+        "bgGradient": "linear-gradient(180deg, #E8F0FE 0%, #B8D4F0 50%, #8BB8E0 100%)",
+        "totalHp": 120,
+        "orders": [
+            {
+                "id": "l1_o1",
+                "name": "引起注意",
+                "required": [
+                    {
+                        "itemId": "study_2",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_2",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 20,
+                "diamondReward": 30,
+                "dialogue": {
+                    "npc": "「……你的笔记，掉地上了。（停顿）字写得……还行吧。比我的整齐点。」",
+                    "player": "「学长在夸我吗？那我继续努力~」"
+                }
+            },
+            {
+                "id": "l1_o2",
+                "name": "拉近距离",
+                "required": [
+                    {
+                        "itemId": "lip_3",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 40,
+                "diamondReward": 50,
+                "dialogue": {
+                    "npc": "「你嘴唇……颜色不一样。（别过脸）还有那个甜点，我不吃甜的。但……你做的，下次可以再给我。」",
+                    "player": "「嘿嘿，被你看出来啦~ 下次给你做更好吃的！」"
+                }
+            },
+            {
+                "id": "l1_o3",
+                "name": "初次心动",
+                "required": [
+                    {
+                        "itemId": "study_3",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 60,
+                "diamondReward": 80,
+                "dialogue": {
+                    "npc": "「又是满分？……（沉默片刻）放学一起走吧。别误会，只是顺路。……每天都顺路。」",
+                    "player": "「每天都顺路？那学长你可真巧呀~」"
+                }
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "bossName": "陆之昂",
+        "bossTitle": "热血体育老师",
+        "bossAvatar": "assets/avatar/leo_no_bg.png",
+        "bossColor": "#E8652A",
+        "bgGradient": "linear-gradient(180deg, #FFF3E0 0%, #FFD9A0 50%, #FFB347 100%)",
+        "totalHp": 300,
+        "orders": [
+            {
+                "id": "l2_o1",
+                "name": "挥洒汗水",
+                "required": [
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "study_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 80,
+                "diamondReward": 50,
+                "dialogue": {
+                    "npc": "「呼——！渴死了！你送的水简直是救命恩人！……那个，你手怎么冰的？来，我帮你暖暖！」",
+                    "player": "「老师，你的手好烫！刚打完球吧~」"
+                }
+            },
+            {
+                "id": "l2_o2",
+                "name": "⚡ 急救",
+                "required": [
+                    {
+                        "itemId": "lip_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": true,
+                "timeLimit": 30,
+                "damage": 100,
+                "diamondReward": 80,
+                "dialogue": {
+                    "npc": "「刚打球撞了嘴角……你帮我涂的这是什么？有点香……（耳朵突然红了）你离太近了！不是——我没说不好——」",
+                    "player": "「别动嘛，乖乖让我贴上，不然伤口好不了哦~」"
+                },
+                "failText": "老师被拉去处理其他伤了……你的心意没能传达。"
+            },
+            {
+                "id": "l2_o3",
+                "name": "直男开窍",
+                "required": [
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "lip_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 120,
+                "diamondReward": 100,
+                "dialogue": {
+                    "npc": "「你的便当真好吃！每天都想做给你吃！不对——我是说，每天我都想吃你——不是！那个……周末有空吗？一起看比赛？就我们两个！」",
+                    "player": "「哈哈，老师你脸好红！好呀，就我们两个~」"
+                }
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "bossName": "Daniel",
+        "bossTitle": "浪漫外教",
+        "bossAvatar": "assets/avatar/daniel_no_bg.png",
+        "bossColor": "#9B59B6",
+        "bgGradient": "linear-gradient(180deg, #F3E5F5 0%, #CE93D8 50%, #AB47BC 100%)",
+        "totalHp": 600,
+        "orders": [
+            {
+                "id": "l3_o1",
+                "name": "文化交流",
+                "required": [
+                    {
+                        "itemId": "perf_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "lip_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 150,
+                "diamondReward": 60,
+                "dialogue": {
+                    "npc": "「What a wonderful scent... 你今天像是从莫奈的画中走出来的。（微微俯身）你知道玫瑰的花语吗？是'心跳'。就像此刻我的感受。」",
+                    "player": "「Thank you~ Daniel老师总让人脸红呢……」"
+                }
+            },
+            {
+                "id": "l3_o2",
+                "name": "⚡ 浪漫邀约",
+                "required": [
+                    {
+                        "itemId": "lip_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "study_4",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_3",
+                        "count": 1
+                    }
+                ],
+                "isTimed": true,
+                "timeLimit": 45,
+                "damage": 200,
+                "diamondReward": 100,
+                "dialogue": {
+                    "npc": "「不仅美丽，还如此聪慧。（轻触手指）今晚，能请你喝一杯咖啡吗？不聊课业，只聊……你。」",
+                    "player": "「好的呀！但我晚上不喝咖啡哦～改成热可可好不好？」"
+                },
+                "failText": "浪漫的氛围渐渐消散……Daniel遗憾地微笑：'Maybe next time.'"
+            },
+            {
+                "id": "l3_o3",
+                "name": "深情告白",
+                "required": [
+                    {
+                        "itemId": "perf_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_5",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 250,
+                "diamondReward": 120,
+                "dialogue": {
+                    "npc": "「Chérie... 你的眼睛里有整个星河，而我已经完全沉沦其中。从今以后，我的每一首诗，都只为你而写。」",
+                    "player": "「我也是……我也是为你心动的人。」"
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "bossName": "司徒渊",
+        "bossTitle": "魅力校长",
+        "bossAvatar": "assets/avatar/vincent_no_bg.png",
+        "bossColor": "#2C3E50",
+        "bgGradient": "linear-gradient(180deg, #2C3E50 0%, #4A6178 50%, #1A1A2E 100%)",
+        "totalHp": 1500,
+        "orders": [
+            {
+                "id": "l4_o1",
+                "name": "例行巡查",
+                "required": [
+                    {
+                        "itemId": "study_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_4",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 350,
+                "diamondReward": 100,
+                "dialogue": {
+                    "npc": "「这位同学，你的表现确实出色。（推眼镜）但想引起我的注意，光这些远远不够。……继续努力，我看着你。」",
+                    "player": "「（微笑）校长大人，请继续看着吧。我不会让您失望的。」"
+                }
+            },
+            {
+                "id": "l4_o2",
+                "name": "⚡ 打破防线",
+                "required": [
+                    {
+                        "itemId": "lip_6",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_5",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_5",
+                        "count": 1
+                    }
+                ],
+                "isTimed": true,
+                "timeLimit": 60,
+                "damage": 500,
+                "diamondReward": 150,
+                "dialogue": {
+                    "npc": "「平时看你规规矩矩的……没想到，你竟然敢闯进校长室。（喉结微动）……你知道这意味着什么吗？」",
+                    "player": "「（微笑）意味着……校长会为我破例一次？」"
+                },
+                "failText": "校长的防线坚不可摧……你的心意没能穿透那层沉稳的伪装。"
+            },
+            {
+                "id": "l4_o3",
+                "name": "臣服女王",
+                "required": [
+                    {
+                        "itemId": "study_6",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "lip_6",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "perf_6",
+                        "count": 1
+                    },
+                    {
+                        "itemId": "food_6",
+                        "count": 1
+                    }
+                ],
+                "isTimed": false,
+                "damage": 650,
+                "diamondReward": 200,
+                "dialogue": {
+                    "npc": "「规则是我定的，但你……是我唯一的例外。（松开领带）今天不用去上课了。留在这里——陪我。不是命令，是请求。」",
+                    "player": "「遵命，校长大人~ ❤️ 这次是心甘情愿的。」"
+                }
+            }
+        ]
+    }
+]
