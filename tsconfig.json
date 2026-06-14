@@ -28,5 +28,6 @@
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "vitest.config.ts"],
+  "exclude": ["src/__tests__"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
