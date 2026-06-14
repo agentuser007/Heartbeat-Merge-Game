@@ -150,7 +150,7 @@ body.cg-platform #landscape-warning {
 }
 
 /* Ensure all direct children are above the overlays */
-#game-container > *:not(.bottom-sheet):not(.bottom-sheet-backdrop):not(#dialogue-overlay):not(#game-complete-overlay):not(#loop-summary-overlay):not(#parade-overlay):not(.vn-overlay):not(#toast-root):not(#transition-overlay) {
+#game-container > *:not(.bottom-sheet):not(.bottom-sheet-backdrop):not(#dialogue-overlay):not(#game-complete-overlay):not(#loop-summary-overlay):not(#parade-overlay):not(.vn-overlay):not(#toast-root):not(#transition-overlay):not(.map-overlay) {
   position: relative;
   z-index: 1;
 }
