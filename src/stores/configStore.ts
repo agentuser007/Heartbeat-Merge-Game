@@ -136,7 +136,7 @@ export const useConfigStore = defineStore('config', () => {
     async function loadGameData(locale?: string): Promise<void> {
         const currentLocale = locale || localStorage.getItem('i18n_locale') || 'zh-CN';
         const isEnglish = currentLocale === 'en';
-        const basePath = '/assets';
+        const basePath = import.meta.env.BASE_URL + 'assets';
         const cacheBust = '?v=' + Date.now();
 
         isLoading.value = true;

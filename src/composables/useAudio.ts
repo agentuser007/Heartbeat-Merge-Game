@@ -36,7 +36,7 @@ const sharedState = {
 };
 
 function audioPath(filename: string): string {
-  return `/assets/audio/${filename}`;
+  return `${import.meta.env.BASE_URL}assets/audio/${filename}`;
 }
 
 export function useAudio() {

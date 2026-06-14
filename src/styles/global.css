@@ -134,7 +134,7 @@ body.cg-platform #landscape-warning {
   background:
     linear-gradient(180deg, rgba(221, 170, 139, 0.3) 0%, rgba(255, 234, 195, 0.15) 25%, rgba(224, 177, 90, 0) 45%),
     linear-gradient(0deg, rgba(224, 177, 90, 0.2) 80%, rgba(255, 234, 195, 0.1) 90%, transparent 100%),
-    url('/assets/bg/overlay.png') center / cover no-repeat;
+    url('@/assets/bg/overlay.png') center / cover no-repeat;
   background-color: #9F9E8B;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   position: relative;

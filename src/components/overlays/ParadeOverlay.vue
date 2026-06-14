@@ -60,7 +60,7 @@ let sparkleAnimFrame: number | null = null;
 
 // --- Queen avatar style ---
 const queenAvatarStyle = computed(() => ({
-  backgroundImage: 'url("assets/avatar/heroine.webp")',
+  backgroundImage: `url("${import.meta.env.BASE_URL}assets/avatar/heroine.webp")`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
 }));
@@ -68,19 +68,19 @@ const queenAvatarStyle = computed(() => ({
 // --- Carrier characters ---
 const carriers = ref([
   {
-    style: { backgroundImage: 'url("assets/avatar/vincent_no_bg.png")', backgroundSize: 'cover', backgroundPosition: 'center' },
+    style: { backgroundImage: `url("${import.meta.env.BASE_URL}assets/avatar/vincent_no_bg.png")`, backgroundSize: 'cover', backgroundPosition: 'center' },
     speechKey: 'parade.carrier1Speech',
   },
   {
-    style: { backgroundImage: 'url("assets/avatar/leo_no_bg.png")', backgroundSize: 'cover', backgroundPosition: 'center' },
+    style: { backgroundImage: `url("${import.meta.env.BASE_URL}assets/avatar/leo_no_bg.png")`, backgroundSize: 'cover', backgroundPosition: 'center' },
     speechKey: 'parade.carrier2Speech',
   },
   {
-    style: { backgroundImage: 'url("assets/avatar/daniel_no_bg.png")', backgroundSize: 'cover', backgroundPosition: 'center' },
+    style: { backgroundImage: `url("${import.meta.env.BASE_URL}assets/avatar/daniel_no_bg.png")`, backgroundSize: 'cover', backgroundPosition: 'center' },
     speechKey: 'parade.carrier3Speech',
   },
   {
-    style: { backgroundImage: 'url("assets/avatar/morven_no_bg.png")', backgroundSize: 'cover', backgroundPosition: 'center' },
+    style: { backgroundImage: `url("${import.meta.env.BASE_URL}assets/avatar/morven_no_bg.png")`, backgroundSize: 'cover', backgroundPosition: 'center' },
     speechKey: 'parade.carrier4Speech',
   },
 ]);

@@ -104,7 +104,7 @@ export const useI18nStore = defineStore('i18n', () => {
         if (typeof document !== 'undefined') document.documentElement.lang = newLocale;
         
         try {
-            const data = await fetch(`/assets/i18n/${newLocale}.json?v=${Date.now()}`).then(r => r.json());
+            const data = await fetch(`${import.meta.env.BASE_URL}assets/i18n/${newLocale}.json?v=${Date.now()}`).then(r => r.json());
             texts.value = data;
             
             globalBus.emit('locale:changed', { locale: newLocale });

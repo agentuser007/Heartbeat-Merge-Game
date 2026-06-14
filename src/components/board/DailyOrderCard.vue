@@ -278,7 +278,7 @@ const openOrderDetails = () => {
   top: -12cqw;
   width: 16cqw;
   height: 20cqw;
-  background-image: url('/assets/avatar/boss_bg.webp');
+  background-image: var(--avatar-boss-bg);
   background-size: contain;
   background-position: bottom center;
   background-repeat: no-repeat;

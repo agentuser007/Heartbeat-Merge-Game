@@ -7,7 +7,7 @@
   >
     <BoardItem v-if="itemId && !locked" :item-id="itemId" :cell-index="index" />
     <div v-if="locked" class="cell-lock">🔒</div>
-    <img v-if="selected" :class="$style.vectorIcon" src="/assets/ui/select-frame.svg" alt="" />
+    <img v-if="selected" :class="$style.vectorIcon" :src="selectFrameSrc" alt="" />
   </div>
 </template>
 
@@ -33,6 +33,8 @@ const emit = defineEmits<{
 }>();
 
 const configStore = useConfigStore();
+
+const selectFrameSrc = import.meta.env.BASE_URL + 'assets/ui/select-frame.svg';
 
 const gridCols = computed(() => configStore.gameConfig.BOARD_COLS || 7);
 
