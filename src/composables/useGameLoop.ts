@@ -216,18 +216,14 @@ export function applyResolveResult(result: ResolveResult, deps: ApplyResolveResu
 
 export function useGameLoop() {
     const bossStore = useBossStore();
-    const currencyStore = useCurrencyStore();
     const energyStore = useEnergyStore();
     const collectionStore = useCollectionStore();
     const achievementStore = useAchievementStore();
     const saveStore = useSaveStore();
     const configStore = useConfigStore();
     const boardStore = useBoardStore();
-    const inventoryStore = useInventoryStore();
     const loopStore = useLoopStore();
     const bus = useEventBus();
-    const fragmentStore = useFragmentStore();
-    const cgAlbumStore = useCGAlbumStore();
     const effects = useEffects();
 
     const applyDeps = useApplyDeps();

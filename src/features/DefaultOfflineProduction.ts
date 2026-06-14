@@ -7,7 +7,7 @@
 // ============================================================
 
 import { IOfflineProduction, OfflineProductionResult, OfflineEnergyResult, OfflineProductionContext, OfflineEnergyContext } from './IOfflineProduction';
-import { BoardLogic, ItemData as BoardItemData, GeneratorConfig } from '../logic/BoardLogic';
+import { BoardLogic } from '../logic/BoardLogic';
 
 /** Maximum offline items per generator (global hard cap) */
 const MAX_OFFLINE_PRODUCES_PER_GENERATOR = 20;

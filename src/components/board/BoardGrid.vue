@@ -48,7 +48,6 @@ import { useSaveStore } from '../../stores/saveStore';
 import { useI18nStore } from '../../stores/i18nStore';
 import { useApplyDeps } from '../../composables/useApplyDeps';
 import { applyResolveResult } from '../../composables/useGameLoop';
-import type { ResolveResult } from '../../services/ServiceResultTypes';
 import type { MergeResult } from '../../types/game';
 
 const boardStore = useBoardStore();
