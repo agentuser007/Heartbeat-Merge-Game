@@ -38,8 +38,7 @@
             :class="{ fulfilled: slot.fulfilled }"
           @click.stop="onSlotClick(slot.itemId)"
         >
-          <img v-if="slot.asset" class="slot-asset" :src="slot.asset" :alt="slot.emoji" draggable="false" />
-          <span v-else class="slot-emoji">{{ slot.emoji }}</span>
+          <span class="slot-emoji">{{ slot.emoji }}</span>
         </div>
         </div>
         <button class="submit-order-btn" :disabled="!canSubmit" @click.stop="onSubmit">提交</button>
@@ -58,12 +57,10 @@ import { useInventoryStore } from '../../stores/inventoryStore';
 import { useLoopStore } from '../../stores/loopStore';
 import { useSaveStore } from '../../stores/saveStore';
 import { useSheet } from '../../composables/useSheet';
-import { getItemAsset } from './itemAssets';
 
 interface OrderSlot {
   itemId: string;
   emoji: string;
-  asset: string | null;
   fulfilled: boolean;
 }
 
@@ -128,7 +125,6 @@ const expandedRequiredSlots = computed(() => {
       slots.push({
         itemId: req.itemId,
         emoji: req.emoji,
-        asset: getItemAsset(configStore.items[req.itemId] || null),
         fulfilled: i < totalOwned
       });
     }
@@ -361,14 +357,6 @@ const onSubmit = () => {
 .slot-emoji {
   font-size: 15px !important;
   line-height: 1;
-}
-
-.slot-asset {
-  width: 82%;
-  height: 82%;
-  object-fit: contain;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 .order-item-slot.fulfilled {

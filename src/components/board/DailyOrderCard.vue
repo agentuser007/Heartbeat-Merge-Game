@@ -45,8 +45,7 @@
           :class="{ fulfilled: slot.fulfilled }"
           @click.stop="onSlotClick(slot.itemId)"
         >
-          <img v-if="slot.asset" class="slot-asset" :src="slot.asset" :alt="slot.emoji" draggable="false" />
-          <span v-else class="slot-emoji">{{ slot.emoji }}</span>
+          <span class="slot-emoji">{{ slot.emoji }}</span>
         </div>
         <button class="fulfill-order-btn" :disabled="!canFulfill" @click.stop="onFulfill">提交</button>
       </div>
@@ -63,14 +62,12 @@ import { useInventoryStore } from '../../stores/inventoryStore';
 import { useSaveStore } from '../../stores/saveStore';
 
 import { useSheet } from '../../composables/useSheet';
-import { getItemAsset } from './itemAssets';
 import type { DailyOrderState } from '../../stores/dailyOrderStore';
 import type { OrderRequirement } from '../../types/game';
 
 interface OrderSlot {
   itemId: string;
   emoji: string;
-  asset: string | null;
   fulfilled: boolean;
 }
 
@@ -126,7 +123,6 @@ const expandedRequiredSlots = computed(() => {
       slots.push({
         itemId: req.itemId,
         emoji: getItemEmoji(req.itemId),
-        asset: getItemAsset(configStore.items[req.itemId] || null),
         fulfilled: i < totalOwned
       });
     }
@@ -345,14 +341,6 @@ const onSlotClick = (itemId: string) => {
 .slot-emoji {
   font-size: 11px !important;
   line-height: 1;
-}
-
-.slot-asset {
-  width: 82%;
-  height: 82%;
-  object-fit: contain;
-  pointer-events: none;
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 .order-item-slot.fulfilled {
