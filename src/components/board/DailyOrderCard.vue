@@ -1,23 +1,23 @@
 <template>
-  <div class="daily-order-card quest-card" :class="{ ready: canFulfill }" @click="openOrderDetails">
+  <div class="daily-order-card quest-card" :class="{ ready: canFulfill }">
     <!-- Reward bubble floating above -->
     <div class="order-reward-bubble">
       <template v-if="order.reward">
         <div v-if="order.reward.gold" class="reward-row">
-          <span class="reward-icon">💰</span>
+          <img class="reward-icon-img" src="/assets/items/coin_icon.png" alt="coin" />
           <span class="reward-amount">+{{ order.reward.gold }}</span>
         </div>
         <div v-if="order.reward.diamonds" class="reward-row">
-          <span class="reward-icon">💎</span>
+          <img class="reward-icon-img" src="/assets/items/diamond.svg" alt="diamond" />
           <span class="reward-amount">+{{ order.reward.diamonds }}</span>
         </div>
         <div v-if="order.reward.energy" class="reward-row">
-          <span class="reward-icon">⚡</span>
+          <img class="reward-icon-img" src="/assets/items/lightning-02.svg" alt="stamina" />
           <span class="reward-amount">+{{ order.reward.energy }}</span>
         </div>
       </template>
       <div v-else class="reward-row">
-        <span class="reward-icon">💰</span>
+        <img class="reward-icon-img" src="/assets/items/coin_icon.png" alt="coin" />
         <span class="reward-amount">+{{ order.goldReward || 10 }}</span>
       </div>
     </div>
@@ -29,7 +29,7 @@
     <div class="order-body">
       <div class="order-body-portrait"></div>
       <div class="order-header">
-        <div class="daily-npc-tag-pill">
+        <div class="daily-npc-tag-pill" @click.stop="openOrderDetails">
           <span class="daily-npc-tag-text">Daily</span>
         </div>
         <div class="hp-bar-mini">
@@ -43,12 +43,13 @@
           :key="idx" 
           class="order-item-slot"
           :class="{ fulfilled: slot.fulfilled }"
+          @click.stop="onSlotClick(slot.itemId)"
         >
-          <span class="slot-emoji">{{ slot.emoji }}</span>
+          <img v-if="slot.asset" class="slot-asset" :src="slot.asset" :alt="slot.emoji" draggable="false" />
+          <span v-else class="slot-emoji">{{ slot.emoji }}</span>
         </div>
+        <button class="fulfill-order-btn" :disabled="!canFulfill" @click.stop="onFulfill">提交</button>
       </div>
-      
-      <button class="fulfill-order-btn" :disabled="!canFulfill" @click.stop="onFulfill">提交</button>
     </div>
   </div>
 </template>
@@ -62,12 +63,14 @@ import { useInventoryStore } from '../../stores/inventoryStore';
 import { useSaveStore } from '../../stores/saveStore';
 
 import { useSheet } from '../../composables/useSheet';
+import { getItemAsset } from './itemAssets';
 import type { DailyOrderState } from '../../stores/dailyOrderStore';
 import type { OrderRequirement } from '../../types/game';
 
 interface OrderSlot {
   itemId: string;
   emoji: string;
+  asset: string | null;
   fulfilled: boolean;
 }
 
@@ -123,6 +126,7 @@ const expandedRequiredSlots = computed(() => {
       slots.push({
         itemId: req.itemId,
         emoji: getItemEmoji(req.itemId),
+        asset: getItemAsset(configStore.items[req.itemId] || null),
         fulfilled: i < totalOwned
       });
     }
@@ -164,14 +168,18 @@ const onFulfill = () => {
 const openOrderDetails = () => {
   dailyOrderSheet.open();
 };
+
+const onSlotClick = (itemId: string) => {
+  boardStore.selectInfoItem(itemId);
+};
 </script>
 
 <style scoped>
 .daily-order-card {
-  width: 38cqw !important;
+  width: 92px !important;
   min-height: 0 !important;
   position: relative !important;
-  margin-top: 18cqw !important;
+  margin-top: 52px !important;
   overflow: visible !important;
   align-self: flex-end !important;
   flex-shrink: 0;
@@ -183,7 +191,7 @@ const openOrderDetails = () => {
   align-items: stretch !important;
   box-sizing: border-box;
   padding: 0 !important;
-  gap: 1cqw !important;
+  gap: 4px !important;
   cursor: pointer;
 }
 
@@ -203,10 +211,10 @@ const openOrderDetails = () => {
 .daily-npc-avatar {
   position: absolute !important;
   left: 50% !important;
-  bottom: 9cqw !important;
-  transform: translateX(-50%) scale(1.1) !important;
-  width: 26cqw !important;
-  height: 32cqw !important;
+  bottom: 38px;
+  transform: translateX(-50%) !important;
+  width: 85px !important;
+  height: 121px !important;
   z-index: 60 !important;
   border: none !important;
   border-radius: 0 !important;
@@ -228,8 +236,8 @@ const openOrderDetails = () => {
 .daily-npc-tag-pill {
   background: var(--name-tag-bg) !important;
   border-radius: 12px !important;
-  padding: 0 8px !important;
-  height: 2.7cqw;
+  padding: 1px 4px !important;
+  height: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -239,7 +247,7 @@ const openOrderDetails = () => {
 }
 
 .daily-npc-tag-text {
-  font-size: 10px !important;
+  font-size: 8px !important;
   font-weight: 700;
   color: var(--name-tag-text) !important;
   white-space: nowrap;
@@ -251,25 +259,25 @@ const openOrderDetails = () => {
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: center !important;
-  gap: 1.5cqw !important;
-  width: auto !important;
-  margin-top: 0.5cqw !important;
+  gap: 4px !important;
+  width: 92px !important;
+  min-height: 44px !important;
+  margin-top: 0 !important;
   margin-left: 0 !important;
-  flex: 0 1 auto !important;
+  flex: 0 0 auto !important;
   background: rgba(0, 0, 0, 0.41) !important;
   backdrop-filter: blur(7.3px) !important;
   -webkit-backdrop-filter: blur(7.3px) !important;
-  border: 1px solid var(--reward-bubble-border) !important;
-  border-radius: 10px !important;
-  padding: 1.5cqw 1.5cqw !important;
+  border: 1px solid #fcefff !important;
+  border-radius: 6px !important;
+  padding: 4px !important;
   box-sizing: border-box !important;
   height: auto !important;
-  min-height: 5cqw !important;
   transition: background 0.2s ease, box-shadow 0.2s ease;
   position: relative !important;
   overflow: visible !important;
   z-index: 61 !important;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 3px 3.7px rgba(0, 0, 0, 0.6);
 }
 
 .order-body-portrait {
@@ -289,12 +297,12 @@ const openOrderDetails = () => {
 .order-header {
   display: flex;
   align-items: center;
-  gap: 1.5cqw;
+  gap: 4px;
 }
 
 .hp-bar-mini {
   flex: 1;
-  height: 2.5cqw;
+  height: 6px;
   background: var(--progress-track);
   border-radius: 13px;
   overflow: hidden;
@@ -312,31 +320,39 @@ const openOrderDetails = () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 1.5cqw;
+  justify-content: flex-start;
+  gap: 3px;
   width: 100%;
-  flex-wrap: wrap !important;
+  flex-wrap: nowrap !important;
 }
 
 .order-item-slot {
-  width: 9.5cqw !important;
-  height: 9.5cqw !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  border-radius: 8px !important;
-  background: rgba(90, 62, 43, 0.25) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  border-radius: 3px !important;
+  background: var(--order-slot-bg) !important;
+  border: 1px solid var(--highlight-pink) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-shrink: 0 !important;
   position: relative !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .slot-emoji {
-  font-size: 18px !important;
+  font-size: 11px !important;
   line-height: 1;
+}
+
+.slot-asset {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 .order-item-slot.fulfilled {
@@ -347,20 +363,20 @@ const openOrderDetails = () => {
 .order-item-slot.fulfilled::after {
   content: '✓';
   position: absolute;
-  bottom: -3px;
-  right: -3px;
+  bottom: -2px;
+  right: -2px;
   background: var(--color-success) !important;
   color: white !important;
-  font-size: 8px !important;
+  font-size: 6px !important;
   font-weight: 900 !important;
-  width: 14px !important;
-  height: 14px !important;
+  width: 9px !important;
+  height: 9px !important;
   border-radius: 50% !important;
   border: 1px solid var(--text-primary) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2) !important;
   pointer-events: none;
   z-index: 10 !important;
   line-height: 1;
@@ -368,17 +384,17 @@ const openOrderDetails = () => {
 
 .order-reward-bubble {
   position: absolute;
-  top: -12cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--reward-bubble-bg);
-  border-radius: 8px;
-  padding: 4px 10px;
+  bottom: 40px;
+  left: 55px;
+  background: rgba(0, 0, 0, 0.41);
+  border: 1px solid #fcefff;
+  border-radius: 6px;
+  padding: 2px 4px;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 3px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 3px 3.7px rgba(0, 0, 0, 0.6);
   z-index: 62;
   white-space: nowrap;
 }
@@ -389,9 +405,10 @@ const openOrderDetails = () => {
   gap: 3px;
 }
 
-.reward-icon {
-  font-size: 11px;
-  line-height: 1;
+.reward-icon-img {
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
 }
 
 .reward-amount {
@@ -405,16 +422,19 @@ const openOrderDetails = () => {
 .fulfill-order-btn {
   background: linear-gradient(135deg, var(--accent-pink), #ff7f9e);
   border: none;
-  border-radius: 8px;
-  padding: 1.5cqw 3cqw;
-  font-size: 11px;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-primary);
   cursor: pointer;
   font-family: 'Jiangcheng Yuanti', sans-serif;
   box-shadow: 0px 2px 4px rgba(243, 86, 131, 0.4);
   transition: transform 0.1s ease;
-  align-self: center;
+  flex-shrink: 0;
+  height: 20px;
+  line-height: 1;
+  margin-left: auto;
 }
 
 .fulfill-order-btn:active {
@@ -425,5 +445,57 @@ const openOrderDetails = () => {
   opacity: 0.4;
   cursor: not-allowed;
 }
-</style>
 
+@media (max-height: 760px) {
+  .daily-order-card {
+    margin-top: 28px !important;
+  }
+  .daily-npc-avatar {
+    width: 56px !important;
+    height: 80px !important;
+    bottom: 30px;
+  }
+  .order-body {
+    width: 82px !important;
+    min-height: 38px !important;
+    padding: 3px !important;
+    gap: 2px !important;
+  }
+  .order-reward-bubble {
+    bottom: 32px;
+    left: 48px;
+  }
+  .order-item-slot {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
+    border-radius: 2px !important;
+  }
+  .slot-emoji {
+    font-size: 9px !important;
+  }
+  .order-item-slot.fulfilled::after {
+    font-size: 5px !important;
+    width: 7px !important;
+    height: 7px !important;
+    bottom: -2px;
+    right: -2px;
+  }
+  .fulfill-order-btn {
+    font-size: 8px;
+    padding: 1px 3px;
+    height: 16px;
+  }
+  .daily-npc-tag-pill {
+    padding: 0 3px;
+    height: 10px;
+  }
+  .daily-npc-tag-text {
+    font-size: 7px !important;
+  }
+  .hp-bar-mini {
+    height: 5px;
+  }
+}
+</style>

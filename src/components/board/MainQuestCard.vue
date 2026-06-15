@@ -1,28 +1,28 @@
 <template>
-  <div v-if="showCard" id="main-quest-card" class="quest-card" :class="{ ready: canSubmit }" @click="openHeroineDetails">
+  <div v-if="showCard" id="main-quest-card" class="quest-card" :class="{ ready: canSubmit }">
     <!-- Reward bubble floating above -->
     <div class="order-reward-bubble">
       <div class="reward-row">
-        <span class="reward-icon">💎</span>
+        <img class="reward-icon-img" src="/assets/items/diamond.svg" alt="diamond" />
         <span class="reward-amount">+{{ bossReward }}</span>
       </div>
       <div class="reward-row">
-        <span class="reward-icon">❤️</span>
+        <img class="reward-icon-img" src="/assets/items/heart.svg" alt="heart" />
         <span class="reward-amount">+{{ affectionReward }}</span>
       </div>
     </div>
 
     <!-- Boss/Heroine Portrait -->
-    <div id="boss-portrait" :style="portraitStyle">
+    <div id="boss-portrait" :style="portraitStyle" @click.stop="openHeroineDetails">
       <div id="boss-blush"></div>
     </div>
 
     <!-- Card Body -->
     <div class="quest-card-body">
       <div class="quest-card-header-row">
-        <div id="boss-header-name">
+        <div id="boss-header-name" @click.stop="openHeroineDetails">
           <span id="boss-name">{{ bossStore.bossName }}</span>
-          <span class="boss-heart-icon">❤️</span>
+          <img class="boss-heart-icon-img" src="/assets/items/heart.svg" alt="heart" />
         </div>
         <div class="hp-bar-container">
           <div id="hp-bar-fill" :style="hpBarStyle"></div>
@@ -31,18 +31,19 @@
       
       <div class="quest-card-items-row">
         <div class="quest-card-items" id="order-items">
-          <div 
-            v-for="(slot, idx) in expandedRequiredSlots" 
-            :key="idx" 
+        <div 
+          v-for="(slot, idx) in expandedRequiredSlots" 
+          :key="idx" 
             class="order-item-slot" 
             :class="{ fulfilled: slot.fulfilled }"
-          >
-            <span class="slot-emoji">{{ slot.emoji }}</span>
-          </div>
+          @click.stop="onSlotClick(slot.itemId)"
+        >
+          <img v-if="slot.asset" class="slot-asset" :src="slot.asset" :alt="slot.emoji" draggable="false" />
+          <span v-else class="slot-emoji">{{ slot.emoji }}</span>
         </div>
+        </div>
+        <button class="submit-order-btn" :disabled="!canSubmit" @click.stop="onSubmit">提交</button>
       </div>
-      
-      <button class="submit-order-btn" :disabled="!canSubmit" @click.stop="onSubmit">提交</button>
     </div>
   </div>
 </template>
@@ -57,10 +58,12 @@ import { useInventoryStore } from '../../stores/inventoryStore';
 import { useLoopStore } from '../../stores/loopStore';
 import { useSaveStore } from '../../stores/saveStore';
 import { useSheet } from '../../composables/useSheet';
+import { getItemAsset } from './itemAssets';
 
 interface OrderSlot {
   itemId: string;
   emoji: string;
+  asset: string | null;
   fulfilled: boolean;
 }
 
@@ -79,6 +82,10 @@ const showCard = computed(() => {
 
 const openHeroineDetails = () => {
   heroineSheet.open();
+};
+
+const onSlotClick = (itemId: string) => {
+  boardStore.selectInfoItem(itemId);
 };
 
 const portraitStyle = computed(() => {
@@ -121,6 +128,7 @@ const expandedRequiredSlots = computed(() => {
       slots.push({
         itemId: req.itemId,
         emoji: req.emoji,
+        asset: getItemAsset(configStore.items[req.itemId] || null),
         fulfilled: i < totalOwned
       });
     }
@@ -182,12 +190,11 @@ const onSubmit = () => {
 
 <style scoped>
 #main-quest-card {
-  width: 45cqw !important;
+  width: 143px !important;
   min-height: 0 !important;
-  padding-left: 0 !important;
   position: relative !important;
   overflow: visible !important;
-  margin-top: 18cqw !important;
+  margin-top: 52px !important;
   align-self: flex-end !important;
   flex-shrink: 0;
   background: transparent !important;
@@ -198,17 +205,17 @@ const onSubmit = () => {
   align-items: stretch !important;
   box-sizing: border-box;
   padding: 0 !important;
-  gap: 1cqw !important;
+  gap: 4px !important;
   cursor: pointer;
 }
 
 #boss-portrait {
   position: absolute !important;
-  left: 50% !important;
-  bottom: 11cqw !important;
-  transform: translateX(-50%) scale(1.55) !important;
-  width: 32cqw !important;
-  height: 40cqw !important;
+  left: calc(50% + 10px) !important;
+  bottom: 48px;
+  transform: translateX(-50%) !important;
+  width: 112px !important;
+  height: 160px !important;
   z-index: 60 !important;
   border: none !important;
   border-radius: 0 !important;
@@ -219,7 +226,7 @@ const onSubmit = () => {
   background-repeat: no-repeat !important;
   overflow: visible !important;
   transition: transform 0.3s ease;
-  pointer-events: none !important;
+  pointer-events: auto !important;
   flex-shrink: 0;
 }
 
@@ -237,24 +244,24 @@ const onSubmit = () => {
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: center !important;
-  gap: 1.5cqw !important;
-  width: 100% !important;
-  margin-top: 0.5cqw !important;
+  gap: 6px !important;
+  width: 143px !important;
+  min-height: 55px !important;
+  margin-top: 0 !important;
   margin-left: 0 !important;
-  flex: 0 1 auto !important;
+  flex: 0 0 auto !important;
   background: rgba(0, 0, 0, 0.41) !important;
   backdrop-filter: blur(7.3px) !important;
   -webkit-backdrop-filter: blur(7.3px) !important;
-  border: 1px solid var(--reward-bubble-border) !important;
-  border-radius: 10px !important;
-  padding: 1.5cqw 1.5cqw 1.5cqw 1.5cqw !important;
+  border: 1px solid #fcefff !important;
+  border-radius: 6px !important;
+  padding: 4px 6px !important;
   box-sizing: border-box !important;
   height: auto !important;
-  min-height: 5cqw !important;
   transition: background 0.2s ease, box-shadow 0.2s ease;
   position: relative !important;
   z-index: 61 !important;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 3px 3.7px rgba(0, 0, 0, 0.6);
 }
 
 #main-quest-card.ready .quest-card-body {
@@ -266,20 +273,20 @@ const onSubmit = () => {
 .quest-card-header-row {
   display: flex;
   align-items: center;
-  gap: 1.5cqw;
+  gap: 4px;
   width: 100%;
 }
 
 #boss-header-name {
   background: var(--name-tag-bg) !important;
   border-radius: 12px !important;
-  padding: 3px 8px !important;
+  padding: 2px 6px !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  gap: 3px;
+  gap: 2px;
 }
 
 #boss-name {
@@ -290,14 +297,14 @@ const onSubmit = () => {
   font-family: 'Jiangcheng Yuanti', sans-serif;
 }
 
-.boss-heart-icon {
-  font-size: 10px;
-  line-height: 1;
+.boss-heart-icon-img {
+  width: 10px;
+  height: 10px;
 }
 
 .hp-bar-container {
   flex: 1;
-  height: 10px !important;
+  height: 8px !important;
   background: var(--progress-track) !important;
   border-radius: 13px !important;
   overflow: hidden;
@@ -319,30 +326,30 @@ const onSubmit = () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 1cqw;
+  justify-content: space-between;
+  gap: 4px;
   width: 100%;
 }
 
 .quest-card-items {
   display: flex !important;
-  gap: 1.5cqw !important;
+  gap: 4px !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   flex-wrap: wrap !important;
-  flex: 0 1 auto !important;
+  flex: 1 !important;
   min-width: 0 !important;
-  margin: 0.5cqw !important;
+  margin: 0 !important;
 }
 
 .order-item-slot {
-  width: 9.5cqw !important;
-  height: 9.5cqw !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  border-radius: 8px !important;
-  background: rgba(90, 62, 43, 0.25) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  border-radius: 4px !important;
+  background: var(--order-slot-bg) !important;
+  border: 1px solid var(--highlight-pink) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -352,8 +359,16 @@ const onSubmit = () => {
 }
 
 .slot-emoji {
-  font-size: 18px !important;
+  font-size: 15px !important;
   line-height: 1;
+}
+
+.slot-asset {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
 
 .order-item-slot.fulfilled {
@@ -368,10 +383,10 @@ const onSubmit = () => {
   right: -3px;
   background: var(--color-success) !important;
   color: white !important;
-  font-size: 8px !important;
+  font-size: 7px !important;
   font-weight: 900 !important;
-  width: 14px !important;
-  height: 14px !important;
+  width: 12px !important;
+  height: 12px !important;
   border-radius: 50% !important;
   border: 1px solid var(--text-primary) !important;
   display: flex !important;
@@ -385,18 +400,22 @@ const onSubmit = () => {
 
 .order-reward-bubble {
   position: absolute;
-  top: -12cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--reward-bubble-bg);
-  border-radius: 8px;
-  padding: 4px 10px;
+  bottom: 46px;
+  left: 97px;
+  background: rgba(0, 0, 0, 0.41);
+  border: 1px solid #fcefff;
+  border-radius: 6px;
+  padding: 2px 4px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  box-shadow: 0px 3px 3.7px rgba(0, 0, 0, 0.6);
   z-index: 62;
+  width: 55px;
+  height: 35px;
+  box-sizing: border-box;
+  justify-content: center;
 }
 
 .reward-row {
@@ -405,9 +424,10 @@ const onSubmit = () => {
   gap: 3px;
 }
 
-.reward-icon {
-  font-size: 11px;
-  line-height: 1;
+.reward-icon-img {
+  width: 11px;
+  height: 11px;
+  object-fit: contain;
 }
 
 .reward-amount {
@@ -421,8 +441,8 @@ const onSubmit = () => {
 .submit-order-btn {
   background: linear-gradient(135deg, var(--accent-pink), #ff7f9e);
   border: none;
-  border-radius: 8px;
-  padding: 1.5cqw 3cqw;
+  border-radius: 4px;
+  padding: 2px 6px;
   font-size: 11px;
   font-weight: 700;
   color: var(--text-primary);
@@ -430,7 +450,8 @@ const onSubmit = () => {
   font-family: 'Jiangcheng Yuanti', sans-serif;
   box-shadow: 0px 2px 4px rgba(243, 86, 131, 0.4);
   transition: transform 0.1s ease;
-  align-self: center;
+  flex-shrink: 0;
+  height: 28px;
 }
 
 .submit-order-btn:active {
@@ -441,5 +462,51 @@ const onSubmit = () => {
   opacity: 0.4;
   cursor: not-allowed;
 }
-</style>
 
+@media (max-height: 760px) {
+  #main-quest-card {
+    margin-top: 28px !important;
+  }
+  #boss-portrait {
+    width: 80px !important;
+    height: 110px !important;
+    bottom: 38px;
+  }
+  .quest-card-body {
+    width: 130px !important;
+    min-height: 46px !important;
+    padding: 3px 5px !important;
+    gap: 3px !important;
+  }
+  .order-reward-bubble {
+    bottom: 36px;
+    left: 82px;
+    width: 48px;
+    height: 30px;
+    padding: 1px 3px;
+    gap: 1px;
+  }
+  .reward-icon-img {
+    width: 9px;
+    height: 9px;
+  }
+  .reward-amount {
+    font-size: 8px;
+  }
+  .order-item-slot {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+    border-radius: 3px !important;
+  }
+  .slot-emoji {
+    font-size: 12px !important;
+  }
+  .submit-order-btn {
+    font-size: 9px;
+    padding: 1px 4px;
+    height: 22px;
+  }
+}
+</style>

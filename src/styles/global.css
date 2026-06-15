@@ -121,17 +121,15 @@ body.cg-platform #landscape-warning {
 #game-container {
   container-type: size;
   --figma-scale: min(calc(100vw / 402), calc(100vh / 874));
-  width: 100%;
-  max-width: min(402px, calc(100vh * 402 / 874));
-  height: 100%;
-  max-height: min(874px, calc(100vw * 874 / 402));
-  aspect-ratio: 402 / 874;
+  width: min(100vw, calc(100svh * 402 / 874), 402px);
+  height: min(100svh, calc(100vw * 874 / 402), 874px);
   min-height: 0;
-  margin: 0 auto;
+  margin: auto;
   display: flex;
   flex-direction: column;
   border-radius: clamp(0px, calc(64px * var(--figma-scale)), 64px);
   background:
+    linear-gradient(0deg, rgba(250, 245, 248, 0.74) 0%, rgba(250, 245, 248, 0.36) 18%, rgba(250, 245, 248, 0) 35%),
     linear-gradient(180deg, rgba(221, 170, 139, 0.3) 0%, rgba(255, 234, 195, 0.15) 25%, rgba(224, 177, 90, 0) 45%),
     linear-gradient(0deg, rgba(224, 177, 90, 0.2) 80%, rgba(255, 234, 195, 0.1) 90%, transparent 100%),
     url('@/assets/bg/overlay.png') center / cover no-repeat;
@@ -144,13 +142,19 @@ body.cg-platform #landscape-warning {
   transition: background 0.8s ease;
 }
 
-/* Hide the ::before blur overlay — final layout pass disables it */
 #game-container::before {
-  display: none !important;
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 28%;
+  background: url('/assets/ui/screen.png') center bottom / cover no-repeat;
+  opacity: 0.62;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Ensure all direct children are above the overlays */
-#game-container > *:not(.bottom-sheet):not(.bottom-sheet-backdrop):not(#dialogue-overlay):not(#game-complete-overlay):not(#loop-summary-overlay):not(#parade-overlay):not(.vn-overlay):not(#toast-root):not(#transition-overlay):not(.map-overlay) {
+#game-container > *:not(.bottom-sheet):not(.bottom-sheet-backdrop):not(#dialogue-overlay):not(#game-complete-overlay):not(#loop-summary-overlay):not(#parade-overlay):not(.vn-overlay):not(#toast-root):not(#transition-overlay):not(.map-overlay):not(#particle-layer) {
   position: relative;
   z-index: 1;
 }
@@ -675,7 +679,10 @@ body.cg-platform #landscape-warning {
   }
 
   #game-container {
-    max-width: min(402px, 92vh * 402 / 874);
+    max-width: 402px;
+    width: min(402px, calc(92vh * 402 / 874));
+    height: min(874px, 92vh);
+    border-radius: 40px;
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 100px rgba(0,0,0,0.6);
@@ -695,8 +702,11 @@ body.cg-platform #landscape-warning {
   .cg-memory-overlay,
   .gacha-card-detail-overlay,
   .cg-preview-overlay,
+  .bottom-sheet,
+  .bottom-sheet-backdrop,
+  .map-overlay,
   #toast-root {
-    max-width: min(402px, 92vh * 402 / 874);
+    max-width: 402px;
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
@@ -740,7 +750,6 @@ body.cg-platform #landscape-warning {
 
 /* --- 1920×1080: Full HD desktop fullscreen --- */
 @media (orientation: landscape) and (min-width: 1200px) and (min-height: 700px) {
-  #game-container { max-width: min(900px, 100%); margin: 0 auto; }
   .item-emoji { font-size: clamp(20px, 4.5vw, 32px); }
   .item-level { font-size: 10px; width: 16px; height: 16px; }
 }

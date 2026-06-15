@@ -400,6 +400,9 @@
     "shopBtn": "💝 商店",
     "giftBtn": "🎁 赠礼"
   },
+  "energy": {
+    "full": "已满"
+  },
   "game_complete": {
     "emoji": "👑",
     "title": "恭喜通关！",

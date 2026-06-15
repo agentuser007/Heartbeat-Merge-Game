@@ -1,13 +1,9 @@
 <template>
   <div id="status-bar">
     <div class="status-left">
-      <div class="star-rating-circle">
-        <span class="star-icon">⭐</span>
-      </div>
-      <div class="rating-gold-pill">
-        <span class="gold-text">{{ goldDisplay }}</span>
-      </div>
-      <div class="loop-index-pill">
+      <img class="coin-icon" src="/assets/items/coin_icon.png" alt="coin" />
+      <span class="gold-text">{{ goldDisplay }}</span>
+      <div class="loop-badge">
         <span class="loop-text">x{{ loopStore.loopIndex }}</span>
       </div>
     </div>
@@ -15,7 +11,7 @@
     <div class="status-center">
       <div class="energy-container">
         <div class="energy-pill">
-          <span class="energy-icon">⚡</span>
+          <img class="energy-icon-img" src="/assets/items/lightning-02.svg" alt="stamina" />
           <span class="energy-value">{{ energyStore.current }}</span>
           <button class="add-btn" @click="shopSheet.open()">+</button>
         </div>
@@ -25,15 +21,18 @@
       </div>
 
       <div class="diamond-pill">
-        <span class="diamond-icon">💎</span>
+        <img class="diamond-icon-img" src="/assets/items/diamond.svg" alt="diamond" />
         <span class="diamond-value">{{ diamondDisplay }}</span>
         <button class="add-btn" @click="shopSheet.open()">+</button>
       </div>
     </div>
 
     <div class="status-right">
-      <button class="shop-circle-btn" @click="$emit('open-map')">
-        <span class="shop-btn-icon">🗺️</span>
+      <button class="shop-circle-btn" @click="shopSheet.open()">
+        <img class="shop-btn-icon-img" src="/assets/items/shop.svg" alt="shop" />
+      </button>
+      <button class="map-circle-btn" @click="$emit('open-map')">
+        <span class="map-btn-icon">🗺️</span>
       </button>
       <div class="rank-container">
         <span class="rank-label">Rank</span>
@@ -197,7 +196,9 @@ const levelText = computed(() => {
 })
 
 const formattedEnergyCountdown = computed(() => {
-  if (energyStore.current >= energyStore.regenCap) return ''
+  if (energyStore.current >= energyStore.regenCap) {
+    return i18nStore.t('energy.full') || '已满'
+  }
   const min = Math.floor(energyCountdown.value / 60)
   const sec = energyCountdown.value % 60
   return `${min}:${sec.toString().padStart(2, '0')}`
@@ -206,91 +207,75 @@ const formattedEnergyCountdown = computed(() => {
 
 <style scoped>
 #status-bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100cqw;
-  padding: calc(3cqw + env(safe-area-inset-top, 0px)) 3cqw 0 3cqw;
-  box-sizing: border-box;
   position: relative;
+  width: 100cqw;
+  height: 33.58cqw;
+  box-sizing: border-box;
   z-index: var(--z-fixed);
   flex-shrink: 0;
-  min-height: calc(14cqw + env(safe-area-inset-top, 0px));
+  padding: calc(2.99cqw + env(safe-area-inset-top, 0px)) 2.99cqw 0 2.99cqw;
 }
 
 .status-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+  position: absolute;
+  top: calc(12.94cqw + env(safe-area-inset-top, 0px));
+  left: 3.98cqw;
+  width: 11.94cqw;
+  height: 20.4cqw;
 }
 
-.star-rating-circle {
-  width: 11cqw;
-  height: 11cqw;
-  min-width: 44px;
-  min-height: 44px;
-  background: var(--off-white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 10px rgba(170, 170, 204, 0.4);
-  z-index: 2;
-}
-
-.star-icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.rating-gold-pill {
-  background: var(--accent-pink);
-  border-radius: 20px;
-  padding: 1px 8px;
-  margin-top: -6px;
-  z-index: 3;
-  box-shadow: 0px 2px 4px rgba(243, 86, 131, 0.3);
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+.coin-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7.96cqw;
+  height: 7.96cqw;
+  filter: drop-shadow(0px 1px 3.7px #60190F);
 }
 
 .gold-text {
-  font-size: 10px;
+  position: absolute;
+  top: 5.97cqw;
+  left: 0;
+  font-size: 2.99cqw;
   font-weight: 900;
-  color: var(--text-primary);
+  color: #fff;
+  text-shadow: 1px 0 0 #DDAA8B, -1px 0 0 #DDAA8B, 0 1px 0 #DDAA8B, 0 -1px 0 #DDAA8B, 1px 1px 0 #DDAA8B, -1px -1px 0 #DDAA8B, 1px -1px 0 #DDAA8B, -1px 1px 0 #DDAA8B;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  line-height: 1.2;
+  z-index: 3;
 }
 
-.loop-index-pill {
-  background: var(--peach-light);
-  border-radius: 20px;
-  padding: 1px 8px;
-  margin-top: 3px;
-  z-index: 3;
-  display: inline-flex;
-  justify-content: center;
+.loop-badge {
+  position: absolute;
+  top: 11.94cqw;
+  left: -0.25cqw;
+  width: 6.97cqw;
+  height: 6.97cqw;
+  border-radius: 1.99cqw;
+  background-color: #DDAA8B;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  z-index: 3;
 }
 
 .loop-text {
-  font-size: 10px;
+  font-size: 3.48cqw;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  line-height: 1.2;
 }
 
 .status-center {
+  position: absolute;
+  top: calc(13.68cqw + env(safe-area-inset-top, 0px));
+  left: 19.65cqw;
   display: flex;
-  align-items: flex-start;
-  gap: 2.5cqw;
-  margin-top: 1cqw;
+  gap: 3.48cqw;
 }
 
 .energy-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -298,47 +283,50 @@ const formattedEnergyCountdown = computed(() => {
 
 .energy-pill,
 .diamond-pill {
-  background: var(--off-white);
-  box-shadow: 0 4px 10px rgba(170, 170, 204, 0.25);
-  border-radius: 32px;
-  height: 8cqw;
-  min-height: 32px;
+  background: #FAF5F8;
+  border-radius: 0px 13px 13px 0px;
+  width: 18.91cqw;
+  height: 6.22cqw;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 0 6px 0 10px;
+  justify-content: flex-start;
+  gap: 1.24cqw;
+  padding: 0 1.24cqw 0 5.47cqw;
+  position: relative;
+  box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
 }
 
-.energy-icon,
-.diamond-icon {
-  font-size: 14px;
+.energy-icon-img,
+.diamond-icon-img {
+  position: absolute;
+  left: -2.49cqw;
+  top: -1cqw;
+  width: 7.96cqw;
+  height: 7.96cqw;
+  z-index: 4;
+  border-radius: 50%;
+  background: #F5F5FA;
+  box-shadow: 5px 5px 10px rgba(170,170,204,0.5), -5px -5px 10px white;
+  padding: 1.24cqw;
 }
 
-.energy-value {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--accent-pink);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-
+.energy-value,
 .diamond-value {
-  font-size: 13px;
+  font-size: 3.48cqw;
   font-weight: 800;
-  color: var(--warm-border);
+  color: #DDAA8B;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1;
 }
 
 .add-btn {
-  width: 5cqw;
-  height: 5cqw;
-  min-width: 20px;
-  min-height: 20px;
+  width: 3.98cqw;
+  height: 3.98cqw;
   border-radius: 50%;
-  background: var(--color-success);
+  background: #73D13D;
   border: none;
   color: white;
-  font-size: 13px;
+  font-size: 2.99cqw;
   font-weight: 900;
   display: flex;
   align-items: center;
@@ -346,82 +334,113 @@ const formattedEnergyCountdown = computed(() => {
   cursor: pointer;
   padding: 0;
   line-height: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-left: auto;
 }
 
 .energy-countdown {
-  font-size: 10px;
+  position: absolute;
+  top: 5.22cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FAF5F8;
+  border-radius: 5px 5px 12px 12px;
+  padding: 1px 6px;
+  font-size: 2.49cqw;
   font-weight: 700;
-  color: var(--color-success);
-  margin-top: 2px;
+  color: #73D13D;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  z-index: 2;
+  white-space: nowrap;
 }
 
 .status-right {
-  display: flex;
-  align-items: center;
-  gap: 2.5cqw;
-  margin-top: 1cqw;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 135px;
+  pointer-events: none;
 }
 
 .shop-circle-btn {
-  width: 9cqw;
-  height: 9cqw;
-  min-width: 36px;
-  min-height: 36px;
+  position: absolute;
+  top: calc(12.94cqw + env(safe-area-inset-top, 0px));
+  right: 28.86cqw;
+  width: 7.96cqw;
+  height: 7.96cqw;
   border-radius: 50%;
-  background: var(--off-white);
+  background: #FAF5F8;
   border: none;
-  box-shadow: 0 4px 10px rgba(170, 170, 204, 0.3);
+  box-shadow: 5px 5px 10px rgba(170, 170, 204, 0.5), -5px -5px 10px #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  pointer-events: auto;
 }
 
-.shop-btn-icon {
-  font-size: 18px;
+.shop-btn-icon-img {
+  width: 4.48cqw;
+  height: 4.48cqw;
+}
+
+.map-circle-btn {
+  display: none;
+}
+
+.map-btn-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .rank-container {
+  position: absolute;
+  top: calc(13.93cqw + env(safe-area-inset-top, 0px));
+  right: 2.49cqw;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 1cqw;
+  pointer-events: auto;
 }
 
 .rank-label {
-  font-size: 14px;
+  font-size: 5.97cqw;
   font-weight: 900;
-  color: var(--text-primary);
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  color: #DDAA8B;
+  text-shadow: 1px 0 0 #fff, -1px 0 0 #fff, 0 1px 0 #fff, 0 -1px 0 #fff, 1px 1px 0 #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  line-height: 1;
+  margin-right: 4px;
 }
 
 .rank-circle {
-  width: 6cqw;
-  height: 6cqw;
-  min-width: 24px;
-  min-height: 24px;
+  width: 6.97cqw;
+  height: 6.97cqw;
   border-radius: 50%;
-  background: var(--off-white);
-  border: 2px solid var(--text-primary);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background: #DDAA8B;
+  border: 2px solid #fff;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .rank-number {
-  font-size: 12px;
+  font-size: 5.97cqw;
   font-weight: 900;
-  color: var(--peach-light);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #fff;
+  font-family: 'Candal', 'Plus Jakarta Sans', sans-serif;
+  line-height: 1;
 }
 
 .buff-row {
   position: absolute;
-  top: 14cqw;
-  left: 3cqw;
+  top: calc(25.87cqw + env(safe-area-inset-top, 0px));
+  left: 3.98cqw;
   display: flex;
   gap: 6px;
   z-index: 10;
@@ -465,6 +484,109 @@ const formattedEnergyCountdown = computed(() => {
   position: fixed;
   inset: 0;
   z-index: 798;
+}
+
+@media (max-height: 560px) {
+  #status-bar {
+    height: 85px;
+    padding: calc(4px + env(safe-area-inset-top, 0px)) 8px 0 8px;
+  }
+  .status-left {
+    top: calc(4px + env(safe-area-inset-top, 0px));
+    width: 56px;
+    height: 56px;
+  }
+  .coin-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .gold-text {
+    top: 22px;
+    left: 4px;
+    font-size: 10px;
+  }
+  .loop-badge {
+    top: 36px;
+    left: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+  }
+  .loop-text {
+    font-size: 11px;
+  }
+  .status-center {
+    top: calc(8px + env(safe-area-inset-top, 0px));
+    left: 44px;
+    gap: 8px;
+  }
+  .energy-pill,
+  .diamond-pill {
+    height: 22px;
+    padding: 0 4px 0 16px;
+    gap: 4px;
+  }
+  .energy-icon-img,
+  .diamond-icon-img {
+    left: -7px;
+    top: calc(50% - 11px);
+    width: 22px;
+    height: 22px;
+  }
+  .energy-value,
+  .diamond-value {
+    font-size: 12px;
+  }
+  .add-btn {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+  .energy-countdown {
+    top: 22px;
+    font-size: 8px;
+    padding: 0 4px;
+  }
+  .status-right {
+    height: 85px;
+  }
+  .shop-circle-btn {
+    top: calc(6px + env(safe-area-inset-top, 0px));
+    right: 80px;
+    width: 28px;
+    height: 28px;
+  }
+  .map-circle-btn {
+    top: calc(38px + env(safe-area-inset-top, 0px));
+    right: 80px;
+    width: 28px;
+    height: 28px;
+  }
+  .map-btn-icon {
+    font-size: 13px;
+  }
+  .rank-container {
+    top: calc(4px + env(safe-area-inset-top, 0px));
+    right: 10px;
+    gap: 2px;
+  }
+  .rank-label {
+    font-size: 18px;
+  }
+  .rank-circle {
+    width: 22px;
+    height: 22px;
+  }
+  .rank-number {
+    font-size: 18px;
+  }
+  .buff-row {
+    top: calc(60px + env(safe-area-inset-top, 0px));
+  }
+  .buff-pill {
+    min-height: 20px;
+    padding: 0 6px;
+  }
 }
 
 .buff-popover {
@@ -545,4 +667,3 @@ const formattedEnergyCountdown = computed(() => {
   color: white;
 }
 </style>
-

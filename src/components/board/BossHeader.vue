@@ -1,15 +1,17 @@
 <template>
   <div id="boss-header">
+    <!-- Warehouse Entry -->
+    <div class="inventory-entry">
+      <div class="inventory-label">仓库</div>
+      <button class="inventory-btn" @click="openInventory">
+        <span class="inventory-icon">🍩</span>
+        <span v-if="inventoryCount > 0" class="inventory-badge">{{ inventoryCount }}</span>
+      </button>
+    </div>
+
+    <!-- Quest Cards Carousel -->
     <div class="quest-row">
       <div id="quest-carousel">
-        <!-- Floating Backpack Button -->
-        <div class="floating-backpack-container">
-          <div class="warehouse-tag">仓库</div>
-          <button id="floating-backpack-btn" @click="openInventory">
-            <span class="backpack-emoji">🍩</span>
-            <span class="backpack-badge" v-if="inventoryCount > 0">{{ inventoryCount }}</span>
-          </button>
-        </div>
         <!-- Main Quest Card -->
         <MainQuestCard />
         <!-- Daily Order Cards -->
@@ -20,6 +22,9 @@
         />
       </div>
     </div>
+
+    <!-- Board Divider -->
+    <div class="board-divider" />
   </div>
 </template>
 
@@ -46,15 +51,15 @@ const openInventory = () => {
 #boss-header {
   position: relative;
   width: 100cqw;
-  height: auto;
-  padding: 0 0cqw 0cqw 1cqw;
+  height: 180px;
+  padding: 0;
   display: block;
   background: transparent;
   border: 0;
   border-radius: 0;
   box-shadow: none;
   overflow: visible;
-  z-index: var(--z-fixed);
+  z-index: 60;
   box-sizing: border-box;
 }
 
@@ -81,6 +86,7 @@ const openInventory = () => {
   box-sizing: border-box;
   position: relative;
   overflow: visible !important;
+  min-height: 180px;
 }
 
 #quest-carousel {
@@ -88,9 +94,9 @@ const openInventory = () => {
   width: 100%;
   height: auto;
   display: flex;
-  gap: 2cqw;
+  gap: 8px;
   align-items: flex-end;
-  padding: 1cqw 0 0 0;
+  padding: 4px 16px 10px 66px;
   overflow-x: auto !important;
   overflow-y: hidden !important;
   max-height: none !important;
@@ -105,78 +111,71 @@ const openInventory = () => {
   display: none;
 }
 
-.floating-backpack-container {
-  position: relative;
-  align-self: flex-end;
+.inventory-entry {
+  position: absolute;
+  top: 56px;
+  left: 7px;
+  width: 52px;
+  height: 110px;
+  z-index: 65;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2cqw;
-  margin-left: 2cqw;
-  z-index: 65;
 }
 
-.warehouse-tag {
-  background: var(--surface-muted);
-  border-radius: 2px;
-  color: var(--text-heading);
+.inventory-label {
+  width: 51px;
+  height: 44px;
+  background: #D9D9D9;
+  color: #000;
   font-size: 11px;
   font-weight: 700;
-  padding: 2px 8px;
-  text-align: center;
-  font-family: 'Jiangcheng Yuanti', sans-serif;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  line-height: 1.2;
-  white-space: nowrap;
-  margin-bottom: 4px;
-}
-
-#floating-backpack-btn {
-  background: var(--cream);
-  border: 2px solid var(--pale-peach);
-  border-radius: 10px;
-  width: 52px;
-  height: 52px;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0px 3px 6px rgba(0,0,0,0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'Jiangcheng Yuanti', sans-serif;
+  text-align: center;
+  line-height: 1.2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.inventory-btn {
+  margin-top: 13px;
+  background: #FFDFC8;
+  border: 4px solid #E9C3A8;
+  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  box-shadow: 0px 1px 3.7px #60190F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   padding: 0;
 }
-#floating-backpack-btn:active {
+.inventory-btn:active {
   transform: scale(0.95);
 }
-#floating-backpack-btn.drop-target,
-.floating-backpack-container.drop-target #floating-backpack-btn {
-  transform: scale(1.18);
-  border-color: #ff6b9d;
-  box-shadow: 0 0 16px rgba(255, 107, 157, 0.75);
-  background: var(--off-white);
-}
 
-.backpack-emoji {
+.inventory-icon {
   font-size: 28px;
   line-height: 1;
 }
 
-.backpack-badge {
+.inventory-badge {
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: -7px;
+  left: 30px;
   background: var(--accent-pink);
-  color: var(--text-primary);
-  font-size: 9px;
+  color: white;
+  font-size: 10px;
   font-weight: 900;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 50%;
-  border: 1.5px solid var(--text-primary);
-  box-shadow: 0 2px 4px rgba(243, 86, 131, 0.3);
+  width: 24px;
+  height: 16px;
+  border-radius: 13px;
+  border: 1px solid #E9C3A8;
+  box-shadow: 0 1px 3px rgba(243, 86, 131, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,9 +184,29 @@ const openInventory = () => {
   box-sizing: border-box;
 }
 
+.board-divider {
+  position: absolute;
+  bottom: 0px;
+  left: 13px;
+  width: calc(100% - 26px);
+  height: 5px;
+  border-radius: 12px;
+  background: #FFDFC8;
+  border: 2px solid #FFF;
+  box-shadow: 0 0 5.8px #000;
+  z-index: 70;
+}
+
 @media (max-height: 760px) {
-  #boss-header { padding: 4px 10px; gap: 8px; }
-  #quest-carousel { padding: 4px 8px; gap: 6px; max-height: 95px; }
+  #boss-header { height: 115px; }
+  .quest-row { min-height: 115px; }
+  #quest-carousel { padding-bottom: 6px; }
+  .inventory-entry { top: 28px; width: 40px; height: 80px; }
+  .inventory-label { width: 40px; height: 30px; font-size: 9px; }
+  .inventory-btn { margin-top: 6px; width: 40px; height: 40px; border-radius: 8px; border-width: 3px; }
+  .inventory-icon { font-size: 22px; }
+  .inventory-badge { top: -5px; left: 22px; width: 20px; height: 14px; font-size: 8px; }
+  #quest-carousel { padding-left: 50px; }
 }
 </style>
 

@@ -26,13 +26,19 @@ export const useI18nStore = defineStore('i18n', () => {
         localStorage.setItem('i18n_locale', determinedLocale);
         if (typeof document !== 'undefined') document.documentElement.lang = determinedLocale;
 
-        const basePath = '/assets';
+        const basePath = `${import.meta.env.BASE_URL || '/'}assets`;
         const cacheBust = '?v=' + Date.now();
         
         try {
             const [textsData, emojisData] = await Promise.all([
-                fetch(`${basePath}/i18n/${determinedLocale}.json${cacheBust}`).then(r => r.json()),
-                fetch(`${basePath}/constants/emojis.json${cacheBust}`).then(r => r.json()),
+                fetch(`${basePath}/i18n/${determinedLocale}.json${cacheBust}`).then(r => {
+                    if (!r.ok) throw new Error(`HTTP error ${r.status} fetching ${determinedLocale}.json`);
+                    return r.json();
+                }),
+                fetch(`${basePath}/constants/emojis.json${cacheBust}`).then(r => {
+                    if (!r.ok) throw new Error(`HTTP error ${r.status} fetching emojis.json`);
+                    return r.json();
+                }),
             ]);
             
             texts.value = textsData;

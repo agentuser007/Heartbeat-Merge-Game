@@ -2,10 +2,10 @@
   <div id="bottom-action-bar">
     <div class="action-buttons-left">
       <button class="action-circle-btn" @click="emit('nav-click', 'gacha')">
-        <span class="action-circle-icon">🎴</span>
+        <img class="action-circle-icon-img" src="/assets/items/gacha.svg" alt="gacha" />
       </button>
       <button class="action-circle-btn" @click="emit('nav-click', 'affection')">
-        <span class="action-circle-icon">💕</span>
+        <img class="action-circle-icon-img" src="/assets/items/crown.svg" alt="crown" />
       </button>
     </div>
     <div class="action-bar-center">
@@ -21,6 +21,8 @@
               {{ sellLabel }}
             </button>
           </div>
+
+          <div v-if="hasSelectedItem" class="info-divider" />
 
           <div v-if="hasSelectedItem" class="info-footer-row">
             <div class="info-hint-row">
@@ -46,15 +48,29 @@
               <span v-if="idx < mergeChain.length - 1" class="merge-chain-arrow">→</span>
             </template>
           </div>
+          <div v-else class="info-empty-state">
+            <div class="info-detail-row">
+              <div class="info-item-group">
+                <span class="info-item-name">眉笔</span>
+                <span class="info-item-level">lv.2</span>
+              </div>
+              <span class="info-sell-label">{{ sellLabel }}</span>
+            </div>
+            <div class="info-divider" />
+            <div class="info-hint-row">
+              <span class="info-icon">ⓘ</span>
+              <span class="info-hint-text">{{ hint }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="action-buttons-right">
       <button class="action-circle-btn" @click="emit('nav-click', 'achievement')">
-        <span class="action-circle-icon">🏆</span>
+        <img class="action-circle-icon-img" src="/assets/items/Trophy.svg" alt="trophy" />
       </button>
       <button class="action-circle-btn" @click="emit('nav-click', 'collection')">
-        <span class="action-circle-icon">📖</span>
+        <img class="action-circle-icon-img" src="/assets/items/book-03.svg" alt="book" />
       </button>
     </div>
   </div>
@@ -122,7 +138,7 @@ const emit = defineEmits<{
   border-radius: 32px;
   background: var(--off-white);
   border: none;
-  box-shadow: var(--shadow-neu-up), var(--shadow-neu-down);
+  box-shadow: 5px 5px 10px rgba(170,170,204,0.5), -5px -5px 10px white;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -137,14 +153,14 @@ const emit = defineEmits<{
   transform: scale(0.92);
 }
 
-.action-circle-icon {
-  font-size: 14px;
-  line-height: 1;
+.action-circle-icon-img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .action-bar-center {
   flex: 1;
-  max-width: 62cqw;
 }
 
 .action-bar-inner {
@@ -239,6 +255,14 @@ const emit = defineEmits<{
   transform: scale(0.95);
 }
 
+.info-sell-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--off-white);
+  opacity: 0.92;
+  font-family: 'Jiangcheng Yuanti', sans-serif;
+}
+
 .info-footer-row {
   display: flex;
   align-items: center;
@@ -290,5 +314,47 @@ const emit = defineEmits<{
 .merge-chain-arrow {
   font-size: 10px;
   color: rgba(250, 245, 248, 0.4);
+}
+
+.info-divider {
+  height: 1px;
+  background: rgba(250, 245, 248, 0.25);
+  width: 100%;
+}
+
+.info-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  width: 100%;
+}
+
+@media (max-height: 760px) {
+  #bottom-action-bar {
+    padding: 1cqw 2cqw calc(2cqw + env(safe-area-inset-bottom, 0px));
+    gap: 1.5cqw;
+  }
+  .action-bar-inner {
+    min-height: 14cqw;
+  }
+  .action-bar-content {
+    min-height: 14cqw;
+    padding: 2cqw 3cqw 2cqw 2cqw;
+    gap: 1cqw;
+  }
+  .action-circle-btn {
+    min-width: 28px;
+    min-height: 28px;
+  }
+  .action-circle-icon-img {
+    width: 14px;
+    height: 14px;
+  }
+  .info-hint-text {
+    font-size: 10px;
+  }
+  .merge-chain-item {
+    font-size: 11px;
+  }
 }
 </style>

@@ -61,6 +61,7 @@ export const useBoardStore = defineStore('board', () => {
     const locked = ref<Set<number>>(new Set());
     const generatorStates = ref<Record<number, any>>({});
     const selectedCell = ref<number | null>(null);
+    const selectedInfoItemId = ref<string | null>(null);
     const cols = ref(0);
     const rows = ref(0);
     const cellsUnlocked = ref(0);
@@ -201,6 +202,12 @@ export const useBoardStore = defineStore('board', () => {
 
     function selectCell(index: number | null) {
         selectedCell.value = index;
+        if (index !== null) selectedInfoItemId.value = null;
+    }
+
+    function selectInfoItem(itemId: string | null) {
+        selectedInfoItemId.value = itemId;
+        if (itemId !== null) selectedCell.value = null;
     }
 
     function unlockCells(indices: number[]) {
@@ -654,6 +661,7 @@ export const useBoardStore = defineStore('board', () => {
         locked,
         generatorStates,
         selectedCell,
+        selectedInfoItemId,
         cols,
         rows,
         cellsUnlocked,
@@ -674,6 +682,7 @@ export const useBoardStore = defineStore('board', () => {
         renderAll,
         placeInitialGenerators,
         selectCell,
+        selectInfoItem,
         unlockCells,
         findEmptyCell,
         findItem,

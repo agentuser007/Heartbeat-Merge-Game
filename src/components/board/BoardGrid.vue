@@ -281,23 +281,32 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
 .grid-container {
   position: relative;
   flex: 1;
+  flex-shrink: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
   margin: 0;
   padding: 0;
-  overflow: visible;
+  overflow: hidden;
   box-sizing: border-box;
   background: transparent !important;
   box-shadow: none !important;
   border: none !important;
+  min-height: 0;
+
+  /* Custom responsive cell size calculation */
+  --avail-width: calc(100cqw - 12cqw);
+  --avail-height: calc(100cqh - 135px - 180px - 110px - 8cqw);
+  --cell-w: calc(var(--avail-width) / 7);
+  --cell-h: calc((var(--avail-height) - 10px) / 9);
+  --cell-size: clamp(36px, min(var(--cell-w), var(--cell-h)), 56px);
 }
 
 .board-frame {
   position: relative;
   width: 100cqw;
-  height: auto;
-  max-width: none;
+  flex: 1;
+  flex-shrink: 0;
   min-height: 0;
   padding: 0;
   border: none;
@@ -305,7 +314,8 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
   background: var(--grid-area-bg);
   box-shadow: var(--shadow-board-outer);
   overflow: hidden;
-  display: block;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
 }
 
@@ -328,18 +338,25 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
 
 .board-frame-inner {
   position: relative;
-  margin: 2cqw 1.2cqw;
+  width: calc(7 * var(--cell-size) + 1.5cqw + 7.4cqw + 8px);
+  margin: 2cqw auto;
   border-radius: 12px;
   background: var(--board-frame-bg);
   border: 2px solid var(--board-frame-border);
   box-sizing: border-box;
   padding: 2cqw 3.7cqw;
   z-index: 1;
+  flex: 1;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 #game-grid {
-  width: 100%;
-  height: auto;
+  width: calc(7 * var(--cell-size) + 1.5cqw + 4px);
+  height: calc(9 * var(--cell-size) + 2cqw + 4px);
+  margin: auto;
   padding: 0;
   gap: 0.25cqw;
   border: 2px solid var(--board-border);
@@ -351,6 +368,7 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
   box-sizing: border-box;
   display: grid;
   aspect-ratio: auto;
+  flex-shrink: 0;
 }
 
 #game-grid.scissor-active {
@@ -376,6 +394,9 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
 }
 
 @media (max-height: 760px) {
-  .grid-container { padding: 0 2px; }
+  .grid-container {
+    padding: 0 2px;
+    --avail-height: calc(100cqh - 85px - 115px - 74px - 8cqw);
+  }
 }
 </style>

@@ -162,15 +162,21 @@ const hint = computed(() => {
 })
 
 const selectedItem = computed(() => {
-  if (boardStore.selectedCell === null) return null
-  const itemId = boardStore.getCell(boardStore.selectedCell)
-  if (!itemId) return null
-  return configStore.items[itemId] || null
+  if (boardStore.selectedCell !== null) {
+    const itemId = boardStore.getCell(boardStore.selectedCell)
+    if (!itemId) return null
+    return configStore.items[itemId] || null
+  }
+  if (boardStore.selectedInfoItemId !== null) {
+    return configStore.items[boardStore.selectedInfoItemId] || null
+  }
+  return null
 })
 
 const hasSelectedItem = computed(() => selectedItem.value !== null)
 
 const canSellSelected = computed(() => {
+  if (boardStore.selectedInfoItemId !== null) return false
   if (boardStore.selectedCell === null) return false
   return boardStore.canSellItem(boardStore.selectedCell)
 })

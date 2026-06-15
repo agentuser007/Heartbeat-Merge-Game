@@ -400,6 +400,9 @@
     "shopBtn": "💝 Shop",
     "giftBtn": "🎁 Gift"
   },
+  "energy": {
+    "full": "Full"
+  },
   "game_complete": {
     "emoji": "👑",
     "title": "Congratulations!",

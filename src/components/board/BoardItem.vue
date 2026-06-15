@@ -1,6 +1,7 @@
 <template>
   <div class="item" :class="itemClasses" :data-level="itemData?.level" :data-chain="itemData?.chain">
-    <span class="item-emoji">{{ itemData?.emoji }}</span>
+    <img v-if="itemAsset" class="item-asset" :src="itemAsset" :alt="itemData?.name || itemId" draggable="false" />
+    <span v-else class="item-emoji">{{ itemData?.emoji }}</span>
     <span v-if="itemData?.type === 'GENERATOR'" class="gen-timer">{{ timerText }}</span>
   </div>
 </template>
@@ -9,6 +10,7 @@
 import { ref, computed, watch, onUnmounted } from 'vue';
 import { useConfigStore } from '../../stores/configStore';
 import { useBoardStore } from '../../stores/boardStore';
+import { getItemAsset } from './itemAssets';
 // ItemData type is used via configStore.items — type inferred at usage
 
 // Props
@@ -27,6 +29,8 @@ const boardStore = useBoardStore();
 const itemData = computed(() => {
   return configStore.items[props.itemId] || null;
 });
+
+const itemAsset = computed(() => getItemAsset(itemData.value));
 
 // Computed classes based on item type
 const itemClasses = computed(() => {
@@ -114,6 +118,20 @@ const timerText = computed(() => {
   line-height: 1;
 }
 
+.item-asset {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.24));
+  transform: translateZ(0);
+  transition: transform var(--transition-fast);
+}
+
+.item:active .item-asset {
+  transform: scale(0.94);
+}
+
 /* ===== Generator visual (glowing border) ===== */
 .item.generator {
   border: 2px solid rgba(255, 215, 0, 0.5);
@@ -123,6 +141,10 @@ const timerText = computed(() => {
 }
 .item.generator .item-emoji {
   filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+}
+.item.generator .item-asset {
+  width: 78%;
+  height: 78%;
 }
 
 /* ===== Joker item ===== */
