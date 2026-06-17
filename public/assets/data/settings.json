@@ -7,7 +7,7 @@
         "ENERGY_REGEN_INTERVAL": 120000,
         "ENERGY_REGEN_AMOUNT": 1,
         "ENERGY_COST_PER_SPAWN": 1,
-        "STARTING_GOLD": 0
+        "ENERGY_REGEN_DOWN_MULTIPLIER": 1.5
     },
     "RECYCLE_ENERGY_TABLE": {
         "1": 0,
@@ -138,10 +138,11 @@
         "heartFlyDuration": 700,
         "defeatBossDelay": 1500,
         "paradeToCompleteDelay": 6000,
-        "autoSaveInterval": 5,
+        "autoSaveInterval": 5000,
         "swipeCloseThreshold": 80,
         "swipeHandleArea": 40,
-        "timerWarningThreshold": 5
+        "timerWarningThreshold": 5,
+        "interactiveTransition": 200
     },
     "UI_COLORS": {
         "toastSSR": "linear-gradient(135deg, rgba(241,196,15,0.9), rgba(255,87,34,0.9))",
@@ -183,7 +184,17 @@
         "particleLifespan": 800,
         "paradeStepInterval": 1500,
         "gachaRevealDelay": 300,
-        "gachaCardFlipDuration": 600
+        "gachaCardFlipDuration": 600,
+        "toastFadeOut": 300,
+        "bgmFadeIn": 800,
+        "bgmResumeFade": 500,
+        "affectionToastDisplay": 2000,
+        "affectionLevelUpToastDisplay": 3000,
+        "touchDialogueDisplay": 3000,
+        "vnTitleDisplay": 2000,
+        "bgmSwitchDelay": 50,
+        "itemUseDelay": 300,
+        "sparkleStartDelay": 50
     },
     "UI_COLOR_THEME": {
         "hpGradientHigh": "linear-gradient(90deg, #FF6B6B, #EE5A24)",

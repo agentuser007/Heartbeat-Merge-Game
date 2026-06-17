@@ -6,6 +6,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
+import { resolveCheckChainCompletion } from '../services/CollectionService';
 
 export const useCollectionStore = defineStore('collection', () => {
     // --- State ---
@@ -116,22 +117,22 @@ export const useCollectionStore = defineStore('collection', () => {
     }
 
     function checkChainCompletion(chainId: string) {
-        if (completedChains.value.has(chainId)) return; // already rewarded
-        if (chainId === 'special') return; // skip special chain
-
-        const chainItems = Object.entries(configStore.items).filter(([, v]) => v.chain === chainId);
-        if (chainItems.length === 0) return;
-
-        const allDiscovered = chainItems.every(([id]) => discovered.value.has(id));
-        if (!allDiscovered) return;
-
-        // Chain is complete — mark as completed
-        completedChains.value.add(chainId);
-        
-        // Emit event for rewards
-        globalBus.emit('collection:chainCompleted', {
-            chainId
+        const result = resolveCheckChainCompletion({
+            chainId,
+            items: configStore.items,
+            discovered: discovered.value,
+            completedChains: completedChains.value,
         });
+
+        if (result.applyTo.collection?.markChainCompleted) {
+            markChainCompletedField(result.applyTo.collection.markChainCompleted);
+        }
+
+        result.events?.forEach((e: { name: string; data: unknown }) => globalBus.emit(e.name, e.data));
+    }
+
+    function markChainCompletedField(chainId: string): void {
+        completedChains.value.add(chainId);
     }
 
     function checkCompletion(): number {
@@ -204,6 +205,7 @@ export const useCollectionStore = defineStore('collection', () => {
         discover,
         collectGacha,
         checkChainCompletion,
+        markChainCompletedField,
         checkCompletion,
         getCompletionPct,
         switchTab,

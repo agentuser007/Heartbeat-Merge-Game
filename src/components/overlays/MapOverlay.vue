@@ -182,7 +182,7 @@ function onStoryClick(node: MapNode) {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .map-close-btn:hover {
@@ -217,7 +217,7 @@ function onStoryClick(node: MapNode) {
   padding: 10px 14px;
   border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
   min-width: 200px;
   border: 2px solid transparent;
 }
@@ -289,7 +289,7 @@ function onStoryClick(node: MapNode) {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .node-story-btn:hover {

@@ -5,6 +5,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
+import { resolveExchange } from '../services/FragmentService';
 
 export const useFragmentStore = defineStore('fragment', () => {
     // --- State ---
@@ -36,23 +37,26 @@ export const useFragmentStore = defineStore('fragment', () => {
     }
 
     function exchangeFragment(fragmentId: string, count: number = 1): boolean {
-        if (!fragments.value[fragmentId] || fragments.value[fragmentId] < count) {
-            return false;
-        }
-        
-        fragments.value[fragmentId] -= count;
+        const result = resolveExchange({
+            fragmentId,
+            count,
+            currentFragments: { ...fragments.value },
+        });
+
+        if (!result.ok) return false;
+
+        const removal = result.resolveResult.applyTo.fragment!.removeFragment!;
+        removeFragmentField(removal.fragmentId, removal.count);
+
+        result.resolveResult.events?.forEach((e: { name: string; data: unknown }) => globalBus.emit(e.name, e.data));
+        return true;
+    }
+
+    function removeFragmentField(fragmentId: string, count: number): void {
+        fragments.value[fragmentId] = (fragments.value[fragmentId] || 0) - count;
         if (fragments.value[fragmentId] <= 0) {
             delete fragments.value[fragmentId];
         }
-        
-        // Emit event for UI updates
-        globalBus.emit('fragment:exchanged', {
-            fragmentId,
-            count,
-            remaining: fragments.value[fragmentId] || 0
-        });
-        
-        return true;
     }
 
     function getFragmentCount(fragmentId: string): number {
@@ -115,6 +119,7 @@ export const useFragmentStore = defineStore('fragment', () => {
         // Actions
         addFragment,
         exchangeFragment,
+        removeFragmentField,
         getFragmentCount,
         hasFragment,
         clearFragment,

@@ -80,7 +80,7 @@ function readCG(cg: CGDisplayItem) {
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .cg-item:hover {

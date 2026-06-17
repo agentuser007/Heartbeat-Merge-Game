@@ -23,6 +23,10 @@ import { useDailyBuffStore } from '@/stores/dailyBuffStore';
 import { useSaveStore } from '@/stores/saveStore';
 import { useAudio } from './useAudio';
 import { useEventBus } from './useEventBus';
+import { LoopService } from '@/services/LoopService';
+import * as LoopLogic from '@/logic/LoopLogic';
+import { applyResolveResult } from '@/composables/useGameLoop';
+import { useApplyDeps } from '@/composables/useApplyDeps';
 
 export function useGameInit() {
     const i18nStore = useI18nStore();
@@ -40,6 +44,7 @@ export function useGameInit() {
     const dailyBuffStore = useDailyBuffStore();
     const saveStore = useSaveStore();
     const bus = useEventBus();
+    const applyDeps = useApplyDeps();
 
     // --- Shared reactive state ---
     const gameReady = ref(false);
@@ -135,7 +140,8 @@ export function useGameInit() {
                     }
 
                     // FB-6: Roll daily buff (will re-roll if day changed since last save)
-                    dailyBuffStore.rollDailyBuff();
+                    const rollResult = dailyBuffStore.rollDailyBuff();
+                    if (rollResult) applyResolveResult(rollResult, applyDeps);
 
                     // Apply heroine permanent effects to energy
                     // Reset to base first to avoid stacking bonuses from saved state
@@ -193,12 +199,13 @@ export function useGameInit() {
         resetRunState();
 
         // FB-6: Roll daily buff for new game
-        dailyBuffStore.rollDailyBuff();
+        const newGameRollResult = dailyBuffStore.rollDailyBuff();
+        if (newGameRollResult) applyResolveResult(newGameRollResult, applyDeps);
 
         // Place initial generators and load first boss
         boardStore.renderAll();
         boardStore.placeInitialGenerators();
-        bossStore.loadLevel(0);
+        applyResolveResult(bossStore.resolveLoadLevel(0), applyDeps);
 
         // Set active board to loop 1
         boardStore.activeBoardLoop = 1;
@@ -257,7 +264,7 @@ export function useGameInit() {
         // Place initial generators and load first boss
         boardStore.renderAll();
         boardStore.placeInitialGenerators();
-        bossStore.loadLevel(0);
+        applyResolveResult(bossStore.resolveLoadLevel(0), applyDeps);
 
         // Update active board loop
         boardStore.activeBoardLoop = loopIdx;
@@ -317,7 +324,18 @@ export function useGameInit() {
         );
 
         // Calculate and award loop tokens
-        loopStore.completeLoop();
+        const result = LoopService.resolveCompleteLoop({
+            loopIndex: loopStore.loopIndex,
+            getNewDiscoveriesCountThisLoop: () => applyDeps.collectionStore.getNewDiscoveriesCountThisLoop(),
+            getUnlockedCountThisLoop: () => applyDeps.achievementStore.getUnlockedCountThisLoop(),
+            getLoopTokenReward: (idx: number) => LoopLogic.getLoopTokenReward(idx, {
+                table: configStore.loopMultipliers.tokenReward.table,
+                overflowBase: configStore.loopMultipliers.tokenReward.overflowBase!,
+                overflowGrowth: configStore.loopMultipliers.tokenReward.overflowGrowth!,
+            }),
+            achievementTokenBonus: configStore.boardEconomy.achievementTokenBonus,
+        });
+        applyResolveResult(result, applyDeps);
 
         // Only show LoopSummary if player is viewing the current loop's board
         if (boardStore.activeBoardLoop === loopStore.loopIndex ||
@@ -364,7 +382,7 @@ export function useGameInit() {
         boardStore.initGrid();
 
         // Boss: reset
-        bossStore.reset();
+        applyResolveResult(bossStore.resolveReset(), applyDeps);
 
         // Inventory: clear all items
         inventoryStore.clear();

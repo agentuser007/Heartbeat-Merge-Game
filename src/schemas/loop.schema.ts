@@ -89,6 +89,30 @@ export const StoryChapterSchema = z.object({
     lines: z.array(StoryLineSchema),
 })
 
+export const MetaUpgradeConfigSchema = z.object({
+    baseCost: z.number().positive(),
+    costScale: z.number().positive(),
+    effectPerLevel: z.number(),
+    maxLevel: z.number().int().positive(),
+})
+
+export const LoopMultiplierTableSchema = z.object({
+    table: z.array(z.number()),
+    overflowBase: z.number().optional(),
+    overflowGrowth: z.number().optional(),
+    cap: z.number().optional(),
+    overflowValue: z.number().optional(),
+})
+
+export const LoopMultipliersSchema = z.object({
+    hpMultiplier: LoopMultiplierTableSchema,
+    rewardMultiplier: LoopMultiplierTableSchema,
+    timeMultiplier: LoopMultiplierTableSchema,
+    tokenReward: LoopMultiplierTableSchema,
+    startingGoldBase: z.number().positive(),
+    metaUpgrades: z.record(z.string(), MetaUpgradeConfigSchema),
+})
+
 export const CGStorySchema = z.object({
     cgId: z.string(),
     title: z.string(),

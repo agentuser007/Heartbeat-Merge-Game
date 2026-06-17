@@ -33,6 +33,32 @@ vi.mock('../../stores/achievementStore', () => ({
   }))
 }))
 
+vi.mock('../../stores/configStore', () => ({
+  useConfigStore: vi.fn(() => ({
+    gameConfig: { BOARD_COLS: 7, BOARD_ROWS: 9, MAX_ENERGY: 100, ENERGY_REGEN_CAP: 100, ENERGY_REGEN_INTERVAL: 120000, ENERGY_REGEN_AMOUNT: 1, ENERGY_COST_PER_SPAWN: 1, ENERGY_REGEN_DOWN_MULTIPLIER: 1.5 },
+    gachaCost: { singleCost: 100, tenCost: 900 },
+    gachaRarityConfig: {},
+    gachaSubWeights: {},
+    gachaPool: [],
+    dailyOrderConfig: { MAX_ACTIVE: 5, REFRESH_COST: 0 },
+    dailyOrderPool: [],
+    dailyBuffPool: [],
+    adConfig: {},
+    gachaConfig: {},
+    loopRules: {},
+    loopMultipliers: { hpMultiplier: { table: [1], overflowBase: 1, overflowGrowth: 0 }, rewardMultiplier: { table: [1], overflowBase: 1, overflowGrowth: 0, cap: 3 }, timeMultiplier: { table: [1], overflowValue: 1 }, tokenReward: { table: [1], overflowBase: 1, overflowGrowth: 0 }, metaUpgrades: [] },
+    touchInteractions: {},
+    affectionConfig: {},
+    affectionShop: {},
+    heroineUpgrades: [],
+    boardEconomy: {},
+    bossProgression: [],
+    items: {},
+    generators: {},
+    chains: {},
+  }))
+}))
+
 const loopStoreMocks = {
   calculateLoopRewards: vi.fn(() => ({ loopTokens: 50, baseTokens: 30, bonusTokens: 20, goldReward: 100, diamondReward: 5 })),
 }

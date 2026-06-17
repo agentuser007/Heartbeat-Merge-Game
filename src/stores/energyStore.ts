@@ -6,6 +6,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
 import { EnergyLogic } from '../logic/EnergyLogic';
+import { resolveResetToBase } from '../services/EnergyService';
 import { useConfigStore } from './configStore';
 import type { EnergySerializeData } from '../types/serialize';
 import { useLoopStore } from './loopStore';
@@ -30,9 +31,9 @@ export const useEnergyStore = defineStore('energy', () => {
     const logic = new EnergyLogic({
         ENERGY_REGEN_CAP: configStore.gameConfig.ENERGY_REGEN_CAP,
         MAX_ENERGY: configStore.gameConfig.MAX_ENERGY,
-        ENERGY_REGEN_INTERVAL: configStore.gameConfig.ENERGY_REGEN_INTERVAL || 3000,
-        ENERGY_REGEN_AMOUNT: configStore.gameConfig.ENERGY_REGEN_AMOUNT || 1,
-        ENERGY_COST_PER_SPAWN: configStore.gameConfig.ENERGY_COST_PER_SPAWN || 5
+        ENERGY_REGEN_INTERVAL: configStore.gameConfig.ENERGY_REGEN_INTERVAL,
+        ENERGY_REGEN_AMOUNT: configStore.gameConfig.ENERGY_REGEN_AMOUNT,
+        ENERGY_COST_PER_SPAWN: configStore.gameConfig.ENERGY_COST_PER_SPAWN
     });
 
     // Initialize state from logic
@@ -119,13 +120,19 @@ export const useEnergyStore = defineStore('energy', () => {
     function resetToBase(): void {
         const configStore = useConfigStore();
         const loopStore = useLoopStore();
-        const maxEvents = logic.setMax(configStore.gameConfig.MAX_ENERGY || 100);
-        const capEvents = logic.setRegenCap(configStore.gameConfig.ENERGY_REGEN_CAP || configStore.gameConfig.MAX_ENERGY || 100);
-        let interval = configStore.gameConfig.ENERGY_REGEN_INTERVAL || 3000;
-        if (loopStore.hasRule('energyRegenDown')) {
-            interval = Math.floor(interval * 1.5);
-        }
-        logic.regenInterval = interval;
+        const result = resolveResetToBase({
+            maxEnergy: configStore.gameConfig.MAX_ENERGY,
+            regenCap: configStore.gameConfig.ENERGY_REGEN_CAP,
+            regenInterval: configStore.gameConfig.ENERGY_REGEN_INTERVAL,
+            hasRule: (rule: string) => loopStore.hasRule(rule),
+            energyRegenDownMultiplier: configStore.gameConfig.ENERGY_REGEN_DOWN_MULTIPLIER,
+        });
+
+        if (!result.ok) return;
+
+        const capEvents = logic.setRegenCap(configStore.gameConfig.ENERGY_REGEN_CAP);
+        const maxEvents = logic.setMax(result.resolveResult.applyTo.energy!.setMax!);
+        logic.regenInterval = result.resolveResult.applyTo.energy!.setRegenInterval!;
         logic.current = logic.max;
 
         max.value = logic.max;
@@ -165,7 +172,7 @@ export const useEnergyStore = defineStore('energy', () => {
                 current: logic.current,
                 regenCap: logic.regenCap,
                 regenInterval: logic.regenInterval,
-                regenAmount: logic.regenAmount || 1,
+                regenAmount: logic.regenAmount,
             });
             if (result.energyRecovered > 0) {
                 logic.current = result.newCurrent;

@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
-import { BoardLogic, ItemData as BoardItemData, GeneratorConfig } from '../logic/BoardLogic';
+import { BoardLogic, ItemData as BoardItemData } from '../logic/BoardLogic';
 import { useConfigStore } from './configStore';
 import type { GameItem } from '../types/game';
 import type { BoardSerializedData } from '../types/serialize';
@@ -122,21 +122,18 @@ export const useBoardStore = defineStore('board', () => {
 
     function placeItem(index: number, itemId: string) {
         const result = BoardService.resolvePlaceItem({ index, itemId });
-
-        logic.setCell(result.applyTo.board.setCell.index, result.applyTo.board.setCell.id);
-        cells.value[index] = itemId;
-
-        const items = getCachedConvertedItems(configStore.items);
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
-        logic.initGeneratorState(result.applyTo.board.initGenerator.index, result.applyTo.board.initGenerator.itemId, items, generators);
-        generatorStates.value = { ...logic.generatorStates };
-
-        result.events.forEach(e => globalBus.emit(e.name, e.data));
+        _setCell(index, itemId);
+        if (result.applyTo.board?.placeItems?.some(p => p.initGenerator)) {
+            _initGeneratorState(index, itemId);
+        }
+        if (result.events) {
+            for (const e of result.events) globalBus.emit(e.name, e.data);
+        }
     }
 
     function merge(sourceIndex: number, targetIndex: number) {
         const items = getCachedConvertedItems(configStore.items);
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
+        const generators = configStore.generators;
 
         const sId = logic.getCell(sourceIndex);
         const tId = logic.getCell(targetIndex);
@@ -148,7 +145,7 @@ export const useBoardStore = defineStore('board', () => {
         generatorStates.value = { ...logic.generatorStates };
 
         const dailyBuffStore = useDailyBuffStore();
-        const resolveResult = BoardService.resolveMerge({
+        const output = BoardService.resolveMerge({
             sourceIndex, targetIndex,
             sourceId: sId, targetId: tId,
             items,
@@ -160,18 +157,20 @@ export const useBoardStore = defineStore('board', () => {
             random: Math.random,
         });
 
-        if (resolveResult.applyTo.board) {
-            for (const sc of resolveResult.applyTo.board.setCells) {
-                logic.setCell(sc.index, sc.id);
-                if (sc.initGenerator) {
-                    logic.initGeneratorState(sc.index, sc.id, items, generators);
-                }
-                cells.value[sc.index] = sc.id;
+        if (output.result.applyTo.board?.placeItems) {
+            for (const p of output.result.applyTo.board.placeItems) {
+                _setCell(p.cellIndex, p.itemId);
             }
-            generatorStates.value = { ...logic.generatorStates };
+            for (const p of output.result.applyTo.board.placeItems) {
+                if (p.initGenerator) {
+                    _initGeneratorState(p.cellIndex, p.itemId);
+                }
+            }
         }
 
-        resolveResult.events.forEach(e => globalBus.emit(e.name, e.data));
+        if (output.result.events) {
+            for (const e of output.result.events) globalBus.emit(e.name, e.data);
+        }
 
         return mergeLogicResult;
     }
@@ -184,7 +183,7 @@ export const useBoardStore = defineStore('board', () => {
 
     function placeInitialGenerators() {
         const items = getCachedConvertedItems(configStore.items);
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
+        const generators = configStore.generators;
         logic.placeInitialGenerators(items, generators);
         
         // Sync state
@@ -237,9 +236,9 @@ export const useBoardStore = defineStore('board', () => {
         const itemId = logic.getCell(index);
         const result = BoardService.resolveClearCell({ index, itemId });
         logic.clearCell(index);
-        cells.value[index] = null;
-        if (result) {
-            result.events.forEach(e => globalBus.emit(e.name, e.data));
+        cells.value = [...logic.cells];
+        if (result?.events) {
+            for (const e of result.events) globalBus.emit(e.name, e.data);
         }
     }
 
@@ -299,7 +298,7 @@ export const useBoardStore = defineStore('board', () => {
         });
     }
 
-    function executeSell(cellIndex: number, sellPriceUpActive: boolean, recycleBonus: number): { gold: number; energy: number; events: Array<{ name: 'board:sold'; data: { cellIndex: number; itemId: string; gold: number; energy: number } }> } | null {
+    function executeSell(cellIndex: number, sellPriceUpActive: boolean, recycleBonus: number): ResolveResult | null {
         const items = getCachedConvertedItems(configStore.items);
         const bossStore = useBossStore();
         const dailyOrderStore = useDailyOrderStore();
@@ -316,12 +315,12 @@ export const useBoardStore = defineStore('board', () => {
         });
     }
 
-    function produceFromGenerator(index: number): { success: boolean; producedItemId?: string; targetIndex?: number; reason?: string; resolveResult?: ResolveResult } {
+    function produceFromGenerator(index: number): { success: boolean; reason?: string } {
         const itemId = logic.getCell(index);
         if (!itemId) return { success: false, reason: 'empty' };
 
         const items = getCachedConvertedItems(configStore.items);
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
+        const generators = configStore.generators;
         const itemData = items[itemId];
         if (!itemData || itemData.type !== 'GENERATOR') return { success: false, reason: 'not_generator' };
 
@@ -333,12 +332,12 @@ export const useBoardStore = defineStore('board', () => {
         }
 
         const isFree = logic.isFreeProduction(itemId, items, generators, { random: Math.random });
-        const energyCost = configStore.gameConfig.ENERGY_COST_PER_SPAWN || 1;
+        const energyCost = configStore.gameConfig.ENERGY_COST_PER_SPAWN;
         const energyStore = useEnergyStore();
         const dailyBuffStore = useDailyBuffStore();
         const loopStore = useLoopStore();
 
-        const result = BoardService.resolveProduction({
+        const output = BoardService.resolveProduction({
             generatorIndex: index,
             generatorItemId: itemId,
             isFreeProduction: isFree,
@@ -367,24 +366,27 @@ export const useBoardStore = defineStore('board', () => {
             random: Math.random,
         });
 
-        if (!result.success) return { success: false, reason: result.reason };
+        if (!output.ui.success) return { success: false, reason: output.ui.reason };
 
-        const { placements, incrementGeneratorClicks, decrementDoubleGenBy } = result.storeMeta;
-        for (const p of placements) {
-            logic.setCell(p.targetIndex, p.producedId);
-            logic.initGeneratorState(p.targetIndex, p.producedId, items, generators);
+        const rr = output.result;
+        if (rr.applyTo.energy?.spend) energyStore.spend(rr.applyTo.energy.spend);
+        if (rr.applyTo.board?.placeItems) {
+            for (const p of rr.applyTo.board.placeItems) _setCell(p.cellIndex, p.itemId);
+            for (const p of rr.applyTo.board.placeItems) {
+                if (p.initGenerator) _initGeneratorState(p.cellIndex, p.itemId);
+            }
         }
-        if (incrementGeneratorClicks) {
-            logic.incrementGeneratorClicks(incrementGeneratorClicks.index, items, generators);
+        if (rr.applyTo.board?.incrementGeneratorClicks) {
+            _incrementGeneratorClicks(rr.applyTo.board.incrementGeneratorClicks.index);
         }
-        if (decrementDoubleGenBy > 0) {
-            for (let i = 0; i < decrementDoubleGenBy; i++) decrementDoubleGenTurns();
+        if (rr.applyTo.board?.decrementDoubleGenTurns) {
+            for (let i = 0; i < rr.applyTo.board.decrementDoubleGenTurns; i++) decrementDoubleGenTurns();
+        }
+        if (rr.events) {
+            for (const e of rr.events) globalBus.emit(e.name, e.data);
         }
 
-        cells.value = [...logic.cells];
-        generatorStates.value = { ...logic.generatorStates };
-
-        return { success: true, producedItemId: result.producedItemId, targetIndex: result.targetIndex, resolveResult: result.resolveResult };
+        return { success: true };
     }
 
     function getUnlockCost(): number {
@@ -420,6 +422,25 @@ export const useBoardStore = defineStore('board', () => {
         }
     }
 
+    function _setCell(index: number, id: string): void {
+        logic.setCell(index, id);
+        cells.value = [...logic.cells];
+    }
+
+    function _initGeneratorState(index: number, itemId: string): void {
+        const items = getCachedConvertedItems(configStore.items);
+        const generators = configStore.generators;
+        logic.initGeneratorState(index, itemId, items, generators);
+        generatorStates.value = { ...logic.generatorStates };
+    }
+
+    function _incrementGeneratorClicks(index: number): void {
+        const items = getCachedConvertedItems(configStore.items);
+        const generators = configStore.generators;
+        logic.incrementGeneratorClicks(index, items, generators);
+        generatorStates.value = { ...logic.generatorStates };
+    }
+
     /**
      * Find indices of `count` random non-generator items on the board.
      * Used by the `reroll` effect.
@@ -453,20 +474,19 @@ export const useBoardStore = defineStore('board', () => {
      * Returns the actual number of items rerolled.
      */
     function rerollItems(count: number, itemsData: Record<string, any>): number {
-        const result = BoardService.resolveReroll({
+        const output = BoardService.resolveReroll({
             cells: cells.value,
             items: itemsData,
             count,
             chainItemPrefix: configStore.chainItemPrefix || {},
             random: Math.random,
         });
-        if (result.applyTo.board) {
-            for (const sc of result.applyTo.board.setCells) {
-                logic.setCell(sc.index, sc.id);
-                cells.value[sc.index] = sc.id;
+        if (output.result.applyTo.board?.placeItems) {
+            for (const p of output.result.applyTo.board.placeItems) {
+                _setCell(p.cellIndex, p.itemId);
             }
         }
-        return result.rerolledCount;
+        return output.ui.rerolledCount;
     }
 
     // --- Multi-board methods ---
@@ -591,7 +611,7 @@ export const useBoardStore = defineStore('board', () => {
 
     function calculateOfflineProduction(savedTimestamp: number): { itemCount: number; resolveResult: ResolveResult } {
         const items = getCachedConvertedItems(configStore.items);
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
+        const generators = configStore.generators;
 
         const producedItems: Array<{ itemId: string; count: number }> = [];
         const result = OfflineProductionManager.calculateProduction(savedTimestamp, {
@@ -650,7 +670,7 @@ export const useBoardStore = defineStore('board', () => {
         logic.cellsUnlocked = cellsUnlocked.value;
 
         // Process offline cooldowns and fix missing maxClicks
-        const generators = configStore.generators as unknown as Record<string, GeneratorConfig>;
+        const generators = configStore.generators;
         logic.processOfflineCooldown(items, generators);
         generatorStates.value = { ...logic.generatorStates };
     }
@@ -700,6 +720,9 @@ export const useBoardStore = defineStore('board', () => {
         resetAllGenerators,
         activateDoubleGen,
         decrementDoubleGenTurns,
+        _setCell,
+        _initGeneratorState,
+        _incrementGeneratorClicks,
         findRandomNonGeneratorItems,
         findAllItemsByLevel,
         hasActiveGenerator,

@@ -6,5 +6,9 @@
     { "maxLoop": 7, "boost": 3 },
     { "maxLoop": null, "boost": 4 }
   ],
-  "maxItemTier": 8
+  "maxItemTier": 8,
+  "timedOrdersUp": {
+    "defaultTimeLimit": 30,
+    "timeMultiplier": 0.7
+  }
 }

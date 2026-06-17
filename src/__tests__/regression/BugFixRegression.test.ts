@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { globalBus } from '../../core/EventBus'
 import { GachaLogic, GachaConfig } from '../../logic/GachaLogic'
-import { BossLogic, LoopConfig, LevelData, BossProgressionDeps } from '../../logic/BossLogic'
+import { BossLogic, LevelData, BossProgressionDeps } from '../../logic/BossLogic'
 import { BoardLogic, GeneratorConfig } from '../../logic/BoardLogic'
 import { EnergyLogic } from '../../logic/EnergyLogic'
 import { CurrencyLogic } from '../../logic/CurrencyLogic'

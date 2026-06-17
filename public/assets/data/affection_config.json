@@ -29,6 +29,7 @@
   },
   "touchCooldown": 3000,
   "dailyTouchBonus": { "threshold": 10, "bonus": 20 },
+  "giftPreferenceMultipliers": { "loved": 1.5, "liked": 1.2 },
   "affectionCoins": {
     "earnRate": 1,
     "levelUpBonuses": { "1": 50, "2": 100, "3": 200, "4": 300, "5": 500 }

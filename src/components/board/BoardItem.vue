@@ -72,7 +72,7 @@ watch(cooldownUntil, (newVal) => {
         window.clearInterval(intervalId!);
         intervalId = null;
       }
-    }, 1000);
+    }, configStore.uiTimers.orderTimerInterval);
   }
 }, { immediate: true });
 

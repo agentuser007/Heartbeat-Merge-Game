@@ -7,7 +7,7 @@ import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
 import { useLoopStore } from './loopStore';
-import { BoardService } from '../services/BoardService';
+import { resolveCheckOrder, resolveRollOrders } from '../services/DailyOrderService';
 import type { DailyOrderState } from '@/types/game';
 
 export type { DailyOrderState }
@@ -121,25 +121,27 @@ const configStore = useConfigStore();
             return;
         }
         
-        lastRollDate.value = today;
-        
         const loopIdx = loopIndex.value;
-        const maxActive = configStore.dailyOrderConfig.MAX_ACTIVE || 3;
+        const maxActive = configStore.dailyOrderConfig.MAX_ACTIVE;
         
-        const result = BoardService.resolveDailyOrders({
+        const rr = resolveRollOrders({
             orderPool: configStore.dailyOrderPool,
             loopIndex: loopIdx,
             maxActive,
             random: Math.random,
         });
-        activeOrders.value = result.orders;
-        
-        completedCount.value = 0;
-        
-        // Emit event for UI updates
-        globalBus.emit('dailyOrders:updated', {
-            orders: activeOrders.value
-        });
+
+        if (rr.applyTo.dailyOrders?.setActiveOrders) {
+            activeOrders.value = rr.applyTo.dailyOrders.setActiveOrders;
+        }
+        if (rr.applyTo.dailyOrders?.setCompletedCount !== undefined) {
+            completedCount.value = rr.applyTo.dailyOrders.setCompletedCount;
+        }
+        lastRollDate.value = today;
+
+        if (rr.events) {
+            for (const e of rr.events) globalBus.emit(e.name, e.data);
+        }
     }
 
     function fulfillOrder(index: number) {
@@ -169,21 +171,17 @@ const configStore = useConfigStore();
     }
 
     function checkOrder(orderIndex: number, itemCounts: Record<string, number>): boolean {
-        if (orderIndex < 0 || orderIndex >= activeOrders.value.length) return false;
-        
-        const order = activeOrders.value[orderIndex];
-        if (order.fulfilled) return false;
-        
-        // Check if all required items are available
-        for (const req of order.required) {
-            const available = itemCounts[req.itemId] || 0;
-            if (available < req.count) {
-                return false;
-            }
-        }
-        
-        return true;
+        const result = resolveCheckOrder({
+            orderIndex,
+            orders: activeOrders.value,
+            itemCounts,
+        });
+        return result.ok;
     }
+
+    function _setActiveOrders(orders: DailyOrderState[]): void { activeOrders.value = orders; }
+    function _setCompletedCount(n: number): void { completedCount.value = n; }
+    function _setLastRollDate(d: string): void { lastRollDate.value = d; }
 
     // --- Serialization ---
     function serialize() {
@@ -254,6 +252,9 @@ const configStore = useConfigStore();
         setLoopIndex,
         freezeOrders,
         unfreezeOrders,
+        _setActiveOrders,
+        _setCompletedCount,
+        _setLastRollDate,
         
         // Serialization
         serialize,

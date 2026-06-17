@@ -8,7 +8,7 @@ import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
 import { useCurrencyStore } from './currencyStore';
 import { HeroineService } from '../services/HeroineService';
-import type { ResolveResult } from '../services/ServiceResultTypes';
+import type { ServiceResult } from '../services/ServiceResultTypes';
 import type { HeroineUpgrade } from '../types/game';
 
 export const useHeroineStore = defineStore('heroine', () => {
@@ -62,19 +62,18 @@ export const useHeroineStore = defineStore('heroine', () => {
     });
 
     // --- Actions ---
-    function purchaseUpgrade(upgradeId: string): { success: boolean; resolveResult: ResolveResult } {
+    function setUpgradeLevel(upgradeId: string, level: number): void {
+        upgrades.value[upgradeId] = level;
+    }
+
+    function purchaseUpgrade(upgradeId: string): ServiceResult {
         const currencyStore = useCurrencyStore();
-        const { success, resolveResult, newLevel } = HeroineService.resolvePurchaseUpgrade(upgradeId, {
+        return HeroineService.resolvePurchaseUpgrade(upgradeId, {
             upgradeList: upgradeList.value,
             currentLevel: (id) => upgrades.value[id],
             canAffordDiamonds: (cost) => currencyStore.canAffordDiamonds(cost),
+            maxEnergyBase: configStore.gameConfig.MAX_ENERGY,
         });
-
-        if (!success) return { success: false, resolveResult };
-
-        upgrades.value[upgradeId] = newLevel!;
-
-        return { success: true, resolveResult };
     }
 
     function getEffectValue(upgradeId: string): number | null {
@@ -162,6 +161,7 @@ export const useHeroineStore = defineStore('heroine', () => {
         
         // Actions
         purchaseUpgrade,
+        setUpgradeLevel,
         getEffectValue,
         applyPermanentEffects,
         getMaxLevel,

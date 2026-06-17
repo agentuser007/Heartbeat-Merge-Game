@@ -52,6 +52,8 @@ import { useLoopStore, MetaUpgrade } from '../../stores/loopStore';
 import { useI18nStore } from '../../stores/i18nStore';
 import { useCollectionStore } from '../../stores/collectionStore';
 import { useAchievementStore } from '../../stores/achievementStore';
+import { applyResolveResult } from '../../composables/useGameLoop';
+import { useApplyDeps } from '../../composables/useApplyDeps';
 
 const props = defineProps<{
   visible: boolean;
@@ -67,6 +69,7 @@ const loopStore = useLoopStore();
 const i18nStore = useI18nStore();
 const collectionStore = useCollectionStore();
 const achievementStore = useAchievementStore();
+const applyDeps = useApplyDeps();
 
 const displayLoopIndex = computed(() => props.targetLoopIndex ?? loopStore.loopIndex);
 
@@ -133,10 +136,9 @@ watch(
 // --- Actions ---
 function purchaseUpgrade(upgrade: MetaUpgradeItem) {
   if (upgrade.isMaxed || !upgrade.canAfford) return;
-  const success = loopStore.purchaseMetaUpgrade(upgrade.id);
-  if (!success) {
-    // Purchase failed — could show a toast in the future
-    console.warn('[LoopSummaryOverlay] Purchase failed for', upgrade.id);
+  const result = loopStore.purchaseMetaUpgrade(upgrade.id);
+  if (result.ok) {
+    applyResolveResult(result.resolveResult, applyDeps);
   }
 }
 
@@ -240,7 +242,7 @@ function nextLoop() {
   margin-bottom: 8px;
   border: 1.5px solid rgba(160, 120, 80, 0.2);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
 }
 
 .meta-shop-item--maxed {

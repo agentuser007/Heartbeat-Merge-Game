@@ -16,9 +16,23 @@ export const AffectionCharacterDefSchema = z.object({
     background: z.string(),
 })
 
-export const AffectionSourceValueSchema = z.union([z.number(), z.record(z.string(), z.number())])
-
-export const AffectionSourcesConfigSchema = z.record(z.string(), AffectionSourceValueSchema)
+export const AffectionSourcesConfigSchema = z.object({
+    bossDefeat: z.object({
+        base: z.number().int().positive(),
+        perLoop: z.number().int().positive(),
+    }),
+    vnStorySR: z.number().int().positive(),
+    vnStorySSR: z.number().int().positive(),
+    touchBase: z.object({
+        min: z.number().int().nonnegative(),
+        max: z.number().int().positive(),
+    }),
+    dailyOrderBonus: z.number().int().positive(),
+    specialEvent: z.object({
+        min: z.number().int().nonnegative(),
+        max: z.number().int().positive(),
+    }),
+})
 
 export const AffectionConfigSchema = z.object({
     levels: z.array(AffectionLevelDefSchema),
@@ -30,6 +44,10 @@ export const AffectionConfigSchema = z.object({
         threshold: z.number().int().nonnegative(),
         bonus: z.number().int().nonnegative(),
     }),
+    giftPreferenceMultipliers: z.object({
+        loved: z.number().positive(),
+        liked: z.number().positive(),
+    }).optional(),
     affectionCoins: z.object({
         earnRate: z.number().nonnegative(),
         levelUpBonuses: z.record(z.string(), z.number()),

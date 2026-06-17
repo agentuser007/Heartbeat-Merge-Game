@@ -51,7 +51,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useTouchInteractionStore, type TouchResult } from '../../stores/touchInteractionStore'
+import { useTouchInteractionStore } from '../../stores/touchInteractionStore'
+import type { TouchData } from '../../services/TouchInteractionService'
 import { useAffectionStore } from '../../stores/affectionStore'
 import { useConfigStore } from '../../stores/configStore'
 import { useSheet } from '../../composables/useSheet'
@@ -63,7 +64,7 @@ const affectionStore = useAffectionStore()
 const configStore = useConfigStore()
 const applyDeps = useApplyDeps()
 
-const lastResult = ref<TouchResult | null>(null)
+const lastResult = ref<TouchData | null>(null)
 
 const activeCharId = computed(() => touchStore.activeCharacterId || 'morven')
 
@@ -96,12 +97,11 @@ function cdRemaining(zoneId: string): number {
 }
 
 function onTouch(zoneId: string) {
-  const { touchResult, resolveResult } = touchStore.performTouch(activeCharId.value, zoneId)
-  applyResolveResult(resolveResult, applyDeps)
-  if (touchResult) {
-    lastResult.value = touchResult
-    setTimeout(() => { lastResult.value = null }, 3000)
-  }
+  const result = touchStore.performTouch(activeCharId.value, zoneId)
+  if (!result.ok) return
+  applyResolveResult(result.resolveResult, applyDeps)
+  lastResult.value = result.data
+  setTimeout(() => { lastResult.value = null }, configStore.uiTimers.touchDialogueDisplay)
 }
 
 function close() {
@@ -214,7 +214,7 @@ function openGift() {
   border-radius: 12px;
   background: rgba(255,255,255,0.7);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   font-size: 13px;
 }
 .touch-zone-btn.unlocked:hover:not(:disabled) {
@@ -271,7 +271,7 @@ function openGift() {
   background: rgba(0,0,0,0.06);
   font-size: 18px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .tf-btn:active { transform: scale(0.9); }
 

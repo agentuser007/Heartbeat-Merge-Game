@@ -17,12 +17,19 @@ import { useLoopStore } from '@/stores/loopStore';
 import { useCollectionStore } from '@/stores/collectionStore';
 import { useDailyOrderStore } from '@/stores/dailyOrderStore';
 import { useSaveStore } from '@/stores/saveStore';
+import { useAdStore } from '@/stores/adStore';
+import { useTouchInteractionStore } from '@/stores/touchInteractionStore';
+import { useDailyBuffStore } from '@/stores/dailyBuffStore';
 import { useFragmentStore } from '@/stores/fragmentStore';
 import { useCGAlbumStore } from '@/stores/cgAlbumStore';
 import { useEffects } from '@/composables/useEffects';
 import { useI18nStore } from '@/stores/i18nStore';
+import { useHeroineStore } from '@/stores/heroineStore';
+import { useDialogueStore } from '@/stores/dialogueStore';
+import { useBossStore } from '@/stores/bossStore';
 import { useEventBus } from '@/composables/useEventBus';
-import type { ApplyDeps } from '@/composables/useGameLoop';
+import { useConfigStore } from '@/stores/configStore';
+import type { ApplyDeps } from '@/composables/applyResolveResult';
 
 export function useApplyDeps(): ApplyDeps {
     return {
@@ -37,10 +44,17 @@ export function useApplyDeps(): ApplyDeps {
         collectionStore: useCollectionStore(),
         dailyOrderStore: useDailyOrderStore(),
         saveStore: useSaveStore(),
+        adStore: useAdStore(),
+        dailyBuffStore: useDailyBuffStore(),
+        touchInteractionStore: useTouchInteractionStore(),
         fragmentStore: useFragmentStore(),
         cgAlbumStore: useCGAlbumStore(),
+        bossStore: useBossStore(),
+        heroineStore: useHeroineStore(),
+        dialogueStore: useDialogueStore(),
         effects: useEffects(),
         i18nStore: useI18nStore(),
         bus: useEventBus(),
+        configStore: useConfigStore(),
     };
 }

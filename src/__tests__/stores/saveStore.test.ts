@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useSaveStore } from '../../stores/saveStore'
+import { useConfigStore } from '../../stores/configStore'
 
 describe('saveStore — H2: old saves auto-deleted on version mismatch', () => {
   let store: ReturnType<typeof useSaveStore>
@@ -8,6 +9,8 @@ describe('saveStore — H2: old saves auto-deleted on version mismatch', () => {
   beforeEach(() => {
     localStorage.clear()
     setActivePinia(createPinia())
+    const configStore = useConfigStore()
+    configStore.gameConfig = { BOARD_COLS: 7, BOARD_ROWS: 9, MAX_ENERGY: 100, ENERGY_REGEN_CAP: 100, ENERGY_REGEN_INTERVAL: 120000, ENERGY_REGEN_AMOUNT: 1, ENERGY_COST_PER_SPAWN: 1, ENERGY_REGEN_DOWN_MULTIPLIER: 1.5 } as any
     store = useSaveStore()
   })
 

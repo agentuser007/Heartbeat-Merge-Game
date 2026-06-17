@@ -8,7 +8,7 @@ export const GameSettingsConfigSchema = z.object({
     ENERGY_REGEN_INTERVAL: z.number().int().positive(),
     ENERGY_REGEN_AMOUNT: z.number().int().positive(),
     ENERGY_COST_PER_SPAWN: z.number().int().positive(),
-    STARTING_GOLD: z.number().int().nonnegative(),
+    ENERGY_REGEN_DOWN_MULTIPLIER: z.number().positive(),
 })
 
 export const HeroineUpgradeLevelSchema = z.object({
@@ -45,6 +45,7 @@ export const UIAnimationConfigSchema = z.object({
     swipeCloseThreshold: z.number(),
     swipeHandleArea: z.number(),
     timerWarningThreshold: z.number(),
+    interactiveTransition: z.number(),
 })
 
 export const UIColorsConfigSchema = z.object({
@@ -98,6 +99,16 @@ export const UITimerConfigSchema = z.object({
     paradeStepInterval: z.number(),
     gachaRevealDelay: z.number(),
     gachaCardFlipDuration: z.number(),
+    toastFadeOut: z.number(),
+    bgmFadeIn: z.number(),
+    bgmResumeFade: z.number(),
+    affectionToastDisplay: z.number(),
+    affectionLevelUpToastDisplay: z.number(),
+    touchDialogueDisplay: z.number(),
+    vnTitleDisplay: z.number(),
+    bgmSwitchDelay: z.number(),
+    itemUseDelay: z.number(),
+    sparkleStartDelay: z.number(),
 })
 
 export const UIColorThemeConfigSchema = z.object({

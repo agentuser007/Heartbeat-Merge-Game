@@ -123,10 +123,12 @@ import { ref, computed, watch, onBeforeUnmount, nextTick } from 'vue';
 import { useVNReaderStore } from '../../stores/vnReaderStore';
 import { useI18nStore } from '../../stores/i18nStore';
 import { useAudio } from '../../composables/useAudio';
+import { useConfigStore } from '../../stores/configStore';
 
 const vnStore = useVNReaderStore();
 const i18nStore = useI18nStore();
 const audio = useAudio();
+const configStore = useConfigStore();
 
 // --- Typewriter state ---
 const displayedText = ref('');
@@ -252,7 +254,7 @@ watch(
       vnStore.showingTitle = true;
       titleTimer = setTimeout(() => {
         vnStore.showingTitle = false;
-      }, 2000);
+      }, configStore.uiTimers.vnTitleDisplay);
 
       // Start showing the first line
       await nextTick();
@@ -267,7 +269,7 @@ watch(
       // Switch back to game BGM
       setTimeout(() => {
         audio.playBGM('game_bgm');
-      }, 50);
+      }, configStore.uiTimers.bgmSwitchDelay);
     }
   },
 );

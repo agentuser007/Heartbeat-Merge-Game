@@ -8,6 +8,7 @@
 
 import { ref } from 'vue';
 import { Howl, Howler } from 'howler';
+import { useConfigStore } from '@/stores/configStore';
 
 const SOUNDS: Record<string, string> = {
   btn_click: 'btn_click.ogg',
@@ -40,6 +41,7 @@ function audioPath(filename: string): string {
 }
 
 export function useAudio() {
+  const configStore = useConfigStore();
   const muted = sharedState.muted;
   const loaded = sharedState.loaded;
   const bgmVolume = sharedState.bgmVolume;
@@ -150,12 +152,12 @@ export function useAudio() {
     if (howl.state() === 'loaded') {
       howl.volume(0);
       howl.play();
-      howl.fade(0, vol, 800);
+      howl.fade(0, vol, configStore.uiTimers.bgmFadeIn);
     } else {
       howl.once('load', () => {
         howl.volume(0);
         howl.play();
-        howl.fade(0, vol, 800);
+        howl.fade(0, vol, configStore.uiTimers.bgmFadeIn);
       });
     }
 
@@ -193,7 +195,7 @@ export function useAudio() {
       const vol = sharedState.muted.value ? 0 : sharedState.bgmVolume.value;
       sharedState.bgmHowl.volume(0);
       sharedState.bgmHowl.play();
-      sharedState.bgmHowl.fade(0, vol, 500);
+      sharedState.bgmHowl.fade(0, vol, configStore.uiTimers.bgmResumeFade);
       sharedState.bgmPaused.value = false;
     }
   }

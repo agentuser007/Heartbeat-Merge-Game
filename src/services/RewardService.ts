@@ -1,7 +1,8 @@
 // ============================================================
 // RewardService.ts — Pure reward distribution logic (Service layer)
 // ============================================================
-// Handles: dailyOrders:fulfilled, achievement:claimed, ad:rewardGranted
+// Handles: dailyOrders:fulfilled, achievement:claimed
+// (ad reward now handled by AdService.resolveWatchAd)
 // No Vue dependency. All functions are pure — deps injected as plain objects.
 // ============================================================
 
@@ -17,9 +18,9 @@ export interface RewardLoopDeps {
 }
 
 export interface RewardAffectionDeps {
-    affectionConfig?: {
-        sources?: {
-            dailyOrderBonus?: number;
+    affectionConfig: {
+        sources: {
+            dailyOrderBonus: number;
         };
         [key: string]: unknown;
     };
@@ -81,7 +82,7 @@ export function resolveDailyOrderFulfilled(
         result.applyTo.currency = { addGold: rewardAmt };
     }
 
-    const dailyBonus = affectionDeps.affectionConfig?.sources?.dailyOrderBonus || 15;
+    const dailyBonus = affectionDeps.affectionConfig.sources.dailyOrderBonus;
     const order = data.order;
     if (order && order.characterId) {
         result.applyTo.affection = {

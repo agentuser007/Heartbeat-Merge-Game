@@ -417,7 +417,7 @@ function switchTab(tab: 'items' | 'gacha' | 'fragments') {
   font-weight: 700;
   font-family: 'Jiangcheng Yuanti', inherit;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   border-bottom: 3px solid transparent;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -536,7 +536,7 @@ function switchTab(tab: 'items' | 'gacha' | 'fragments') {
   border: 1px solid #eee;
   opacity: 0.5;
   filter: grayscale(1);
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .evo-node.discovered {
@@ -600,7 +600,7 @@ function switchTab(tab: 'items' | 'gacha' | 'fragments') {
   font-weight: 700;
   font-family: 'Jiangcheng Yuanti', sans-serif;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   color: var(--text-light);
 }
 
@@ -662,7 +662,7 @@ function switchTab(tab: 'items' | 'gacha' | 'fragments') {
   gap: 4px;
   opacity: 0.45;
   filter: grayscale(0.7);
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   position: relative;
 }
 
@@ -880,7 +880,7 @@ function switchTab(tab: 'items' | 'gacha' | 'fragments') {
   opacity: 0.5;
   filter: grayscale(0.4);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   -webkit-tap-highlight-color: transparent;
 }
 

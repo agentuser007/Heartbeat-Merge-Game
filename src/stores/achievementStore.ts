@@ -8,6 +8,7 @@ import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
 import { useCollectionStore } from './collectionStore';
 import { useLoopStore } from './loopStore';
+import { resolveCheckAll } from '../services/AchievementService';
 
 export interface Achievement {
     id: string;
@@ -60,39 +61,39 @@ export const useAchievementStore = defineStore('achievement', () => {
 
     // --- Actions ---
     function checkAll() {
-        if (achievementList.value.length === 0) return;
+        const result = resolveCheckAll({
+            achievementList: achievementList.value,
+            unlocked: unlocked.value,
+            completed: completed.value,
+            stats: stats.value,
+            collectionPct: useCollectionStore().completionPercentage ?? 0,
+            loopIndex: useLoopStore().loopIndex,
+        });
 
-        for (const ach of achievementList.value) {
-            // Skip if already unlocked (pending claim) or already completed (claimed)
-            if (unlocked.value.has(ach.id) || completed.value.has(ach.id)) continue;
-
-            let currentValue = 0;
-            if (ach.condition === 'collectionPct') {
-                currentValue = useCollectionStore().completionPercentage ?? 0;
-            } else if (ach.condition === 'loopReached') {
-                currentValue = useLoopStore().loopIndex;
-            } else {
-                currentValue = stats.value[ach.condition] || 0;
-            }
-
-            if (currentValue >= ach.target) {
-                unlock(ach.id);
+        if (result.applyTo.achievement?.unlockAchievements) {
+            for (const id of result.applyTo.achievement.unlockAchievements) {
+                unlockField(id);
             }
         }
+
+        result.events?.forEach((e: { name: string; data: unknown }) => globalBus.emit(e.name, e.data));
+    }
+
+    function unlockField(achievementId: string): void {
+        if (unlocked.value.has(achievementId) || completed.value.has(achievementId)) return;
+        unlocked.value.add(achievementId);
+        unlockedThisLoop.value.add(achievementId);
     }
 
     function unlock(achievementId: string) {
-        // Check if already unlocked or completed
         if (unlocked.value.has(achievementId) || completed.value.has(achievementId)) {
             return;
         }
 
-        unlocked.value.add(achievementId);
-        unlockedThisLoop.value.add(achievementId);
+        unlockField(achievementId);
 
         const ach = achievementList.value.find(a => a.id === achievementId);
         if (ach) {
-            // Emit event for UI effects
             globalBus.emit('achievement:unlocked', {
                 achievement: ach
             });
@@ -194,6 +195,7 @@ export const useAchievementStore = defineStore('achievement', () => {
         // Actions
         checkAll,
         unlock,
+        unlockField,
         complete,
         incrementStat,
         getStatValue,

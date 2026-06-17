@@ -79,7 +79,7 @@ const hasReward = computed(() => {
   border-radius: 10px;
   box-shadow: var(--ach-shadow-red);
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
 }
 
 .achievement-card.active,

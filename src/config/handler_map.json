@@ -1,0 +1,31 @@
+{
+  "_comment": "Changing enabled/order requires page refresh in dev. Handler implementations are in src/composables/handlers/",
+  "handlers": [
+    { "id": "boss-fsm-defeated-watch", "source": { "type": "watch", "store": "bossStore", "getter": "fsmState" }, "enabled": true, "order": 100 },
+    { "id": "boss-defeated-unlock-cells", "source": { "type": "event", "name": "boss:defeated" }, "enabled": true, "order": 150 },
+    { "id": "boss-defeated-loop-event", "source": { "type": "event", "name": "boss:defeated" }, "enabled": true, "order": 160 },
+    { "id": "collection-discover-check-achievements", "source": { "type": "event", "name": "collection:itemDiscovered" }, "enabled": true, "order": 200 },
+    { "id": "board-produced-discover", "source": { "type": "event", "name": "board:produced" }, "enabled": true, "order": 210 },
+    { "id": "board-merged-discover", "source": { "type": "event", "name": "board:merged" }, "enabled": true, "order": 220 },
+    { "id": "board-item-placed-discover", "source": { "type": "event", "name": "board:itemPlaced" }, "enabled": true, "order": 230 },
+    { "id": "currency-changed-check-achievements", "source": { "type": "event", "name": "currency:changed" }, "enabled": true, "order": 300 },
+    { "id": "currency-gold-earned-stat", "source": { "type": "event", "name": "currency:goldEarned" }, "enabled": true, "order": 310 },
+    { "id": "bossfsm-defeated-achievement-affection", "source": { "type": "event", "name": "bossfsm:stateChanged" }, "enabled": true, "order": 400 },
+    { "id": "board-cells-unlocked-achievement", "source": { "type": "event", "name": "board:cellsUnlocked" }, "enabled": true, "order": 500 },
+    { "id": "board-merged-achievement-stats", "source": { "type": "event", "name": "board:merged" }, "enabled": true, "order": 510 },
+    { "id": "board-item-consumed-achievement", "source": { "type": "event", "name": "board:itemConsumed" }, "enabled": true, "order": 520 },
+    { "id": "gacha-pulled-achievement-collection", "source": { "type": "event", "name": "gacha:pulled" }, "enabled": true, "order": 600 },
+    { "id": "fragment-added-discover", "source": { "type": "event", "name": "fragment:added" }, "enabled": true, "order": 610 },
+    { "id": "daily-orders-fulfilled-reward", "source": { "type": "event", "name": "dailyOrders:fulfilled" }, "enabled": true, "order": 700 },
+    { "id": "loop-should-complete", "source": { "type": "event", "name": "loop:shouldComplete" }, "enabled": true, "order": 800 },
+    { "id": "loop-meta-upgrade-save", "source": { "type": "event", "name": "loop:metaUpgradePurchased" }, "enabled": true, "order": 810 },
+    { "id": "shop-item-purchased", "source": { "type": "event", "name": "shop:itemPurchased" }, "enabled": true, "order": 900 },
+    { "id": "toast-show-bridge", "source": { "type": "event", "name": "toast:show" }, "enabled": true, "order": 910 },
+    { "id": "inventory-item-used", "source": { "type": "event", "name": "inventory:itemUsed" }, "enabled": true, "order": 920 },
+    { "id": "vn-closed", "source": { "type": "event", "name": "vn:closed" }, "enabled": true, "order": 1000 },
+    { "id": "affection-vn-completed", "source": { "type": "event", "name": "affection:vnCompleted" }, "enabled": true, "order": 1010 },
+    { "id": "affection-shop-effect-bridge", "source": { "type": "event", "name": "affection:shopEffect" }, "enabled": true, "order": 1020 },
+    { "id": "achievement-claimed-reward", "source": { "type": "event", "name": "achievement:claimed" }, "enabled": true, "order": 1100 },
+    { "id": "locale-changed", "source": { "type": "event", "name": "locale:changed" }, "enabled": true, "order": 1200 }
+  ]
+}

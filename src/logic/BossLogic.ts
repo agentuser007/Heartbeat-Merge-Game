@@ -41,11 +41,6 @@ export interface LevelData {
   orders: OrderData[];
 }
 
-export interface LoopConfig {
-  loopIndex: number;
-  hpMultiplier: number;
-}
-
 export interface TierBoostEntry {
   maxLoop: number | null;
   boost: number;
@@ -114,7 +109,6 @@ export class BossLogic {
   totalHp: number;
   orderFailed: boolean;
   timerRemaining: number;
-  loopConfig: LoopConfig | null;
   fsm: StateMachine;
 
   constructor() {
@@ -124,7 +118,6 @@ export class BossLogic {
     this.totalHp = 0;
     this.orderFailed = false;
     this.timerRemaining = 0;
-    this.loopConfig = null;
 
     // State Machine
     this.fsm = new StateMachine({
@@ -138,13 +131,6 @@ export class BossLogic {
         COMPLETE: { on: { RESET: 'IDLE' } }
       }
     });
-  }
-
-  /**
-   * Set loop config for HP/reward scaling.
-   */
-  setLoopConfig(loopConfig: LoopConfig): void {
-    this.loopConfig = loopConfig;
   }
 
   /**
@@ -165,8 +151,7 @@ export class BossLogic {
    * Increases item tier (itemId suffix) by the boost amount, capped at MAX_TIER (8).
    * Only scales if the target item ID exists in the ITEMS registry.
    */
-  getScaledOrder(order: OrderData, items: { [key: string]: ItemData }, deps: BossProgressionDeps): OrderData {
-    const loopIndex = this.loopConfig ? this.loopConfig.loopIndex : 1;
+  getScaledOrder(order: OrderData, items: { [key: string]: ItemData }, deps: BossProgressionDeps, loopIndex: number, hpMultiplier: number): OrderData {
     const boost = this.getOrderTierBoost(loopIndex, deps);
     if (boost === 0) return order;
 
@@ -188,14 +173,14 @@ export class BossLogic {
       return req; // Item doesn't exist, keep original
     });
 
-    const hpMult = this.loopConfig?.hpMultiplier || 1.0;
+    const hpMult = hpMultiplier;
     return { ...order, required: scaledRequired, damage: Math.ceil(order.damage * hpMult) };
   }
 
   /**
    * Load a boss level. Returns level data or null if game complete.
    */
-  loadLevel(levelIdx: number, levels: LevelData[], deps: BossProgressionDeps): { level: LevelData | null; events: LogicEvent[] } {
+  loadLevel(levelIdx: number, levels: LevelData[], deps: BossProgressionDeps, hpMultiplier: number): { level: LevelData | null; events: LogicEvent[] } {
     if (levelIdx >= levels.length) {
       this.fsm.send('GAME_OVER');
       return { level: null, events: [{ type: 'boss:gameComplete' }] };
@@ -205,8 +190,6 @@ export class BossLogic {
     this.orderFailed = false;
     const level = levels[levelIdx];
 
-    // Apply loop HP multiplier if available
-    const hpMultiplier = (this.loopConfig && this.loopConfig.hpMultiplier) ? this.loopConfig.hpMultiplier : 1.0;
     this.currentHp = Math.floor(level.totalHp * hpMultiplier);
     this.totalHp = Math.floor(level.totalHp * hpMultiplier);
 
@@ -245,7 +228,7 @@ export class BossLogic {
   /**
    * Load an order within the current level.
    */
-  loadOrder(orderIdx: number, levels: LevelData[], deps: BossProgressionDeps, items?: { [key: string]: ItemData }): { order: OrderData | null; events: LogicEvent[] } {
+  loadOrder(orderIdx: number, levels: LevelData[], deps: BossProgressionDeps, items?: { [key: string]: ItemData }, loopIndex?: number, hpMultiplier?: number): { order: OrderData | null; events: LogicEvent[] } {
     const level = levels[this.currentLevelIdx];
     if (orderIdx >= level.orders.length) {
       const defeatEvents = this.defeatBoss();
@@ -254,7 +237,7 @@ export class BossLogic {
     this.currentOrderIdx = orderIdx;
     this.orderFailed = false;
     const rawOrder = level.orders[orderIdx];
-    const order = items ? this.getScaledOrder(rawOrder, items, deps) : rawOrder;
+    const order = (items && loopIndex !== undefined && hpMultiplier !== undefined) ? this.getScaledOrder(rawOrder, items, deps, loopIndex, hpMultiplier) : rawOrder;
     this.timerRemaining = order.isTimed ? order.timeLimit || 0 : 0;
 
     return {
@@ -399,13 +382,13 @@ export class BossLogic {
   /**
    * Get current order.
    */
-  getCurrentOrder(levels: LevelData[], deps: BossProgressionDeps, items?: { [key: string]: ItemData }): OrderData | null {
+  getCurrentOrder(levels: LevelData[], deps: BossProgressionDeps, items?: { [key: string]: ItemData }, loopIndex?: number, hpMultiplier?: number): OrderData | null {
     if (this.currentLevelIdx < 0) return null;
     const level = levels[this.currentLevelIdx];
     if (!level || this.currentOrderIdx >= level.orders.length) return null;
     const rawOrder = level.orders[this.currentOrderIdx];
-    if (!items) return rawOrder;
-    return this.getScaledOrder(rawOrder, items, deps);
+    if (!items || loopIndex === undefined || hpMultiplier === undefined) return rawOrder;
+    return this.getScaledOrder(rawOrder, items, deps, loopIndex, hpMultiplier);
   }
 
   /**

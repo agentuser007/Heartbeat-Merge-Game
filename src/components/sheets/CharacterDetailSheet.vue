@@ -87,7 +87,8 @@ import { computed, ref } from 'vue'
 import BaseBottomSheet from './BaseBottomSheet.vue'
 import { useSheet } from '../../composables/useSheet'
 import { useAffectionStore } from '../../stores/affectionStore'
-import { useTouchInteractionStore, type TouchResult } from '../../stores/touchInteractionStore'
+import { useTouchInteractionStore } from '../../stores/touchInteractionStore'
+import type { TouchData } from '../../services/TouchInteractionService'
 import { useConfigStore } from '../../stores/configStore'
 import { useI18nStore } from '../../stores/i18nStore'
 import { useApplyDeps } from '../../composables/useApplyDeps'
@@ -101,7 +102,7 @@ const configStore = useConfigStore()
 const i18nStore = useI18nStore()
 const applyDeps = useApplyDeps()
 
-const touchResult = ref<TouchResult | null>(null)
+const touchResult = ref<TouchData | null>(null)
 
 const characterId = computed(() => {
   return affectionStore._selectedCharacterId || 'morven'
@@ -148,18 +149,19 @@ function canTouchZone(zoneId: string): boolean {
 }
 
 function onTouch(zoneId: string) {
-  const { touchResult: tr, resolveResult } = touchStore.performTouch(characterId.value, zoneId)
-  applyResolveResult(resolveResult, applyDeps)
-  touchResult.value = tr
-  if (tr) {
-    setTimeout(() => { touchResult.value = null }, 3000)
+  const result = touchStore.performTouch(characterId.value, zoneId)
+  if (!result.ok) return
+  applyResolveResult(result.resolveResult, applyDeps)
+  touchResult.value = result.data
+  if (result.data) {
+    setTimeout(() => { touchResult.value = null }, configStore.uiTimers.touchDialogueDisplay)
   }
 }
 
 function onGift(gift: AffectionShopItem) {
   if (!affectionStore.canAffordCoins(gift.price)) return
-  if (!affectionStore.spendCoins(gift.price)) return
-  affectionStore.giftItem(characterId.value, gift.id)
+  const result = affectionStore.resolveGiftItem(characterId.value, gift.id)
+  if (result) applyResolveResult(result, applyDeps)
 }
 
 function openTouchOverlay() {
@@ -271,7 +273,7 @@ function openShop() {
   border-radius: 10px;
   background: rgba(255,255,255,0.7);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   font-size: 12px;
 }
 .touch-zone-btn:hover:not(:disabled) {
@@ -339,7 +341,7 @@ function openShop() {
   background: rgba(255,255,255,0.7);
   cursor: pointer;
   font-size: 11px;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .gift-btn:hover:not(:disabled) {
   border-color: #FF69B4;
@@ -371,7 +373,7 @@ function openShop() {
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .action-btn:active {
   transform: scale(0.95);

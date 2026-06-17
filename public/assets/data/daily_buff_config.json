@@ -1,0 +1,10 @@
+{
+  "buffDurationMs": 1800000,
+  "buffTypes": [
+    { "id": "merge_bonus", "icon": "✨", "nameKey": "dailyBuff.mergeBonus", "descKey": "dailyBuff.mergeBonusDesc" },
+    { "id": "energy_discount", "icon": "⚡", "nameKey": "dailyBuff.energyDiscount", "descKey": "dailyBuff.energyDiscountDesc" },
+    { "id": "sell_price_up", "icon": "🪙", "nameKey": "dailyBuff.sellPriceUp", "descKey": "dailyBuff.sellPriceUpDesc" },
+    { "id": "gen_speed_up", "icon": "⏩", "nameKey": "dailyBuff.genSpeedUp", "descKey": "dailyBuff.genSpeedUpDesc" },
+    { "id": "lucky_merge", "icon": "🍀", "nameKey": "dailyBuff.luckyMerge", "descKey": "dailyBuff.luckyMergeDesc" }
+  ]
+}

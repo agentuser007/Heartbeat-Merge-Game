@@ -148,9 +148,13 @@ function singlePull() {
     effects.showToast(i18nStore.t('currency.insufficientDiamonds') || '钻石不足！', 'error')
     return
   }
-  const { pullResult, resolveResult } = gachaStore.singlePull()
-  applyResolveResult(resolveResult, applyDeps)
-  if (!pullResult) {
+  const result = gachaStore.singlePull()
+  if (!result.ok) {
+    effects.showToast(i18nStore.t('gacha.pullFailed') || '抽卡失败', 'error')
+    return
+  }
+  applyResolveResult(result.resolveResult, applyDeps)
+  if (!result.data.pullResult) {
     effects.showToast(i18nStore.t('gacha.pullFailed') || '抽卡失败', 'error')
   }
 }
@@ -160,9 +164,13 @@ function tenPull() {
     effects.showToast(i18nStore.t('currency.insufficientDiamonds') || '钻石不足！', 'error')
     return
   }
-  const { pullResults, resolveResult } = gachaStore.tenPull()
-  applyResolveResult(resolveResult, applyDeps)
-  if (!pullResults) {
+  const result = gachaStore.tenPull()
+  if (!result.ok) {
+    effects.showToast(i18nStore.t('gacha.pullFailed') || '抽卡失败', 'error')
+    return
+  }
+  applyResolveResult(result.resolveResult, applyDeps)
+  if (!result.data.pullResults) {
     effects.showToast(i18nStore.t('gacha.pullFailed') || '抽卡失败', 'error')
   }
 }
@@ -172,8 +180,8 @@ function freePull() {
     effects.showToast(i18nStore.t('gacha.noFreePulls') || '今日免费次数已用完！', 'info')
     return
   }
-  const { resolveResult } = gachaStore.freePull()
-  applyResolveResult(resolveResult, applyDeps)
+  const result = gachaStore.freePull()
+  if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
 }
 </script>
 

@@ -28,10 +28,12 @@
 import { ref, watch, computed, onBeforeUnmount } from 'vue';
 import { useDialogueStore } from '../../stores/dialogueStore';
 import { useI18nStore } from '../../stores/i18nStore';
+import { useConfigStore } from '../../stores/configStore';
 import { useAudio } from '../../composables/useAudio';
 
 const dialogueStore = useDialogueStore();
 const i18nStore = useI18nStore();
+const configStore = useConfigStore();
 const audio = useAudio();
 
 // --- Reactive typewriter state ---
@@ -149,12 +151,12 @@ watch(
       audio.playBGM('story_bgm');
 
       // Start NPC typewriter (30ms per character, matching original)
-      await typewrite(dialogueStore.npcText, displayedNpcText, isNpcTyping, 30);
+      await typewrite(dialogueStore.npcText, displayedNpcText, isNpcTyping, configStore.dialogueConfig.typewriterSpeedNormal);
 
       // After NPC text completes, start player text typewriter if present
       if (dialogueStore.playerText && dialogueStore.isOpen) {
         const playerFullText = i18nStore.emoji('thought') + ' ' + dialogueStore.playerText;
-        await typewrite(playerFullText, displayedPlayerText, isPlayerTyping, 25);
+        await typewrite(playerFullText, displayedPlayerText, isPlayerTyping, configStore.dialogueConfig.typewriterSpeedFast);
       }
 
       // Sync typing state back to store
@@ -192,11 +194,11 @@ watch(
       isNpcTyping.value = false;
       isPlayerTyping.value = false;
 
-      await typewrite(newText, displayedNpcText, isNpcTyping, 30);
+      await typewrite(newText, displayedNpcText, isNpcTyping, configStore.dialogueConfig.typewriterSpeedNormal);
 
       if (dialogueStore.playerText && dialogueStore.isOpen) {
         const playerFullText = i18nStore.emoji('thought') + ' ' + dialogueStore.playerText;
-        await typewrite(playerFullText, displayedPlayerText, isPlayerTyping, 25);
+        await typewrite(playerFullText, displayedPlayerText, isPlayerTyping, configStore.dialogueConfig.typewriterSpeedFast);
       }
     }
   },

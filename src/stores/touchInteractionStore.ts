@@ -3,6 +3,7 @@
 // ============================================================
 // Manages touch overlay state, cooldowns, and daily limits.
 // Belongs to META save (permanent across loops).
+// Iron rule #5: Store only does apply + emit.
 // ============================================================
 
 import { defineStore } from 'pinia';
@@ -10,20 +11,9 @@ import { ref } from 'vue';
 import { useConfigStore } from './configStore';
 import { useAffectionStore } from './affectionStore';
 import { TouchInteractionService } from '../services/TouchInteractionService';
-import type { ResolveResult } from '../services/ServiceResultTypes';
+import type { ServiceResultWithData } from '../services/ServiceResultTypes';
+import type { TouchData } from '../services/TouchInteractionService';
 import type { TouchZone, TouchResponse } from '@/types/game';
-
-export interface TouchResult {
-    dialogue?: string;
-    affection: number;
-    animation?: string;
-    zoneId: string;
-}
-
-export interface PerformTouchReturn {
-    touchResult: TouchResult | null;
-    resolveResult: ResolveResult;
-}
 
 export const useTouchInteractionStore = defineStore('touchInteraction', () => {
     const activeCharacterId = ref<string | null>(null);
@@ -93,24 +83,25 @@ export const useTouchInteractionStore = defineStore('touchInteraction', () => {
         activeCharacterId.value = null;
     }
 
-    function performTouch(characterId: string, zoneId: string): PerformTouchReturn {
+    function performTouch(characterId: string, zoneId: string): ServiceResultWithData<TouchData> {
         _checkDailyReset();
 
-        const { touchResult, resolveResult } = TouchInteractionService.resolvePerformTouch(characterId, zoneId, {
+        return TouchInteractionService.resolvePerformTouch(characterId, zoneId, {
             canTouch,
             getTouchResponse,
         });
+    }
 
-        if (!touchResult) return { touchResult: null, resolveResult };
-
+    // --- Thin mutations — called by applyResolveResult only ---
+    function setTouchCooldownField(characterId: string, zoneId: string, timestamp: number): void {
         if (!touchCooldowns.value[characterId]) {
             touchCooldowns.value[characterId] = {};
         }
-        touchCooldowns.value[characterId][zoneId] = Date.now();
+        touchCooldowns.value[characterId][zoneId] = timestamp;
+    }
 
+    function incrementDailyTouchCountField(characterId: string): void {
         dailyTouchCount.value[characterId] = (dailyTouchCount.value[characterId] || 0) + 1;
-
-        return { touchResult, resolveResult };
     }
 
     function resetDailyCounts(): void {
@@ -154,6 +145,8 @@ export const useTouchInteractionStore = defineStore('touchInteraction', () => {
         openOverlay,
         closeOverlay,
         performTouch,
+        setTouchCooldownField,
+        incrementDailyTouchCountField,
         resetDailyCounts,
         getDailyTouchCount,
 

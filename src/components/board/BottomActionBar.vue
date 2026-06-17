@@ -294,7 +294,7 @@ const emit = defineEmits<{
   font-size: 14px;
   opacity: 0.35;
   filter: grayscale(1);
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
 }
 
 .merge-chain-item.current {

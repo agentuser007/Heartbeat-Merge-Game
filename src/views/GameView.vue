@@ -94,16 +94,13 @@ import { onMounted, onUnmounted } from 'vue'
 import { useGameInit } from '@/composables/useGameInit'
 import { useGameLoop } from '@/composables/useGameLoop'
 import { useAutoSave } from '@/composables/useAutoSave'
-import { useSheet } from '@/composables/useSheet'
-import { useEventBus } from '@/composables/useEventBus'
-import { globalBus } from '@/core/EventBus'
-import { useI18nStore } from '@/stores/i18nStore'
-import { useBoardStore } from '@/stores/boardStore'
-import { useConfigStore } from '@/stores/configStore'
-import { useCurrencyStore } from '@/stores/currencyStore'
-import { useEnergyStore } from '@/stores/energyStore'
-import { useDailyBuffStore } from '@/stores/dailyBuffStore'
-import { useHeroineStore } from '@/stores/heroineStore'
+ import { useSheet } from '@/composables/useSheet'
+ import { useEventBus } from '@/composables/useEventBus'
+ import { useI18nStore } from '@/stores/i18nStore'
+ import { useBoardStore } from '@/stores/boardStore'
+ import { useConfigStore } from '@/stores/configStore'
+ import { useDailyBuffStore } from '@/stores/dailyBuffStore'
+ import { useHeroineStore } from '@/stores/heroineStore'
 import { useLoopStore } from '@/stores/loopStore'
 import { useAudio } from '@/composables/useAudio'
 import { useEffects } from '@/composables/useEffects'
@@ -147,8 +144,6 @@ import AffectionToast from '@/components/common/AffectionToast.vue'
 const i18nStore = useI18nStore()
 const boardStore = useBoardStore()
 const configStore = useConfigStore()
-const currencyStore = useCurrencyStore()
-const energyStore = useEnergyStore()
 const dailyBuffStore = useDailyBuffStore()
 const heroineStore = useHeroineStore()
 const effects = useEffects()
@@ -217,16 +212,12 @@ const onSell = () => {
   const recycleBonus = heroineStore.getEffectValue('recycle_bonus')
   const result = boardStore.executeSell(cellIndex, sellPriceUpActive, recycleBonus || 0)
   if (!result) return
-  if (result.gold > 0) {
-    currencyStore.addGold(result.gold)
+  const energyAmount = result.applyTo.energy?.add ?? 0
+  applyResolveResult(result, applyDeps)
+  if (energyAmount > 0) {
+    effects.showToast(i18nStore.t('energy.recycleGained', { count: energyAmount }) || `+${energyAmount} 体力`, 'info')
   }
-  if (result.energy > 0) {
-    energyStore.add(result.energy)
-    effects.showToast(i18nStore.t('energy.recycleGained', { count: result.energy }) || `+${result.energy} 体力`, 'info')
-  }
-  boardStore.clearCell(cellIndex)
   boardStore.selectCell(null)
-  result.events.forEach(e => globalBus.emit(e.name, e.data))
 }
 
 const pendingBoardLoop = ref<number | null>(null)
@@ -271,7 +262,7 @@ const {
 useGameLoop()
 
 // --- Auto-save (periodic + visibility + beforeunload) ---
-useAutoSave(30000)
+useAutoSave(configStore.uiAnimation.autoSaveInterval)
 
 // --- Event bus for loop completion ---
 const bus = useEventBus()
@@ -431,7 +422,7 @@ onUnmounted(() => {
   background: white;
   font-size: 18px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .lang-btn:hover {

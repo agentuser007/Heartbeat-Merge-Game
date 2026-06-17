@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onBeforeUnmount } from 'vue';
 import { useI18nStore } from '../../stores/i18nStore';
+import { useConfigStore } from '../../stores/configStore';
 
 const props = defineProps<{
   visible: boolean;
@@ -53,6 +54,7 @@ defineEmits<{
 }>();
 
 const i18nStore = useI18nStore();
+const configStore = useConfigStore();
 
 // --- Refs ---
 const sparkleCanvasRef = ref<HTMLCanvasElement | null>(null);
@@ -164,7 +166,7 @@ watch(
   (isVisible) => {
     if (isVisible) {
       // Start sparkle animation after a tick so canvas is mounted
-      setTimeout(() => startSparkleAnimation(), 50);
+      setTimeout(() => startSparkleAnimation(), configStore.uiTimers.sparkleStartDelay);
     } else {
       stopSparkleAnimation();
     }

@@ -3,6 +3,8 @@ import { setActivePinia, createPinia } from 'pinia'
 import { useHeroineStore } from '../../stores/heroineStore'
 import { useConfigStore } from '../../stores/configStore'
 import { useCurrencyStore } from '../../stores/currencyStore'
+import { applyResolveResult } from '../../composables/useGameLoop'
+import { useApplyDeps } from '../../composables/useApplyDeps'
 import {
     createGameSettingsConfig,
     createGachaCostConfig,
@@ -13,6 +15,7 @@ import {
 describe('heroineStore — H7: affordability check + spend before upgrade', () => {
   let store: ReturnType<typeof useHeroineStore>
   let currencyStore: ReturnType<typeof useCurrencyStore>
+  let applyDeps: ReturnType<typeof useApplyDeps>
 
   const mockUpgrades = [
     createHeroineUpgrade({
@@ -45,59 +48,58 @@ describe('heroineStore — H7: affordability check + spend before upgrade', () =
     configStore.gachaRarityConfig = createGachaRarityConfig()
     configStore.gachaCost = createGachaCostConfig()
     configStore.gachaSubWeights = {}
-    configStore.gachaPoolV2 = []
     configStore.gachaPool = []
     
     currencyStore = useCurrencyStore()
     store = useHeroineStore()
+    applyDeps = useApplyDeps()
   })
 
   it('H7: purchaseUpgrade fails when not enough diamonds', () => {
     currencyStore.addDiamonds(10)
-    const { success, resolveResult } = store.purchaseUpgrade('energy_cap')
-    expect(success).toBe(false)
-    expect(resolveResult).toBeDefined()
+    const result = store.purchaseUpgrade('energy_cap')
+    expect(result.ok).toBe(false)
     expect(store.getCurrentLevel('energy_cap')).toBe(-1)
   })
 
   it('H7: purchaseUpgrade succeeds and spends diamonds', () => {
     currencyStore.addDiamonds(100)
-    const { success, resolveResult } = store.purchaseUpgrade('energy_cap')
-    expect(success).toBe(true)
-    expect(store.getCurrentLevel('energy_cap')).toBe(0)
-    if (resolveResult.applyTo.currency?.spendDiamonds) {
-      currencyStore.spendDiamonds(resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('energy_cap')
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      applyResolveResult(result.resolveResult, applyDeps)
     }
+    expect(store.getCurrentLevel('energy_cap')).toBe(0)
     expect(currencyStore.diamonds).toBe(50)
   })
 
   it('H7: purchaseUpgrade levels up incrementally', () => {
     currencyStore.addDiamonds(350)
-    let r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    let result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.getCurrentLevel('energy_cap')).toBe(0)
-    r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.getCurrentLevel('energy_cap')).toBe(1)
-    r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.getCurrentLevel('energy_cap')).toBe(2)
     expect(currencyStore.diamonds).toBe(0)
   })
 
   it('purchaseUpgrade fails when maxed', () => {
     currencyStore.addDiamonds(500)
-    let r = store.purchaseUpgrade('daily_bonus')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result1 = store.purchaseUpgrade('daily_bonus')
+    if (result1.ok) applyResolveResult(result1.resolveResult, applyDeps)
     expect(store.getCurrentLevel('daily_bonus')).toBe(0)
-    const result = store.purchaseUpgrade('daily_bonus')
-    expect(result.success).toBe(false)
+    const result2 = store.purchaseUpgrade('daily_bonus')
+    expect(result2.ok).toBe(false)
   })
 
   it('purchaseUpgrade fails for unknown upgrade', () => {
     currencyStore.addDiamonds(1000)
     const result = store.purchaseUpgrade('nonexistent')
-    expect(result.success).toBe(false)
+    expect(result.ok).toBe(false)
   })
 
   it('getEffectValue returns null for unpurchased', () => {
@@ -106,38 +108,38 @@ describe('heroineStore — H7: affordability check + spend before upgrade', () =
 
   it('getEffectValue returns value for purchased upgrade', () => {
     currencyStore.addDiamonds(100)
-    const r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.getEffectValue('energy_cap')).toBe(10)
   })
 
   it('getNextCost returns correct cost', () => {
     expect(store.getNextCost('energy_cap')).toBe(50)
     currencyStore.addDiamonds(50)
-    const r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.getNextCost('energy_cap')).toBe(100)
   })
 
   it('isMaxed works', () => {
     currencyStore.addDiamonds(500)
-    const r = store.purchaseUpgrade('daily_bonus')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('daily_bonus')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.isMaxed('daily_bonus')).toBe(true)
   })
 
   it('maxedUpgrades computed works', () => {
     currencyStore.addDiamonds(500)
-    const r = store.purchaseUpgrade('daily_bonus')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('daily_bonus')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.maxedUpgrades).toContain('daily_bonus')
   })
 
   it('purchasedUpgrades computed works', () => {
     expect(store.purchasedUpgrades.length).toBe(0)
     currencyStore.addDiamonds(50)
-    const r = store.purchaseUpgrade('energy_cap')
-    if (r.resolveResult.applyTo.currency?.spendDiamonds) currencyStore.spendDiamonds(r.resolveResult.applyTo.currency.spendDiamonds)
+    const result = store.purchaseUpgrade('energy_cap')
+    if (result.ok) applyResolveResult(result.resolveResult, applyDeps)
     expect(store.purchasedUpgrades.length).toBe(1)
   })
 })

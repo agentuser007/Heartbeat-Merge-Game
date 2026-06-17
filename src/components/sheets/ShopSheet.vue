@@ -75,7 +75,7 @@ function buyItem(item: { id: string; cost: number; effect: string; value: GachaP
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
   margin-bottom: 8px;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 
 .shop-item:hover {
@@ -116,7 +116,7 @@ function buyItem(item: { id: string; cost: number; effect: string; value: GachaP
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   white-space: nowrap;
   flex-shrink: 0;
 }

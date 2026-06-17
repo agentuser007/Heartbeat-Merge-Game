@@ -1,4 +1,4 @@
-import type { ResolveResult } from './ServiceResultTypes';
+import { okResultWithData, failResultWithData, type ResolveResult, type ServiceResultWithData } from './ServiceResultTypes';
 import type { TouchResponse } from '@/types/game';
 
 export interface TouchInteractionServiceDeps {
@@ -6,32 +6,31 @@ export interface TouchInteractionServiceDeps {
     getTouchResponse: (characterId: string, zoneId: string) => TouchResponse | null;
 }
 
-export interface TouchResult {
+export interface TouchData {
     dialogue?: string;
     affection: number;
     animation?: string;
     zoneId: string;
 }
 
-export interface PerformTouchResult {
-    touchResult: TouchResult | null;
-    resolveResult: ResolveResult;
-}
-
 export const TouchInteractionService = {
-    resolvePerformTouch(characterId: string, zoneId: string, deps: TouchInteractionServiceDeps): PerformTouchResult {
+    resolvePerformTouch(characterId: string, zoneId: string, deps: TouchInteractionServiceDeps): ServiceResultWithData<TouchData> {
         if (!deps.canTouch(characterId, zoneId)) {
-            return { touchResult: null, resolveResult: { applyTo: {} } };
+            return failResultWithData<TouchData>('Cannot touch this zone');
         }
 
         const response = deps.getTouchResponse(characterId, zoneId);
         if (!response) {
-            return { touchResult: null, resolveResult: { applyTo: {} } };
+            return failResultWithData<TouchData>('No touch response found');
         }
 
         const result: ResolveResult = {
             applyTo: {
                 affection: { recordTouch: { characterId, zoneId } },
+                touch: {
+                    setTouchCooldown: { characterId, zoneId, timestamp: Date.now() },
+                    incrementDailyTouchCount: characterId,
+                },
             },
         };
 
@@ -41,14 +40,11 @@ export const TouchInteractionService = {
 
         result.events = [{ name: 'affection:touchPerformed', data: { characterId, zoneId, affectionGained: response.affection } }];
 
-        return {
-            touchResult: {
-                dialogue: response.dialogue,
-                affection: response.affection,
-                animation: response.animation,
-                zoneId: response.zoneId,
-            },
-            resolveResult: result,
-        };
+        return okResultWithData({
+            dialogue: response.dialogue,
+            affection: response.affection,
+            animation: response.animation,
+            zoneId: response.zoneId,
+        }, result);
     },
 };

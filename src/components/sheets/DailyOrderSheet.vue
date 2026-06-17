@@ -161,7 +161,7 @@ function onEndLoop() {
   border: 1px solid rgba(221, 170, 139, 0.3);
   border-radius: 12px;
   padding: 12px;
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
@@ -212,7 +212,7 @@ function onEndLoop() {
   cursor: pointer;
   background: rgba(0, 0, 0, 0.06);
   color: rgba(0, 0, 0, 0.25);
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
   flex-shrink: 0;
 }
 
@@ -306,7 +306,7 @@ function onEndLoop() {
   background: linear-gradient(135deg, #6c5ce7, #e17055);
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   font-family: 'Jiangcheng Yuanti', inherit;
 }
 

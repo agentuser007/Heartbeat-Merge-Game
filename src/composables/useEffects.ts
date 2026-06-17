@@ -7,6 +7,7 @@
 
 import { onUnmounted } from 'vue';
 import { useAudio } from './useAudio';
+import { useConfigStore } from '@/stores/configStore';
 
 const POOL_SIZE = 24;
 const particlePool: HTMLDivElement[] = [];
@@ -54,6 +55,7 @@ function acquireParticle(layer: HTMLElement): HTMLDivElement | null {
 
 export function useEffects() {
     const audio = useAudio();
+    const configStore = useConfigStore();
     const pendingTimers = new Set<ReturnType<typeof setTimeout>>();
     const pendingRAFs = new Set<number>();
 
@@ -87,15 +89,15 @@ export function useEffects() {
         toast.textContent = message;
         
         if (type === 'ssr') {
-            toast.style.background = 'linear-gradient(135deg, rgba(241,196,15,0.9), rgba(255,87,34,0.9))';
+            toast.style.background = configStore.uiColors.toastSSR;
             audio.playSound('pop');
         } else if (type === 'sr') {
-            toast.style.background = 'linear-gradient(135deg, rgba(155,89,182,0.9), rgba(142,68,173,0.9))';
+            toast.style.background = configStore.uiColors.toastSR;
             audio.playSound('pop');
         } else if (type === 'error') {
-            toast.style.background = 'rgba(211, 47, 47, 0.9)'; // Dark Red for errors
+            toast.style.background = 'rgba(211, 47, 47, 0.9)';
         } else {
-            toast.style.background = 'rgba(0,0,0,0.8)';
+            toast.style.background = configStore.uiColors.toastDefault;
         }
         
         const activeToasts = toastRoot.querySelectorAll('.daily-toast.show');
@@ -114,9 +116,9 @@ export function useEffects() {
             pendingTimers.delete(t1);
             toast.classList.remove('show');
             toast.style.transform = `translateX(-50%) translateY(${offset - 20}px)`;
-            const t2 = setTimeout(() => { pendingTimers.delete(t2); toast.remove(); }, 300);
+            const t2 = setTimeout(() => { pendingTimers.delete(t2); toast.remove(); }, configStore.uiTimers.achievementToastFadeOut);
             pendingTimers.add(t2);
-        }, 2000);
+        }, configStore.uiTimers.achievementToastDisplay);
         pendingTimers.add(t1);
     }
 
@@ -126,7 +128,7 @@ export function useEffects() {
         cellEl.classList.add('merge-pop');
         spawnParticles(cellEl, 8, '✨');
         
-        const t3 = setTimeout(() => { pendingTimers.delete(t3); cellEl.classList.remove('merge-pop'); }, 500);
+        const t3 = setTimeout(() => { pendingTimers.delete(t3); cellEl.classList.remove('merge-pop'); }, configStore.uiAnimation.mergePopDuration);
         pendingTimers.add(t3);
     }
 
@@ -178,7 +180,7 @@ export function useEffects() {
         const endY = tgtRect.top + tgtRect.height / 2;
         
         const startTime = Date.now();
-        const duration = 800;
+        const duration = configStore.uiAnimation.heartFlyDuration;
         
         const animate = () => {
             const elapsed = Date.now() - startTime;

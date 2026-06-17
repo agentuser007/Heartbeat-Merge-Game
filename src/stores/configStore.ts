@@ -41,6 +41,9 @@ import type {
     UITimerConfig,
     UIColorThemeConfig,
     UILayoutConfig,
+    LoopMultipliersConfig,
+    AdConfig,
+    DailyBuffConfig,
 } from '@/types/game';
 import { validateConfig, type ConfigKey } from '@/schemas';
 import { deepMerge } from '@/core/deepMerge';
@@ -72,7 +75,6 @@ export const useConfigStore = defineStore('config', () => {
     const gachaRarityConfig = ref<Record<string, GachaRarityConfig>>({});
     const gachaCost = ref<GachaCostConfig>({} as GachaCostConfig);
     const gachaSubWeights = ref<GachaSubWeights>({});
-    const gachaPoolV2 = ref<GachaPoolItem[]>([]);
     const cgStories = ref<Record<string, CGStory>>({});
     const loopRules = ref<Record<string, LoopRule>>({});
     const loopNarratives = ref<Record<string, LoopNarrative>>({});
@@ -84,12 +86,14 @@ export const useConfigStore = defineStore('config', () => {
     const chainItemPrefix = ref<Record<string, string>>({});
     const fragmentToGenerator = ref<number>(60);
     const fragmentToStory = ref<number>(60);
-    const recycleEnergy = ref<Record<string, number>>({});
     
     const affectionConfig = ref<AffectionConfig>({} as AffectionConfig);
     const touchInteractions = ref<TouchInteractionsConfig>({} as TouchInteractionsConfig);
     const characterProfiles = ref<Record<string, CharacterProfile>>({});
     const affectionShop = ref<AffectionShopConfig>({} as AffectionShopConfig);
+    const loopMultipliers = ref<LoopMultipliersConfig>({} as LoopMultipliersConfig);
+    const adConfig = ref<AdConfig>({} as AdConfig);
+    const dailyBuffConfig = ref<DailyBuffConfig>({} as DailyBuffConfig);
 
     // Pluggable config: item effects, board economy, boss progression, gacha
     const itemEffects = ref<ItemEffectsConfig>({} as ItemEffectsConfig);
@@ -105,30 +109,6 @@ export const useConfigStore = defineStore('config', () => {
     const loadError = ref<string | null>(null);
     const isDataReady = computed(() => !isLoading.value && loadError.value === null && Object.keys(gameConfig.value).length > 0);
 
-
-    function getItem(id: string): GameItem | undefined {
-        return items.value[id];
-    }
-
-    function getGenerator(id: string): GeneratorConfig | undefined {
-        return generators.value[id];
-    }
-
-    function getCharacter(id: string): CharacterProfile | undefined {
-        return characterProfiles.value[id];
-    }
-
-    function getLevel(idx: number): LevelData | undefined {
-        return levels.value[idx];
-    }
-
-    function getShopItem(id: string): ShopItem | undefined {
-        return shopItems.value.find(item => item.id === id);
-    }
-
-    function getChainName(chainId: string): string {
-        return chainNames.value[chainId] ?? chainId;
-    }
 
     /**
      * Load all game data from JSON files
@@ -221,26 +201,26 @@ export const useConfigStore = defineStore('config', () => {
             const validatedAffectionShop = validateWithOverlayFallback('affectionShop', mergedData[14], baseData[14]) as AffectionShopConfig;
 
             // Assign to refs — extract nested fields from settings.json
-            gameConfig.value = settings.GAME_CONFIG || settings;
+            gameConfig.value = settings.GAME_CONFIG;
             items.value = validatedItems;
             // NOTE: generators.json contains debug fields like "_cooldownOriginal" alongside "cooldown".
             // These are dev/test overrides (cooldown: 0 for instant testing) and should be ignored
             // by production code. Only the "cooldown" field is used at runtime.
             generators.value = validatedGenerators;
             levels.value = validatedLevels;
-            lockedCellsInitial.value = settings.LOCKED_CELLS_INITIAL || [];
-            unlockPerBoss.value = settings.UNLOCK_PER_BOSS || [];
-            cellUnlockCosts.value = settings.CELL_UNLOCK_COSTS || [];
-            heroineUpgrades.value = settings.HEROINE_UPGRADES || [];
-            recycleEnergyTable.value = settings.RECYCLE_ENERGY_TABLE || {};
-            dailyOrderConfig.value = settings.DAILY_ORDER_CONFIG || {};
-            dialogueConfig.value = settings.DIALOGUE_CONFIG || {};
-            uiText.value = settings.UI_TEXT || {};
-            uiAnimation.value = settings.UI_ANIMATION || {};
-            uiColors.value = settings.UI_COLORS || {};
-            uiTimers.value = settings.UI_TIMERS || {};
-            uiColorTheme.value = settings.UI_COLOR_THEME || {};
-            uiLayout.value = settings.UI_LAYOUT || {};
+            lockedCellsInitial.value = settings.LOCKED_CELLS_INITIAL;
+            unlockPerBoss.value = settings.UNLOCK_PER_BOSS;
+            cellUnlockCosts.value = settings.CELL_UNLOCK_COSTS;
+            heroineUpgrades.value = settings.HEROINE_UPGRADES;
+            recycleEnergyTable.value = settings.RECYCLE_ENERGY_TABLE;
+            dailyOrderConfig.value = settings.DAILY_ORDER_CONFIG;
+            dialogueConfig.value = settings.DIALOGUE_CONFIG;
+            uiText.value = settings.UI_TEXT;
+            uiAnimation.value = settings.UI_ANIMATION;
+            uiColors.value = settings.UI_COLORS;
+            uiTimers.value = settings.UI_TIMERS;
+            uiColorTheme.value = settings.UI_COLOR_THEME;
+            uiLayout.value = settings.UI_LAYOUT;
 
             // Extract arrays from wrapper objects
             dailyOrderPool.value = validatedDailyOrders?.orderPool || [];
@@ -250,7 +230,6 @@ export const useConfigStore = defineStore('config', () => {
             gachaRarityConfig.value = gacha.rarityConfig || {};
             gachaCost.value = gacha.gachaCost || {};
             gachaSubWeights.value = gacha.subWeights || {};
-            gachaPoolV2.value = (gacha.gachaPoolV2 as GachaPoolItem[]) || [];
             gachaPool.value = (gacha.gachaPoolV2 as GachaPoolItem[]) || [];
             chains.value = gacha.chains || [];
             chainNames.value = gacha.chainNames || {};
@@ -259,7 +238,6 @@ export const useConfigStore = defineStore('config', () => {
             chainItemPrefix.value = gacha.chainItemPrefix || {};
             fragmentToGenerator.value = gacha.fragmentToGenerator ?? 60;
             fragmentToStory.value = gacha.fragmentToStory ?? 60;
-            recycleEnergy.value = gacha.recycleEnergy || {};
 
             achievementData.value = validatedAchievements?.achievements || [];
             loopRules.value = validatedLoopRules;
@@ -273,12 +251,15 @@ export const useConfigStore = defineStore('config', () => {
             affectionShop.value = validatedAffectionShop;
 
             // Load pluggable config files
-            const [itemEffectsData, boardEconomyData, bossProgressionData, gachaConfigData, shopItemsData] = await Promise.all([
+            const [itemEffectsData, boardEconomyData, bossProgressionData, gachaConfigData, shopItemsData, loopMultipliersData, adConfigData, dailyBuffConfigData] = await Promise.all([
                 fetch(`${basePath}/data/item_effects.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/board_economy.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/boss_progression.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/gacha_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/shop_items.json${cacheBust}`).then(r => r.json()).catch(() => ([])),
+                fetch(`${basePath}/data/loop_multipliers.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
+                fetch(`${basePath}/data/ad_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
+                fetch(`${basePath}/data/daily_buff_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
             ]);
 
             itemEffects.value = validateConfig('itemEffects', itemEffectsData);
@@ -286,6 +267,9 @@ export const useConfigStore = defineStore('config', () => {
             bossProgression.value = validateConfig('bossProgression', bossProgressionData);
             gachaConfig.value = validateConfig('gachaConfig', gachaConfigData) as GachaSimpleConfig;
             shopItems.value = validateConfig('shopItems', shopItemsData);
+            loopMultipliers.value = validateConfig('loopMultipliers', loopMultipliersData) as LoopMultipliersConfig;
+            adConfig.value = validateConfig('adConfig', adConfigData) as AdConfig;
+            dailyBuffConfig.value = validateConfig('dailyBuffConfig', dailyBuffConfigData) as DailyBuffConfig;
 
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -322,7 +306,6 @@ export const useConfigStore = defineStore('config', () => {
         gachaRarityConfig,
         gachaCost,
         gachaSubWeights,
-        gachaPoolV2,
         cgStories,
         loopRules,
         loopNarratives,
@@ -334,7 +317,6 @@ export const useConfigStore = defineStore('config', () => {
         chainItemPrefix,
         fragmentToGenerator,
         fragmentToStory,
-        recycleEnergy,
         shopItems,
         affectionConfig,
         touchInteractions,
@@ -344,6 +326,9 @@ export const useConfigStore = defineStore('config', () => {
         boardEconomy,
         bossProgression,
         gachaConfig,
+        loopMultipliers,
+        adConfig,
+        dailyBuffConfig,
         isLoading,
         loadError,
         isDataReady,
@@ -352,12 +337,5 @@ export const useConfigStore = defineStore('config', () => {
         loadGameData,
         deepMerge,
 
-        // Getters
-        getItem,
-        getGenerator,
-        getCharacter,
-        getLevel,
-        getShopItem,
-        getChainName,
     };
 });

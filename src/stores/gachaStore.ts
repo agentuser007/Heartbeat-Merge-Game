@@ -1,6 +1,9 @@
 // ============================================================
 // gachaStore.ts — Gacha Game State Store
 // ============================================================
+// Iron rule #5: Store only does apply + emit.
+// All business logic in GachaLogic / GachaService.
+// ============================================================
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
@@ -10,23 +13,14 @@ import { useBoardStore } from './boardStore';
 import { useCurrencyStore } from './currencyStore';
 import { GachaService } from '../services/GachaService';
 import type { InstantEffectDeps } from '../services/ItemEffectService';
-import type { ResolveResult } from '../services/ServiceResultTypes';
+import type { ServiceResultWithData } from '../services/ServiceResultTypes';
+import type { SinglePullData, TenPullData } from '../services/GachaService';
 
 export type GachaItem = LogicGachaItem;
 
-export interface GachaPullResult {
-    pullResult: GachaItem | null;
-    resolveResult: ResolveResult;
-}
-
-export interface GachaTenPullResult {
-    pullResults: GachaItem[] | null;
-    resolveResult: ResolveResult;
-}
-
 export const useGachaStore = defineStore('gacha', () => {
     // --- State ---
-    const ssrOwned = ref<Record<string, boolean>>({}); // ssr_id -> owned status
+    const ssrOwned = ref<Record<string, boolean>>({});
     const results = ref<GachaItem[]>([]);
     const freePullsLeft = ref(0);
     const lastFreePullDate = ref('');
@@ -34,13 +28,8 @@ export const useGachaStore = defineStore('gacha', () => {
     // --- Logic instance ---
     const logic = new GachaLogic();
 
-    // NOTE: useConfigStore() is called at the top level of this defineStore setup.
-    // This creates an init order dependency — Pinia must be installed before this store is first accessed.
-    // In practice this is safe because stores are first accessed after app.mount(), but restructuring
-    // to use a lazy getter would remove this dependency if needed.
     const configStore = useConfigStore();
 
-    // Initialize state from logic
     ssrOwned.value = { ...logic.ssrOwned };
     checkDailyReset();
 
@@ -54,6 +43,23 @@ export const useGachaStore = defineStore('gacha', () => {
             items: configStore.items,
             fragment: { ...configStore.itemEffects.fragment, random: Math.random },
             resolveItemId: { random: Math.random },
+        };
+    }
+
+    function _gachaServiceDeps() {
+        const currencyStore = useCurrencyStore();
+        return {
+            gachaCost: configStore.gachaCost,
+            gachaRarityConfig: configStore.gachaRarityConfig,
+            gachaSubWeights: configStore.gachaSubWeights,
+            gachaPool: configStore.gachaPool,
+            canAffordDiamonds: (cost: number) => currencyStore.canAffordDiamonds(cost),
+            diamonds: currencyStore.diamonds,
+            ssrOwned: { ...ssrOwned.value },
+            logic,
+            effectDeps: buildEffectDeps(),
+            tenPullCount: configStore.gachaConfig.tenPullCount,
+            random: { random: Math.random },
         };
     }
 
@@ -87,76 +93,37 @@ export const useGachaStore = defineStore('gacha', () => {
         return freePullsLeft.value > 0;
     });
 
-    // --- Actions ---
-    function singlePull(maxRarity?: 'R' | 'SR' | 'SSR'): GachaPullResult {
-        const currencyStore = useCurrencyStore();
-        const { pullResult, resolveResult, ssrFirst } = GachaService.resolveSinglePull({
-            gachaCost: configStore.gachaCost,
-            gachaRarityConfig: configStore.gachaRarityConfig,
-            gachaSubWeights: configStore.gachaSubWeights,
-            gachaPoolV2: configStore.gachaPoolV2 || configStore.gachaPool,
-            gachaPool: configStore.gachaPool,
-            canAffordDiamonds: (cost) => currencyStore.canAffordDiamonds(cost),
-            diamonds: currencyStore.diamonds,
-            ssrOwned: { ...ssrOwned.value },
-            logic,
-            effectDeps: buildEffectDeps(),
-            tenPullCount: configStore.gachaConfig.tenPullCount,
-            random: { random: Math.random },
-        }, maxRarity);
-
-        if (pullResult) {
-            results.value = [pullResult];
-
-            if (ssrFirst) {
-                ssrOwned.value[ssrFirst.item.id] = true;
-            }
-        }
-
-        return { pullResult, resolveResult };
+    // --- Actions — return ServiceResultWithData, caller applies ---
+    function singlePull(maxRarity?: 'R' | 'SR' | 'SSR'): ServiceResultWithData<SinglePullData> {
+        return GachaService.resolveSinglePull(_gachaServiceDeps(), maxRarity);
     }
 
-    function tenPull(): GachaTenPullResult {
-        const currencyStore = useCurrencyStore();
-        const { pullResults, resolveResult, newSSRs } = GachaService.resolveTenPull({
-            gachaCost: configStore.gachaCost,
-            gachaRarityConfig: configStore.gachaRarityConfig,
-            gachaSubWeights: configStore.gachaSubWeights,
-            gachaPoolV2: configStore.gachaPoolV2 || configStore.gachaPool,
-            gachaPool: configStore.gachaPool,
-            canAffordDiamonds: (cost) => currencyStore.canAffordDiamonds(cost),
-            diamonds: currencyStore.diamonds,
-            ssrOwned: { ...ssrOwned.value },
-            logic,
-            effectDeps: buildEffectDeps(),
-            tenPullCount: configStore.gachaConfig.tenPullCount,
-            random: { random: Math.random },
+    function tenPull(): ServiceResultWithData<TenPullData> {
+        return GachaService.resolveTenPull(_gachaServiceDeps());
+    }
+
+    function freePull(): ServiceResultWithData<SinglePullData> {
+        return GachaService.resolveFreePull(_gachaServiceDeps(), {
+            canFreePull: canFreePull.value,
+            today: new Date().toISOString().split('T')[0],
         });
-
-        if (pullResults) {
-            results.value = pullResults;
-
-            for (const ssr of newSSRs) {
-                ssrOwned.value[ssr.id] = true;
-            }
-        }
-
-        return { pullResults, resolveResult };
-    }
-
-    function freePull(): GachaPullResult {
-        if (!canFreePull.value) return { pullResult: null, resolveResult: { applyTo: {} } };
-        
-        freePullsLeft.value--;
-        lastFreePullDate.value = new Date().toISOString().split('T')[0];
-        
-        return singlePull('SR');
     }
 
     function resetResults() {
         results.value = [];
         logic.acknowledge();
     }
+
+    // --- Thin mutations — called by applyResolveResult only ---
+    function setResultsField(items: GachaItem[]): void { results.value = items; }
+    function markSsrOwnedField(ssrIds: string[]): void {
+        for (const id of ssrIds) {
+            ssrOwned.value[id] = true;
+            logic.ssrOwned[id] = true;
+        }
+    }
+    function decrementFreePullsField(): void { freePullsLeft.value--; }
+    function setLastFreePullDateField(date: string): void { lastFreePullDate.value = date; }
 
     function isSSRFirst(ssrId: string): boolean {
         return !ssrOwned.value[ssrId];
@@ -175,11 +142,11 @@ export const useGachaStore = defineStore('gacha', () => {
     }
 
     function canAffordSingle(currency: { diamonds: number }): boolean {
-        return currency.diamonds >= (configStore.gachaCost.singleCost || 0);
+        return currency.diamonds >= configStore.gachaCost.singleCost;
     }
 
     function canAffordTen(currency: { diamonds: number }): boolean {
-        return currency.diamonds >= (configStore.gachaCost.tenCost || 0);
+        return currency.diamonds >= configStore.gachaCost.tenCost;
     }
 
     // --- Serialization ---
@@ -199,7 +166,6 @@ export const useGachaStore = defineStore('gacha', () => {
         freePullsLeft.value = d.freePullsLeft || 0;
         lastFreePullDate.value = d.lastFreePullDate || '';
         
-        // Sync to logic
         logic.ssrOwned = { ...ssrOwned.value };
         
         checkDailyReset();
@@ -217,6 +183,7 @@ export const useGachaStore = defineStore('gacha', () => {
         totalSSRCount,
         ssrCollectionRate,
         hasResults,
+        canFreePull,
         
         // Actions
         singlePull,
@@ -228,7 +195,12 @@ export const useGachaStore = defineStore('gacha', () => {
         getOwnedSSRIds,
         canAffordSingle,
         canAffordTen,
-        canFreePull,
+        
+        // Thin mutations
+        setResultsField,
+        markSsrOwnedField,
+        decrementFreePullsField,
+        setLastFreePullDateField,
         
         // Serialization
         serialize,

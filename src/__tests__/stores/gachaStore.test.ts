@@ -5,7 +5,8 @@ import { useConfigStore } from '../../stores/configStore'
 import { useCurrencyStore } from '../../stores/currencyStore'
 import { GachaService } from '../../services/GachaService'
 import type { GachaItem } from '../../logic/GachaLogic'
-import type { ResolveResult } from '../../services/ServiceResultTypes'
+import type { SinglePullData, TenPullData } from '../../services/GachaService'
+import type { ServiceResultWithData } from '../../services/ServiceResultTypes'
 import {
     createGameSettingsConfig,
     createGachaCostConfig,
@@ -23,12 +24,11 @@ function setupStores() {
     configStore.gachaRarityConfig = createGachaRarityConfig()
     configStore.gachaCost = createGachaCostConfig()
     configStore.gachaSubWeights = { R: {}, SR: {}, SSR: {} }
-    configStore.gachaPoolV2 = [
+    configStore.gachaPool = [
         createGachaPoolItem({ id: 'item_r1', name: 'R Item 1', rarity: 'R', effect: 'spawn_board_item', value: { chain: 'lips', level: 1 } }),
         createGachaPoolItem({ id: 'item_sr1', name: 'SR Item 1', rarity: 'SR', effect: 'spawn_board_item', value: { chain: 'lips', level: 2 } }),
         createGachaPoolItem({ id: 'item_ssr1', name: 'SSR Item 1', rarity: 'SSR', effect: 'ssr_generator', value: { genChain: 'gen_makeup', level: 1 } }),
     ]
-    configStore.gachaPool = configStore.gachaPoolV2
     configStore.gameConfig = createGameSettingsConfig()
     configStore.gachaConfig = createGachaSimpleConfig()
     configStore.chains = ['lips']
@@ -55,79 +55,68 @@ function makeGachaItem(overrides: Partial<GachaItem> = {}): GachaItem {
     }
 }
 
+function makeSinglePullOk(data: SinglePullData, resolveResultOverrides: Record<string, unknown> = {}): ServiceResultWithData<SinglePullData> {
+    return {
+        ok: true,
+        data,
+        resolveResult: { applyTo: { ...resolveResultOverrides } },
+    };
+}
+
+function makeTenPullOk(data: TenPullData, resolveResultOverrides: Record<string, unknown> = {}): ServiceResultWithData<TenPullData> {
+    return {
+        ok: true,
+        data,
+        resolveResult: { applyTo: { ...resolveResultOverrides } },
+    };
+}
+
 describe('gachaStore', () => {
     describe('singlePull / tenPull / freePull (委托+包装)', () => {
         it('singlePull calls GachaService.resolveSinglePull and returns its result', () => {
             const { store } = setupStores()
             const pullResult = makeGachaItem({ id: 'r1', effect: 'add_joker', value: null })
-            const resolveResult: ResolveResult = { applyTo: { inventory: { addItems: [{ itemId: 'r1', count: 1 }] } } }
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult,
-                ssrFirst: undefined,
-            })
+            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue(
+                makeSinglePullOk({ pullResult }, { inventory: { addItems: [{ itemId: 'r1', count: 1 }] } })
+            )
 
             const result = store.singlePull()
 
             expect(GachaService.resolveSinglePull).toHaveBeenCalledOnce()
-            expect(result.pullResult).toBe(pullResult)
-            expect(result.resolveResult).toBe(resolveResult)
-            expect(store.results).toEqual([pullResult])
+            expect(result.ok).toBe(true)
+            expect(result.data.pullResult).toBe(pullResult)
         })
 
-        it('singlePull with null pullResult does not update results', () => {
+        it('singlePull with null pullResult returns ok:true with null data', () => {
             const { store } = setupStores()
-            const resolveResult: ResolveResult = { applyTo: {} }
+            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue(
+                makeSinglePullOk({ pullResult: null })
+            )
+
+            const result = store.singlePull()
+
+            expect(result.ok).toBe(true)
+            expect(result.data.pullResult).toBeNull()
+        })
+
+        it('singlePull returns ok:false when cannot afford', () => {
+            const { store } = setupStores()
             vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult: null,
-                resolveResult,
+                ok: false,
+                reason: 'Insufficient diamonds for single pull',
             })
 
             const result = store.singlePull()
 
-            expect(result.pullResult).toBeNull()
-            expect(store.results).toEqual([])
-        })
-
-        it('singlePull marks SSR first-time ownership via ssrFirst', () => {
-            const { store } = setupStores()
-            const ssrItem = makeGachaItem({ id: 'ssr1', rarity: 'SSR', effect: 'add_joker', value: null })
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult: ssrItem,
-                resolveResult: { applyTo: {} },
-                ssrFirst: { item: ssrItem, isFirst: true },
-            })
-
-            store.singlePull()
-
-            expect(store.ssrOwned['ssr1']).toBe(true)
-        })
-
-        it('singlePull does not overwrite ssrOwned for already-owned SSR', () => {
-            const { store } = setupStores()
-            store.ssrOwned = { ssr1: true }
-            const ssrItem = makeGachaItem({ id: 'ssr1', rarity: 'SSR', effect: 'add_joker', value: null })
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult: ssrItem,
-                resolveResult: { applyTo: {} },
-                ssrFirst: { item: ssrItem, isFirst: false },
-            })
-
-            store.singlePull()
-
-            expect(store.ssrOwned['ssr1']).toBe(true)
+            expect(result.ok).toBe(false)
         })
 
         it('singlePull transparently passes resolveResult with meta from Service', () => {
             const { store } = setupStores()
             const pullResult = makeGachaItem({ id: 'item1', effect: 'add_joker', value: { level: 2 } })
-            const resolveResult: ResolveResult = {
-                applyTo: { inventory: { addItems: [{ itemId: 'item1', count: 1, meta: { effect: 'add_joker', value: { level: 2 } } }] } }
-            }
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult,
-            })
+            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue(
+                makeSinglePullOk({ pullResult }, { inventory: { addItems: [{ itemId: 'item1', count: 1, meta: { effect: 'add_joker', value: { level: 2 } } }] } })
+            )
 
             const result = store.singlePull()
 
@@ -140,10 +129,9 @@ describe('gachaStore', () => {
         it('singlePull does not touch meta when no addItems', () => {
             const { store } = setupStores()
             const pullResult = makeGachaItem({ id: 'item1', effect: 'add_gold', value: 100 })
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult: { applyTo: { currency: { addGold: 100 } } },
-            })
+            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue(
+                makeSinglePullOk({ pullResult }, { currency: { addGold: 100 } })
+            )
 
             const result = store.singlePull()
 
@@ -153,70 +141,55 @@ describe('gachaStore', () => {
         it('tenPull calls GachaService.resolveTenPull and returns its result', () => {
             const { store } = setupStores()
             const pullResults = [makeGachaItem({ id: 'a' }), makeGachaItem({ id: 'b' })]
-            const resolveResult: ResolveResult = { applyTo: {} }
-            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue({
-                pullResults,
-                resolveResult,
-                newSSRs: [],
-            })
+            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue(
+                makeTenPullOk({ pullResults, newSSRs: [] })
+            )
 
             const result = store.tenPull()
 
             expect(GachaService.resolveTenPull).toHaveBeenCalledOnce()
-            expect(result.pullResults).toBe(pullResults)
-            expect(result.resolveResult).toBe(resolveResult)
-            expect(store.results).toEqual(pullResults)
+            expect(result.ok).toBe(true)
+            expect(result.data.pullResults).toBe(pullResults)
         })
 
-        it('tenPull with null pullResults does not update results', () => {
+        it('tenPull with null pullResults returns ok:true with null data', () => {
+            const { store } = setupStores()
+            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue(
+                makeTenPullOk({ pullResults: null, newSSRs: [] })
+            )
+
+            const result = store.tenPull()
+
+            expect(result.ok).toBe(true)
+            expect(result.data.pullResults).toBeNull()
+        })
+
+        it('tenPull returns ok:false when cannot afford', () => {
             const { store } = setupStores()
             vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue({
-                pullResults: null,
-                resolveResult: { applyTo: {} },
-                newSSRs: [],
+                ok: false,
+                reason: 'Insufficient diamonds for ten pull',
             })
 
             const result = store.tenPull()
 
-            expect(result.pullResults).toBeNull()
-            expect(store.results).toEqual([])
-        })
-
-        it('tenPull marks all newSSRs as owned', () => {
-            const { store } = setupStores()
-            const ssr1 = makeGachaItem({ id: 'ssr1', rarity: 'SSR', effect: 'add_joker', value: null })
-            const ssr2 = makeGachaItem({ id: 'ssr2', rarity: 'SSR', effect: 'add_joker', value: null })
-            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue({
-                pullResults: [ssr1, ssr2],
-                resolveResult: { applyTo: {} },
-                newSSRs: [ssr1, ssr2],
-            })
-
-            store.tenPull()
-
-            expect(store.ssrOwned['ssr1']).toBe(true)
-            expect(store.ssrOwned['ssr2']).toBe(true)
+            expect(result.ok).toBe(false)
         })
 
         it('tenPull transparently passes resolveResult with meta from Service', () => {
             const { store } = setupStores()
             const itemA = makeGachaItem({ id: 'a', itemId: 'inv_a', effect: 'add_joker', value: { level: 1 } })
             const itemB = makeGachaItem({ id: 'b', itemId: 'inv_b', effect: 'add_scissor', value: { level: 2 } })
-            const resolveResult: ResolveResult = {
-                applyTo: {
+            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue(
+                makeTenPullOk({ pullResults: [itemA, itemB], newSSRs: [] }, {
                     inventory: {
                         addItems: [
                             { itemId: 'inv_a', count: 1, meta: { effect: 'add_joker', value: { level: 1 } } },
                             { itemId: 'inv_b', count: 1, meta: { effect: 'add_scissor', value: { level: 2 } } },
                         ]
                     }
-                }
-            }
-            vi.spyOn(GachaService, 'resolveTenPull').mockReturnValue({
-                pullResults: [itemA, itemB],
-                resolveResult,
-                newSSRs: [],
-            })
+                })
+            )
 
             const result = store.tenPull()
 
@@ -230,34 +203,57 @@ describe('gachaStore', () => {
             })
         })
 
-        it('freePull delegates to singlePull with SR maxRarity when canFreePull', () => {
+        it('freePull delegates to GachaService.resolveFreePull', () => {
             const { store } = setupStores()
             store.freePullsLeft = 1
             const pullResult = makeGachaItem({ id: 'r1', rarity: 'SR' })
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult: { applyTo: {} },
-            })
+            vi.spyOn(GachaService, 'resolveFreePull').mockReturnValue(
+                makeSinglePullOk({ pullResult }, { gacha: { decrementFreePulls: true, setLastFreePullDate: '2026-06-16', setResults: [pullResult] } })
+            )
 
-            const beforeDate = store.lastFreePullDate
             const result = store.freePull()
 
-            expect(store.freePullsLeft).toBe(0)
-            expect(result.pullResult).toBe(pullResult)
-            expect(GachaService.resolveSinglePull).toHaveBeenCalledWith(
-                expect.anything(),
-                'SR'
-            )
+            expect(result.ok).toBe(true)
+            expect(result.data.pullResult).toBe(pullResult)
+            expect(GachaService.resolveFreePull).toHaveBeenCalledOnce()
         })
 
-        it('freePull returns null when cannot free pull', () => {
+        it('freePull returns ok:false when cannot free pull', () => {
             const { store } = setupStores()
             store.freePullsLeft = 0
 
             const result = store.freePull()
 
-            expect(result.pullResult).toBeNull()
-            expect(result.resolveResult).toEqual({ applyTo: {} })
+            expect(result.ok).toBe(false)
+        })
+    })
+
+    describe('thin mutations', () => {
+        it('setResultsField sets results', () => {
+            const { store } = setupStores()
+            const items = [makeGachaItem({ id: 'a' })]
+            store.setResultsField(items)
+            expect(store.results).toEqual(items)
+        })
+
+        it('markSsrOwnedField marks SSRs as owned', () => {
+            const { store } = setupStores()
+            store.markSsrOwnedField(['ssr1', 'ssr2'])
+            expect(store.ssrOwned['ssr1']).toBe(true)
+            expect(store.ssrOwned['ssr2']).toBe(true)
+        })
+
+        it('decrementFreePullsField decrements freePullsLeft', () => {
+            const { store } = setupStores()
+            store.freePullsLeft = 2
+            store.decrementFreePullsField()
+            expect(store.freePullsLeft).toBe(1)
+        })
+
+        it('setLastFreePullDateField sets lastFreePullDate', () => {
+            const { store } = setupStores()
+            store.setLastFreePullDateField('2026-06-16')
+            expect(store.lastFreePullDate).toBe('2026-06-16')
         })
     })
 
@@ -370,12 +366,7 @@ describe('gachaStore', () => {
 
         it('resetResults clears results', () => {
             const { store } = setupStores()
-            const pullResult = makeGachaItem()
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult: { applyTo: {} },
-            })
-            store.singlePull()
+            store.setResultsField([makeGachaItem()])
             expect(store.results.length).toBeGreaterThan(0)
             store.resetResults()
             expect(store.results.length).toBe(0)
@@ -384,12 +375,7 @@ describe('gachaStore', () => {
         it('hasResults computed works', () => {
             const { store } = setupStores()
             expect(store.hasResults).toBe(false)
-            const pullResult = makeGachaItem()
-            vi.spyOn(GachaService, 'resolveSinglePull').mockReturnValue({
-                pullResult,
-                resolveResult: { applyTo: {} },
-            })
-            store.singlePull()
+            store.setResultsField([makeGachaItem()])
             expect(store.hasResults).toBe(true)
         })
 
@@ -412,10 +398,9 @@ describe('gachaStore', () => {
 
         it('ssrCollectionRate returns 0 when no SSRs in pool', () => {
             const { store, configStore } = setupStores()
-            configStore.gachaPoolV2 = [
+            configStore.gachaPool = [
                 createGachaPoolItem({ id: 'item_r1', name: 'R Item', rarity: 'R', value: {} }),
             ]
-            configStore.gachaPool = configStore.gachaPoolV2
             expect(store.ssrCollectionRate).toBe(0)
         })
     })

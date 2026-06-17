@@ -12,6 +12,8 @@ import {
     GachaSimpleConfigSchema,
     ShopItemSchema,
     GachaPoolDataSchema,
+    AdConfigSchema,
+    DailyBuffConfigSchema,
 } from './economy.schema'
 import {
     AffectionConfigSchema,
@@ -23,6 +25,7 @@ import {
     LoopRuleSchema,
     LoopEventSchema,
     LoopNarrativeSchema,
+    LoopMultipliersSchema,
     DailyOrderPoolDataSchema,
     AchievementDataSchema,
     CGStorySchema,
@@ -59,6 +62,9 @@ export const CONFIG_SCHEMAS = {
     bossProgression:     BossProgressionConfigSchema,
     gachaConfig:         GachaSimpleConfigSchema,
     shopItems:           ShopItemsSchema,
+    loopMultipliers:     LoopMultipliersSchema,
+    adConfig:            AdConfigSchema,
+    dailyBuffConfig:     DailyBuffConfigSchema,
 }
 
 export type ConfigKey = keyof typeof CONFIG_SCHEMAS

@@ -6,8 +6,8 @@
 
 ## 核心架构：Logic → Service → Store
 
-- **Logic层** (`src/logic/`，6模块)：纯函数，零Vue依赖，所有外部值通过 deps 参数传入
-- **Service层** (`src/services/`，12模块)：编排Logic，返回 ResolveResult，零Vue依赖
+- **Logic层** (`src/logic/`，7模块)：纯函数，零Vue依赖，所有外部值通过 deps 参数传入
+- **Service层** (`src/services/`，12模块 + ServiceResultTypes)：编排Logic，返回 ResolveResult，零Vue依赖
 - **Store层** (`src/stores/`，22模块)：Pinia store，调用Service，apply ResolveResult，emit事件
 
 **ResolveResult 模式**：Service返回 `{ applyTo, events, ui }` 声明式指令，Store负责apply和emit。详细schema见 `docs/architecture.md`。
@@ -32,7 +32,7 @@
 | #2 不引用 configStore | ✅ 全部合规 | Logic/Service 零 configStore import |
 | #3 random 通过 deps | ✅ 全部合规 | BoardService.random deps 已注入（TD-004 修复），其余 Logic 本就合规 |
 | #4 事件类型注册 | ✅ 全部合规 | game.d.ts 已注册所有事件 payload |
-| #5 Store 只做 apply+emit | ✅ 全部合规 | Logic 层返回 LogicEvent[]，Store 层负责 globalBus.emit（TD-001 修复） |
+| #5 Store 只做 apply+emit | ✅ 全部合规 | emit 路径已合规（TD-001）；业务计算逻辑已合规（TD-009~013 修复：affectionStore 计算下沉到 AffectionService、loopStore 纯函数搬迁到 LoopLogic+LoopService、heroineStore 补 applyTo.heroine ResolveResult） |
 
 **铁律 #1 作用域区分**：`??` fallback 禁令仅适用于 Logic/Service 层。UI 层 computed 中 `??` 作为防御性展示是合理的（如 GachaSheet `configStore.gachaCost?.singleCost ?? 100`）。
 
@@ -56,8 +56,8 @@
 - **生产代码 `any`**：2 处（SAFE-CAST：DevConfig `window.__DEV__`、main.ts `appEl.__vue_app__`）
 - **测试代码 `as any`**：19 处（deepMerge 边界值 11 + 故意无效输入 8）
 - **vue-tsc 生产错误**：0
-- **测试**：908 pass
-- **TD 注册表**：6 已修复，1 accepted risk（TD-005），1 待 CI 严格化（TD-008）→ `docs/tech-debt.md`
+- **测试**：1102 pass
+- **TD 注册表**：12 已修复（含 TD-015），1 accepted risk（TD-005），1 待 CI 严格化（TD-008）→ `docs/tech-debt.md`
 - **Architecture Freeze v1.0**：JSON 配置表结构已冻结，详见 `docs/hardcoded-values-audit.md`
 
 ---
@@ -65,7 +65,7 @@
 ## 当前任务
 
 <!-- 每次开新任务时更新此行 -->
-→ 质量改进阶段完成（any 清零 + 铁律合规 + GachaSheet TS 修复），可开始新功能开发
+→ Phase 5 完成（未消费 config refs 消费化 + 3 处值不匹配 bug 修复），可开始新功能开发
 
 ---
 

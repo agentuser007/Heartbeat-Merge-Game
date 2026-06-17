@@ -46,8 +46,6 @@ import { useDrag } from '../../composables/useDrag';
 import { useInventoryStore } from '../../stores/inventoryStore';
 import { useSaveStore } from '../../stores/saveStore';
 import { useI18nStore } from '../../stores/i18nStore';
-import { useApplyDeps } from '../../composables/useApplyDeps';
-import { applyResolveResult } from '../../composables/useGameLoop';
 import type { MergeResult } from '../../types/game';
 
 const boardStore = useBoardStore();
@@ -58,7 +56,6 @@ const saveStore = useSaveStore();
 const i18nStore = useI18nStore();
 const audio = useAudio();
 const effects = useEffects();
-const applyDeps = useApplyDeps();
 
 const animMap: Record<number, string> = reactive({});
 
@@ -244,9 +241,6 @@ const { isDragging: _isDragging, dragSourceIndex: _dragSourceIndex, onPointerDow
     if (isItemGenerator(index)) {
       boardStore.selectCell(index);
       const result = boardStore.produceFromGenerator(index);
-      if (result.resolveResult) {
-        applyResolveResult(result.resolveResult, applyDeps);
-      }
       if (!result.success) {
         if (result.reason === 'board_full') {
           effects.showToast(i18nStore.t('board.boardFull') || '棋盘已满，请先合成或回收物品！', 'error');

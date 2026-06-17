@@ -4,16 +4,15 @@
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { globalBus } from '../core/EventBus';
-
-export interface AdConfig {
-    energy: { reward: number; dailyLimit: number; cooldownMs: number; emoji: string };
-    gold: { reward: number; dailyLimit: number; cooldownMs: number; emoji: string };
-    diamonds: { reward: number; dailyLimit: number; cooldownMs: number; emoji: string; betaBenefit: boolean };
-    freePull: { dailyLimit: number; cooldownMs: number; maxRarity: string; emoji: string };
-}
+import { useConfigStore } from './configStore';
+import { AdService } from '../services/AdService';
+import type { ServiceResult } from '../services/ServiceResultTypes';
+import type { ResolveResult } from '../services/ServiceResultTypes';
+import * as AdLogic from '../logic/AdLogic';
 
 export const useAdStore = defineStore('ad', () => {
+    const configStore = useConfigStore();
+
     // --- State ---
     const dailyAdCounts = ref<Record<string, number>>({
         energy: 0,
@@ -31,14 +30,6 @@ export const useAdStore = defineStore('ad', () => {
     
     const lastResetDate = ref<string>('');
 
-    // --- Config ---
-    const adConfig: AdConfig = {
-        energy: { reward: 20, dailyLimit: Infinity, cooldownMs: 0, emoji: '⚡' },
-        gold: { reward: 50, dailyLimit: 3, cooldownMs: 0, emoji: '💰' },
-        diamonds: { reward: 50, dailyLimit: 3, cooldownMs: 0, emoji: '💎', betaBenefit: true },
-        freePull: { dailyLimit: 1, cooldownMs: 0, maxRarity: 'SR', emoji: '🃏' }
-    };
-
     // --- Computed ---
     const canWatchEnergyAd = computed(() => canWatch('energy'));
     const canWatchGoldAd = computed(() => canWatch('gold'));
@@ -46,79 +37,48 @@ export const useAdStore = defineStore('ad', () => {
     const canWatchFreePullAd = computed(() => canWatch('freePull'));
 
     // --- Actions ---
-    function watchAd(adType: string): boolean {
+    function watchAd(adType: string): ServiceResult {
         checkDailyReset();
-        if (!canWatch(adType)) return false;
-        
-        // Grant reward directly (no real ad in BASIC mode)
-        grantReward(adType);
-        return true;
+        return AdService.resolveWatchAd(adType, {
+            adConfig: configStore.adConfig,
+            dailyAdCounts: dailyAdCounts.value,
+            lastWatchTime: lastWatchTime.value,
+            freePullMaxRarity: configStore.gachaConfig.freePullMaxRarity,
+            now: Date.now(),
+        });
     }
 
     function canWatch(adType: string): boolean {
-        const config = adConfig[adType as keyof AdConfig];
-        if (!config) return false;
-        
-        if (dailyAdCounts.value[adType] >= config.dailyLimit) return false;
-        
-        if (config.cooldownMs > 0 && lastWatchTime.value[adType]) {
-            if (Date.now() - lastWatchTime.value[adType] < config.cooldownMs) return false;
-        }
-        
-        return true;
+        return AdLogic.canWatch(adType, {
+            config: configStore.adConfig,
+            dailyAdCounts: dailyAdCounts.value,
+            lastWatchTime: lastWatchTime.value,
+            now: Date.now(),
+        });
     }
 
     function getRemaining(adType: string): number | string {
         checkDailyReset();
-        const config = adConfig[adType as keyof AdConfig];
-        if (!config) return 0;
-        
-        const remaining = config.dailyLimit - (dailyAdCounts.value[adType] || 0);
-        return remaining === Infinity ? '∞' : remaining;
-    }
-
-    function grantReward(adType: string): void {
-        dailyAdCounts.value[adType]++;
-        lastWatchTime.value[adType] = Date.now();
-        
-        const config = adConfig[adType as keyof AdConfig];
-        if (!config) return;
-        
-        globalBus.emit('ad:rewardGranted', {
-            adType,
-            reward: 'reward' in config ? config.reward : 0
+        return AdLogic.getRemaining(adType, {
+            config: configStore.adConfig,
+            dailyAdCounts: dailyAdCounts.value,
         });
     }
 
     function checkDailyReset(): void {
-        const today = getCurrentDateStr();
-        if (lastResetDate.value !== today) {
-            dailyAdCounts.value = {
-                energy: 0,
-                gold: 0,
-                diamonds: 0,
-                freePull: 0
-            };
-            lastResetDate.value = today;
+        const now = Date.now();
+        if (AdLogic.needsDailyReset({ lastResetDate: lastResetDate.value, now })) {
+            resetAllCounts();
+            lastResetDate.value = AdLogic.getCurrentDateStr(now);
         }
     }
 
-    function getCurrentDateStr(): string {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    function resetAllCounts(): void {
+        dailyAdCounts.value = { energy: 0, gold: 0, diamonds: 0, freePull: 0 };
     }
 
-    function resetDaily(): void {
-        dailyAdCounts.value = {
-            energy: 0,
-            gold: 0,
-            diamonds: 0,
-            freePull: 0
-        };
-        lastResetDate.value = getCurrentDateStr();
-        
-        // Emit event for UI updates
-        globalBus.emit('ad:dailyReset');
+    function resetDaily(): ResolveResult {
+        return AdService.resolveDailyReset({ now: Date.now() });
     }
 
     // --- Serialization ---
@@ -134,45 +94,29 @@ export const useAdStore = defineStore('ad', () => {
         if (!data) return;
         const d = data as { dailyAdCounts?: Record<string, number>; lastWatchTime?: Record<string, number>; lastResetDate?: string };
         
-        dailyAdCounts.value = d.dailyAdCounts || {
-            energy: 0,
-            gold: 0,
-            diamonds: 0,
-            freePull: 0
-        };
-        
-        lastWatchTime.value = d.lastWatchTime || {
-            energy: 0,
-            gold: 0,
-            diamonds: 0,
-            freePull: 0
-        };
-        
-        lastResetDate.value = d.lastResetDate || getCurrentDateStr();
+        dailyAdCounts.value = d.dailyAdCounts || { energy: 0, gold: 0, diamonds: 0, freePull: 0 };
+        lastWatchTime.value = d.lastWatchTime || { energy: 0, gold: 0, diamonds: 0, freePull: 0 };
+        lastResetDate.value = d.lastResetDate || AdLogic.getCurrentDateStr(Date.now());
         checkDailyReset();
     }
 
     return {
-        // State
         dailyAdCounts,
         lastWatchTime,
         lastResetDate,
         
-        // Computed
         canWatchEnergyAd,
         canWatchGoldAd,
         canWatchDiamondsAd,
         canWatchFreePullAd,
         
-        // Actions
         watchAd,
         canWatch,
         getRemaining,
-        grantReward,
         checkDailyReset,
+        resetAllCounts,
         resetDaily,
         
-        // Serialization
         serialize,
         deserialize
     };

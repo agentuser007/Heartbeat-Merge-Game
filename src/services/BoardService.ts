@@ -5,7 +5,7 @@
 // All functions are pure — deps injected as plain objects.
 // Store calls these and applies mutations + emits events.
 import type { ItemData as BoardItemData } from '../logic/BoardLogic';
-import type { DailyOrder, GameItem, BoardSnapshot, GeneratorConfig, LoopStatus, DailyOrderState } from '../types/game';
+import type { GameItem, BoardSnapshot, GeneratorConfig, LoopStatus, DailyOrderState } from '../types/game';
 import type { ResolveResult } from './ServiceResultTypes';
 import type { OrderData } from '../logic/BossLogic';
 import type { MergeResult } from '../logic/BoardLogic';
@@ -135,41 +135,14 @@ export interface ExecuteSellDeps {
     dailyActiveOrders: DailyOrderState[];
 }
 
-export interface ExecuteSellResult {
-    gold: number;
-    energy: number;
-    events: Array<{ name: 'board:sold'; data: { cellIndex: number; itemId: string; gold: number; energy: number } }>;
-}
-
-// --- 1c: Hybrid split types ---
-
 export interface ResolvePlaceItemDeps {
     index: number;
     itemId: string;
 }
 
-export interface ResolvePlaceItemResult {
-    applyTo: {
-        board: {
-            setCell: { index: number; id: string };
-            initGenerator: { index: number; itemId: string };
-        };
-    };
-    events: Array<{ name: 'board:itemPlaced'; data: { index: number; itemId: string } }>;
-}
-
 export interface ResolveClearCellDeps {
     index: number;
     itemId: string | null;
-}
-
-export interface ResolveClearCellResult {
-    applyTo: {
-        board: {
-            clearCell: number;
-        };
-    };
-    events: Array<{ name: 'board:itemConsumed'; data: { index: number; itemId: string } }>;
 }
 
 // --- 1c-ii: Hybrid split — produceFromGenerator ---
@@ -192,22 +165,9 @@ export interface ResolveProductionDeps {
     random: () => number;
 }
 
-export interface ProductionPlacement {
-    targetIndex: number;
-    producedId: string;
-}
-
-export interface ResolveProductionResult {
-    success: boolean;
-    producedItemId?: string;
-    targetIndex?: number;
-    reason?: string;
-    resolveResult: ResolveResult;
-    storeMeta: {
-        placements: ProductionPlacement[];
-        incrementGeneratorClicks: { index: number } | null;
-        decrementDoubleGenBy: number;
-    };
+export interface ResolveProductionOutput {
+    result: ResolveResult;
+    ui: { success: boolean; reason?: string };
 }
 
 // --- 1c-iii: Hybrid split — merge ---
@@ -234,65 +194,17 @@ export interface ResolveRerollDeps {
     random: () => number;
 }
 
-export interface ResolveRerollResult {
-    rerolledCount: number;
-    applyTo: {
-        board?: {
-            setCells: Array<{ index: number; id: string }>;
-        };
-    };
+export interface ResolveRerollOutput {
+    result: ResolveResult;
+    ui: { rerolledCount: number };
 }
 
-// === Daily Systems ===
-
-export interface ResolveDailyOrdersDeps<T extends DailyOrder> {
-    orderPool: T[];
-    loopIndex: number;
-    maxActive: number;
-    random: () => number;
+export interface ResolveMergeOutput {
+    result: ResolveResult;
+    ui: { mergeResult: MergeResult | 'move' | 'swap' | null };
 }
 
-export interface ResolveDailyOrdersResult<T extends DailyOrder> {
-    orders: Array<T & { fulfilled: boolean }>;
-}
-
-export interface ResolveDailyBuffDeps<T> {
-    buffTypes: T[];
-    random: () => number;
-}
-
-export interface ResolveDailyBuffResult<T> {
-    buff: T;
-}
-
-export interface MergePlacement {
-    index: number;
-    id: string;
-    initGenerator: boolean;
-}
-
-export interface ResolveMergeResult {
-    result: MergeResult | 'move' | 'swap' | null;
-    applyTo: {
-        board?: {
-            /** Ordered list of cell mutations to apply sequentially.
-             *  Order matters: later placements may read state set by earlier ones. */
-            setCells: MergePlacement[];
-        };
-    };
-    events: Array<{ name: 'board:merged' | 'toast:show'; data: unknown }>;
-}
-
-// --- Utility ---
-
-function fisherYatesShuffle<T>(arr: T[], random: () => number): T[] {
-    const result = [...arr];
-    for (let i = result.length - 1; i > 0; i--) {
-        const j = Math.floor(random() * (i + 1));
-        [result[i], result[j]] = [result[j], result[i]];
-    }
-    return result;
-}
+import { fisherYatesShuffle } from '../utils/shuffle';
 
 // ============================================================
 // BoardService — namespace object with pure functions
@@ -493,7 +405,7 @@ export const BoardService = {
         };
     },
 
-    executeSell(deps: ExecuteSellDeps): ExecuteSellResult | null {
+    executeSell(deps: ExecuteSellDeps): ResolveResult | null {
         const { cellIndex, cells, items, recycleEnergyTable, sellPriceUpActive, sellPriceBoost, recycleBonus, bossOrders, dailyActiveOrders } = deps;
 
         if (!BoardService.canSellItem({ cells, items, index: cellIndex, bossOrders, dailyActiveOrders })) {
@@ -511,37 +423,39 @@ export const BoardService = {
         const energy = baseRecycleEnergy + recycleBonus;
 
         return {
-            gold,
-            energy,
+            applyTo: {
+                currency: { addGold: gold },
+                energy: { add: energy },
+                board: { clearCells: [cellIndex] },
+            },
             events: [{
                 name: 'board:sold',
                 data: { cellIndex, itemId, gold, energy }
-            }]
+            }],
         };
     },
 
     // ---- 1c-i: Hybrid split — placeItem / clearCell ----
 
-    resolvePlaceItem(deps: ResolvePlaceItemDeps): ResolvePlaceItemResult {
+    resolvePlaceItem(deps: ResolvePlaceItemDeps): ResolveResult {
         const { index, itemId } = deps;
         return {
             applyTo: {
                 board: {
-                    setCell: { index, id: itemId },
-                    initGenerator: { index, itemId },
+                    placeItems: [{ cellIndex: index, itemId, initGenerator: true }],
                 },
             },
             events: [{ name: 'board:itemPlaced', data: { index, itemId } }],
         };
     },
 
-    resolveClearCell(deps: ResolveClearCellDeps): ResolveClearCellResult | null {
+    resolveClearCell(deps: ResolveClearCellDeps): ResolveResult | null {
         const { index, itemId } = deps;
         if (!itemId) return null;
         return {
             applyTo: {
                 board: {
-                    clearCell: index,
+                    clearCells: [index],
                 },
             },
             events: [{ name: 'board:itemConsumed', data: { index, itemId } }],
@@ -550,17 +464,16 @@ export const BoardService = {
 
     // ---- 1c-ii: Hybrid split — produceFromGenerator ----
 
-    resolveProduction(deps: ResolveProductionDeps): ResolveProductionResult {
+    resolveProduction(deps: ResolveProductionDeps): ResolveProductionOutput {
         const {
             generatorIndex, generatorItemId, isFreeProduction, energyCost,
             currentEnergy, energyDiscountActive, genSpeedUpActive, perfumeBoostActive,
             perfumeBoostChains, doubleGenTurns, items, rollDrop, findTargetCell,
         } = deps;
 
-        const fail = (reason: string): ResolveProductionResult => ({
-            success: false, reason,
-            resolveResult: { applyTo: {} },
-            storeMeta: { placements: [], incrementGeneratorClicks: null, decrementDoubleGenBy: 0 },
+        const fail = (reason: string): ResolveProductionOutput => ({
+            result: { applyTo: {} },
+            ui: { success: false, reason },
         });
 
         const targetIndex = findTargetCell(generatorIndex);
@@ -588,9 +501,9 @@ export const BoardService = {
             }
         }
 
-        const placements: ProductionPlacement[] = [{ targetIndex, producedId }];
+        const placeItems: Array<{ cellIndex: number; itemId: string; initGenerator?: boolean }> = [{ cellIndex: targetIndex, itemId: producedId, initGenerator: true }];
         const events: Array<{ name: string; data: unknown }> = [];
-        let decrementDoubleGenBy = 0;
+        let decrementDoubleGenTurns: number | undefined;
 
         if (genSpeedUpActive) {
             const secondId = rollDrop(generatorItemId);
@@ -604,7 +517,7 @@ export const BoardService = {
                 }
                 const secondTarget = findTargetCell(generatorIndex, targetIndex);
                 if (secondTarget !== -1) {
-                    placements.push({ targetIndex: secondTarget, producedId: finalSecondId });
+                    placeItems.push({ cellIndex: secondTarget, itemId: finalSecondId, initGenerator: true });
                 } else {
                     events.push({ name: 'toast:show', data: { message: '棋盘已满，额外产物未生成', type: 'error' } });
                 }
@@ -623,47 +536,42 @@ export const BoardService = {
                 }
                 const extraTarget = findTargetCell(generatorIndex, targetIndex);
                 if (extraTarget !== -1) {
-                    placements.push({ targetIndex: extraTarget, producedId: finalExtraId });
-                    decrementDoubleGenBy = 1;
+                    placeItems.push({ cellIndex: extraTarget, itemId: finalExtraId, initGenerator: true });
                 } else {
                     events.push({ name: 'toast:show', data: { message: '棋盘已满，双倍产出未生成', type: 'error' } });
-                    decrementDoubleGenBy = 1;
                 }
-            } else {
-                decrementDoubleGenBy = 1;
             }
+            decrementDoubleGenTurns = 1;
         }
 
         events.push({ name: 'board:produced', data: { generatorIndex, targetIndex, producedItemId: producedId } });
 
         return {
-            success: true,
-            producedItemId: producedId,
-            targetIndex,
-            resolveResult: {
+            result: {
                 applyTo: {
-                    energy: { spend: energySpend },
+                    energy: energySpend > 0 ? { spend: energySpend } : undefined,
+                    board: {
+                        placeItems,
+                        incrementGeneratorClicks: { index: generatorIndex },
+                        ...(decrementDoubleGenTurns ? { decrementDoubleGenTurns } : {}),
+                    },
                 },
                 events,
             },
-            storeMeta: {
-                placements,
-                incrementGeneratorClicks: { index: generatorIndex },
-                decrementDoubleGenBy,
-            },
+            ui: { success: true },
         };
     },
 
     // ---- 1c-iii: Hybrid split — merge ----
 
-    resolveMerge(deps: ResolveMergeDeps): ResolveMergeResult {
+    resolveMerge(deps: ResolveMergeDeps): ResolveMergeOutput {
         const {
             sourceIndex, targetIndex, sourceId, targetId,
             items, luckyMergeActive, mergeBonusActive, mergeResult, findEmptyCell,
         } = deps;
 
-        const setCells: MergePlacement[] = [];
-        const events: ResolveMergeResult['events'] = [];
+        const placeItems: Array<{ cellIndex: number; itemId: string; initGenerator?: boolean }> = [];
+        const events: Array<{ name: string; data: unknown }> = [];
 
         if (sourceId && targetId && sourceId === targetId && items[sourceId] && !items[sourceId].nextId) {
             events.push({ name: 'toast:show', data: { message: '已满级，无法合成', type: 'info' } });
@@ -672,18 +580,21 @@ export const BoardService = {
         if (mergeResult && typeof mergeResult === 'object' && (mergeResult.action === 'merge' || mergeResult.action === 'joker')) {
             let nextId = mergeResult.nextId;
 
+            // Lucky merge: upgrade one further tier. setCells overwrites target cell
+            // with the lucky-upgraded ID. tryMergeOrSwap already set target to nextId,
+            // so applyResolveResult's _setCell will overwrite with the lucky ID — expected.
             if (nextId && luckyMergeActive && deps.random() < deps.luckyMergeChance) {
                 const nextData = items[nextId];
                 if (nextData && nextData.nextId) {
                     nextId = nextData.nextId;
-                    setCells.push({ index: targetIndex, id: nextId, initGenerator: true });
+                    placeItems.push({ cellIndex: targetIndex, itemId: nextId, initGenerator: true });
                 }
             }
 
             if (mergeBonusActive && nextId) {
                 const emptyIdx = findEmptyCell();
                 if (emptyIdx !== -1) {
-                    setCells.push({ index: emptyIdx, id: nextId, initGenerator: true });
+                    placeItems.push({ cellIndex: emptyIdx, itemId: nextId, initGenerator: true });
                 } else {
                     events.push({ name: 'toast:show', data: { message: '棋盘已满，额外产物未生成', type: 'error' } });
                 }
@@ -695,9 +606,11 @@ export const BoardService = {
         }
 
         return {
-            result: mergeResult,
-            applyTo: setCells.length > 0 ? { board: { setCells } } : {},
-            events,
+            result: {
+                applyTo: placeItems.length > 0 ? { board: { placeItems } } : {},
+                events,
+            },
+            ui: { mergeResult },
         };
     },
 
@@ -727,7 +640,7 @@ export const BoardService = {
     // --- resolveOfflineProduction ---
     // Returns inventory items produced offline
 
-    resolveReroll(deps: ResolveRerollDeps): ResolveRerollResult {
+    resolveReroll(deps: ResolveRerollDeps): ResolveRerollOutput {
         const { cells, items, count, chainItemPrefix, random } = deps;
         const nonGenIndices: number[] = [];
         for (let i = 0; i < cells.length; i++) {
@@ -738,7 +651,7 @@ export const BoardService = {
         }
         const shuffled = fisherYatesShuffle(nonGenIndices, random);
         const toReroll = shuffled.slice(0, count);
-        const setCells: Array<{ index: number; id: string }> = [];
+        const placeItems: Array<{ cellIndex: number; itemId: string }> = [];
         const chains = Object.keys(chainItemPrefix);
 
         for (const idx of toReroll) {
@@ -751,37 +664,21 @@ export const BoardService = {
                 if (prefix) {
                     const newId = `${prefix}_${oldLevel}`;
                     if (items[newId]) {
-                        setCells.push({ index: idx, id: newId });
+                        placeItems.push({ cellIndex: idx, itemId: newId });
                     }
                 }
             }
         }
 
         return {
-            rerolledCount: toReroll.length,
-            applyTo: setCells.length > 0 ? { board: { setCells } } : {},
+            result: {
+                applyTo: placeItems.length > 0 ? { board: { placeItems } } : {},
+            },
+            ui: { rerolledCount: toReroll.length },
         };
     },
 
     // === Daily Systems ===
-
-    resolveDailyOrders<T extends DailyOrder>(deps: ResolveDailyOrdersDeps<T>): ResolveDailyOrdersResult<T> {
-        const { orderPool, loopIndex, maxActive, random } = deps;
-        const available = orderPool.filter(order => (order.minLoop || 1) <= loopIndex);
-        const shuffled = fisherYatesShuffle(available, random);
-        const selected = shuffled.slice(0, maxActive).map(order => ({
-            ...order,
-            fulfilled: false,
-        }));
-        return { orders: selected };
-    },
-
-    resolveDailyBuff<T>(deps: ResolveDailyBuffDeps<T>): ResolveDailyBuffResult<T> {
-        const { buffTypes, random } = deps;
-        if (buffTypes.length === 0) throw new Error('resolveDailyBuff: buffTypes must not be empty');
-        const idx = Math.floor(random() * buffTypes.length);
-        return { buff: { ...buffTypes[idx] } };
-    },
 
     resolveOfflineProduction(producedItems: Array<{ itemId: string; count: number }>): ResolveResult {
         if (!producedItems || producedItems.length === 0) return { applyTo: {} };

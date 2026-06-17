@@ -9,6 +9,7 @@ import type { DialogueSerializeData } from '../types/serialize';
 
 export const useDialogueStore = defineStore('dialogue', () => {
     let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+    let pendingOnClose: (() => void) | null = null;
 
     // --- State ---
     const isOpen = ref(false);
@@ -49,10 +50,10 @@ export const useDialogueStore = defineStore('dialogue', () => {
     // --- Actions ---
     function show(
         npcNameParam: string,
-        portrait: string, // Can be URL or emoji
+        portrait: string,
         npcTextParam: string,
         playerTextParam: string,
-        _options?: { skipBGM?: boolean }
+        options?: { skipBGM?: boolean; onClose?: () => void }
     ) {
         if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
 
@@ -70,6 +71,8 @@ export const useDialogueStore = defineStore('dialogue', () => {
             portraitEmoji.value = portrait || '';
             portraitUrl.value = '';
         }
+
+        pendingOnClose = options?.onClose ?? null;
     }
 
     function close() {
@@ -83,6 +86,11 @@ export const useDialogueStore = defineStore('dialogue', () => {
         
         // Emit event for UI components
         globalBus.emit('dialogue:closed');
+        
+        // Fire onClose callback if registered
+        const onClose = pendingOnClose;
+        pendingOnClose = null;
+        onClose?.();
         
         // Process next dialogue in queue if available
         if (dialogueQueue.value.length > 0) {

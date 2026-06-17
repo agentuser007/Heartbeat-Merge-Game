@@ -9,7 +9,7 @@
 import { onMounted, onUnmounted } from 'vue';
 import { useSaveStore } from '@/stores/saveStore';
 
-export function useAutoSave(intervalMs: number = 30000) {
+export function useAutoSave(intervalMs: number = 5000) {
     const saveStore = useSaveStore();
     let timer: number | null = null;
 

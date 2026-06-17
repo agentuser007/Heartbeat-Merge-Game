@@ -55,9 +55,15 @@ export const BossProgressionTierEntrySchema = z.object({
     boost: z.number().int().nonnegative(),
 })
 
+export const TimedOrdersUpConfigSchema = z.object({
+    defaultTimeLimit: z.number().int().positive(),
+    timeMultiplier: z.number().min(0).max(1),
+})
+
 export const BossProgressionConfigSchema = z.object({
     orderTierBoost: z.array(BossProgressionTierEntrySchema),
     maxItemTier: z.number().int().positive(),
+    timedOrdersUp: TimedOrdersUpConfigSchema,
 })
 
 export const GachaSimpleConfigSchema = z.object({
@@ -108,7 +114,6 @@ export const GachaPoolDataSchema = z.object({
     rarityConfig: z.record(z.string(), GachaRarityConfigSchema),
     gachaCost: GachaCostConfigSchema,
     subWeights: GachaSubWeightsSchema,
-    recycleEnergy: z.record(z.string(), z.number()),
     fragmentToGenerator: z.number().int().positive(),
     fragmentToStory: z.number().int().positive(),
     chains: z.array(ChainIdSchema),
@@ -117,6 +122,43 @@ export const GachaPoolDataSchema = z.object({
     chainToGen: z.record(z.string(), z.string()),
     chainItemPrefix: z.record(z.string(), z.string()),
     gachaPoolV2: z.array(GachaPoolItemSchema),
+})
+
+export const AdTypeWithRewardSchema = z.object({
+    reward: z.number().nonnegative(),
+    dailyLimit: z.number().positive().nullable(),
+    cooldownMs: z.number().nonnegative(),
+    emoji: z.string(),
+})
+
+export const AdTypeDiamondsSchema = AdTypeWithRewardSchema.extend({
+    betaBenefit: z.boolean(),
+})
+
+export const AdTypeFreePullSchema = z.object({
+    dailyLimit: z.number().positive().nullable(),
+    cooldownMs: z.number().nonnegative(),
+    maxRarity: z.string(),
+    emoji: z.string(),
+})
+
+export const AdConfigSchema = z.object({
+    energy: AdTypeWithRewardSchema,
+    gold: AdTypeWithRewardSchema,
+    diamonds: AdTypeDiamondsSchema,
+    freePull: AdTypeFreePullSchema,
+})
+
+export const DailyBuffTypeSchema = z.object({
+    id: z.string(),
+    icon: z.string(),
+    nameKey: z.string(),
+    descKey: z.string(),
+})
+
+export const DailyBuffConfigSchema = z.object({
+    buffDurationMs: z.number().int().positive(),
+    buffTypes: z.array(DailyBuffTypeSchema).min(1),
 })
 
 export const ShopItemSchema = z.object({

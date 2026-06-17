@@ -115,9 +115,9 @@ function getEffectDesc(item: AffectionShopItem): string {
 }
 
 function onBuy(item: AffectionShopItem) {
-  const { success, resolveResult } = affectionStore.purchaseShopItem(item.id)
-  applyResolveResult(resolveResult, applyDeps)
-  if (success) {
+  const result = affectionStore.purchaseShopItem(item.id)
+  if (result.ok) {
+    applyResolveResult(result.resolveResult, applyDeps)
     globalBus.emit('toast:show', {
       message: i18nStore.t('affection.shopPurchased'),
       type: 'info'
@@ -167,7 +167,7 @@ function onBuy(item: AffectionShopItem) {
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   color: rgba(0,0,0,0.5);
 }
 .shop-tab.active {
@@ -190,7 +190,7 @@ function onBuy(item: AffectionShopItem) {
   background: rgba(255,255,255,0.7);
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: 12px;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .shop-item.locked {
   opacity: 0.5;
@@ -234,7 +234,7 @@ function onBuy(item: AffectionShopItem) {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
   white-space: nowrap;
   flex-shrink: 0;
 }

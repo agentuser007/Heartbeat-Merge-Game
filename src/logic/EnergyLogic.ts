@@ -40,7 +40,7 @@ export class EnergyLogic {
     if (!gameConfig.ENERGY_REGEN_AMOUNT || gameConfig.ENERGY_REGEN_AMOUNT <= 0) {
       throw new Error('[EnergyLogic] ENERGY_REGEN_AMOUNT is required and must be > 0');
     }
-    this.regenCap = gameConfig.ENERGY_REGEN_CAP || gameConfig.MAX_ENERGY;
+    this.regenCap = gameConfig.ENERGY_REGEN_CAP;
     this.max = this.regenCap;
     this.current = this.regenCap;
     this.regenInterval = gameConfig.ENERGY_REGEN_INTERVAL;

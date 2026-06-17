@@ -1,0 +1,29 @@
+{
+  "hpMultiplier": {
+    "table": [1.00, 1.20, 1.40, 1.65, 1.95, 2.30, 2.70, 3.15],
+    "overflowBase": 3.15,
+    "overflowGrowth": 0.16
+  },
+  "rewardMultiplier": {
+    "table": [1.00, 1.10, 1.20, 1.30, 1.40, 1.55, 1.70, 1.85],
+    "overflowBase": 1.85,
+    "overflowGrowth": 0.12,
+    "cap": 3.0
+  },
+  "timeMultiplier": {
+    "table": [1.00, 0.95, 0.90, 0.88, 0.85, 0.82, 0.80, 0.78],
+    "overflowValue": 0.78
+  },
+  "tokenReward": {
+    "table": [0, 10, 15, 20, 25, 30, 36, 42, 50],
+    "overflowBase": 50,
+    "overflowGrowth": 5
+  },
+  "startingGoldBase": 100,
+  "metaUpgrades": {
+    "startingGold":     { "baseCost": 10, "costScale": 0.8, "effectPerLevel": 50,  "maxLevel": 10 },
+    "startingDiamonds": { "baseCost": 20, "costScale": 0.8, "effectPerLevel": 5,   "maxLevel": 5 },
+    "startingEnergy":   { "baseCost": 15, "costScale": 0.8, "effectPerLevel": 20,  "maxLevel": 8 },
+    "dailyBonus":       { "baseCost": 25, "costScale": 0.8, "effectPerLevel": 0.05,"maxLevel": 10 }
+  }
+}

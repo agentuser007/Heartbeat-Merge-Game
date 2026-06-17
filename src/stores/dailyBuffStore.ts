@@ -1,114 +1,84 @@
 // ============================================================
 // dailyBuffStore.ts — Daily Buff Game State Store
 // ============================================================
+// Store only does apply + emit. Business logic delegated to
+// DailyBuffLogic (pure functions) and DailyBuffService (ResolveResult).
+// ============================================================
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { globalBus } from '../core/EventBus';
-import { BoardService } from '../services/BoardService';
+import { useConfigStore } from './configStore';
+import { DailyBuffService } from '../services/DailyBuffService';
+import * as DailyBuffLogic from '../logic/DailyBuffLogic';
+import type { DailyBuffEntry } from '../logic/DailyBuffLogic';
+import type { ResolveResult } from '../services/ServiceResultTypes';
 
-export interface DailyBuff {
-    id: string;
-    icon: string;
-    nameKey: string;
-    descKey: string;
-    activatedAt?: number;
-}
-
-const BUFF_DURATION_MS = 30 * 60 * 1000;
+export type DailyBuff = DailyBuffEntry;
 
 export const useDailyBuffStore = defineStore('dailyBuff', () => {
+    const configStore = useConfigStore();
+
     const activeBuffs = ref<DailyBuff[]>([]);
     const lastRollDate = ref<string>('');
     const buffFlags = ref<Record<string, boolean>>({});
     const pendingBuff = ref<DailyBuff | null>(null);
 
-    const DAILY_BUFF_TYPES: DailyBuff[] = [
-        {
-            id: 'merge_bonus',
-            icon: '✨',
-            nameKey: 'dailyBuff.mergeBonus',
-            descKey: 'dailyBuff.mergeBonusDesc'
-        },
-        {
-            id: 'energy_discount',
-            icon: '⚡',
-            nameKey: 'dailyBuff.energyDiscount',
-            descKey: 'dailyBuff.energyDiscountDesc'
-        },
-        {
-            id: 'sell_price_up',
-            icon: '🪙',
-            nameKey: 'dailyBuff.sellPriceUp',
-            descKey: 'dailyBuff.sellPriceUpDesc'
-        },
-        {
-            id: 'gen_speed_up',
-            icon: '⏩',
-            nameKey: 'dailyBuff.genSpeedUp',
-            descKey: 'dailyBuff.genSpeedUpDesc'
-        },
-        {
-            id: 'lucky_merge',
-            icon: '🍀',
-            nameKey: 'dailyBuff.luckyMerge',
-            descKey: 'dailyBuff.luckyMergeDesc'
-        }
-    ];
-
     const hasActiveBuffs = computed(() => activeBuffs.value.length > 0);
     const currentBuff = computed(() => activeBuffs.value[0] || null);
     const isPending = computed(() => pendingBuff.value !== null);
 
+    // @deserialize-only — 故意不 emit events，避免在 Store 初始化阶段
+    // 触发依赖其他 Store 就绪的 handler。gameplay 路径请使用 applyResolveResult。
+    function _applyDeserializeOnly(result: ResolveResult): void {
+        const db = result.applyTo.dailyBuff;
+        if (!db) return;
+
+        if (db.setActiveBuffs !== undefined) activeBuffs.value = db.setActiveBuffs;
+        if (db.setBuffFlags !== undefined) buffFlags.value = db.setBuffFlags;
+        if (db.setPendingBuff !== undefined) pendingBuff.value = db.setPendingBuff;
+        if (db.setLastRollDate !== undefined) lastRollDate.value = db.setLastRollDate;
+    }
+
     function getBuffRemainingMs(buff: DailyBuff): number {
-        if (!buff.activatedAt) return 0;
-        const elapsed = Date.now() - buff.activatedAt;
-        return Math.max(0, BUFF_DURATION_MS - elapsed);
+        return DailyBuffLogic.getBuffRemainingMs(buff, {
+            buffDurationMs: configStore.dailyBuffConfig.buffDurationMs,
+            now: Date.now(),
+        });
     }
 
     function isBuffExpired(buff: DailyBuff): boolean {
-        return getBuffRemainingMs(buff) <= 0;
-    }
-
-    function checkBuffExpiry(): void {
-        const expired = activeBuffs.value.filter(b => isBuffExpired(b));
-        activeBuffs.value = activeBuffs.value.filter(b => !isBuffExpired(b));
-        for (const buff of expired) {
-            delete buffFlags.value[buff.id];
-            globalBus.emit('dailyBuff:expired', { buff });
-        }
-    }
-
-    function rollDailyBuff(): void {
-        const today = getCurrentDateStr();
-        if (lastRollDate.value === today && (activeBuffs.value.length > 0 || pendingBuff.value)) return;
-
-        activeBuffs.value = [];
-        buffFlags.value = {};
-
-        const result = BoardService.resolveDailyBuff({
-            buffTypes: DAILY_BUFF_TYPES,
-            random: Math.random,
-        });
-        lastRollDate.value = today;
-
-        pendingBuff.value = result.buff;
-
-        globalBus.emit('dailyBuff:rolled', {
-            buff: result.buff
+        return DailyBuffLogic.isBuffExpired(buff, {
+            buffDurationMs: configStore.dailyBuffConfig.buffDurationMs,
+            now: Date.now(),
         });
     }
 
-    function activatePendingBuff(): void {
-        if (!pendingBuff.value) return;
-        const buff: DailyBuff = { ...pendingBuff.value, activatedAt: Date.now() };
-        activeBuffs.value.push(buff);
-        buffFlags.value[buff.id] = true;
-        pendingBuff.value = null;
+    function checkBuffExpiry(): ResolveResult | null {
+        return DailyBuffService.resolveBuffExpiry(
+            activeBuffs.value,
+            buffFlags.value,
+            { buffDurationMs: configStore.dailyBuffConfig.buffDurationMs, now: Date.now() },
+        );
+    }
 
-        globalBus.emit('dailyBuff:activated', {
-            buff
-        });
+    function rollDailyBuff(): ResolveResult | null {
+        const result = DailyBuffService.resolveDailyBuffRoll(
+            lastRollDate.value,
+            activeBuffs.value,
+            pendingBuff.value,
+            {
+                buffDurationMs: configStore.dailyBuffConfig.buffDurationMs,
+                buffTypes: configStore.dailyBuffConfig.buffTypes,
+                now: Date.now(),
+                random: Math.random,
+            },
+        );
+        return result;
+    }
+
+    function activatePendingBuff(): ResolveResult | null {
+        if (!pendingBuff.value) return null;
+        return DailyBuffService.resolveActivateBuff(pendingBuff.value, { now: Date.now() });
     }
 
     function dismissPendingBuff(): void {
@@ -116,23 +86,22 @@ export const useDailyBuffStore = defineStore('dailyBuff', () => {
     }
 
     function hasBuff(buffId: string): boolean {
-        return activeBuffs.value.some(buff => buff.id === buffId && !isBuffExpired(buff));
+        return DailyBuffLogic.hasBuff(buffId, activeBuffs.value, {
+            buffDurationMs: configStore.dailyBuffConfig.buffDurationMs,
+            now: Date.now(),
+        });
     }
 
     function getBuffValue(buffId: string): boolean {
         return buffFlags.value[buffId] || false;
     }
 
-    function getCurrentDateStr(): string {
-        const d = new Date();
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    }
-
-    function checkDailyReset(): void {
-        const today = getCurrentDateStr();
-        if (lastRollDate.value !== today) {
-            rollDailyBuff();
+    function checkDailyReset(): ResolveResult | null {
+        const now = Date.now();
+        if (DailyBuffLogic.needsDailyReset({ lastRollDate: lastRollDate.value, now })) {
+            return rollDailyBuff();
         }
+        return null;
     }
 
     function serialize() {
@@ -153,8 +122,11 @@ export const useDailyBuffStore = defineStore('dailyBuff', () => {
         buffFlags.value = d.buffFlags || {};
         pendingBuff.value = d.pendingBuff || null;
 
-        checkBuffExpiry();
-        checkDailyReset();
+        const expiryResult = checkBuffExpiry();
+        if (expiryResult) _applyDeserializeOnly(expiryResult);
+
+        const resetResult = checkDailyReset();
+        if (resetResult) _applyDeserializeOnly(resetResult);
     }
 
     return {

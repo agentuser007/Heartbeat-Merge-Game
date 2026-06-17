@@ -6,18 +6,20 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
-import { useCollectionStore } from './collectionStore';
-import { useAchievementStore } from './achievementStore';
-import type { MetaUpgrade, LoopStatus, LoopConfig, LoopSpecialRule, LoopSummary } from '../types/game';
+import type { MetaUpgrade, LoopStatus, LoopConfig, LoopSummary } from '../types/game';
 import type { LoopSerializeData } from '../types/serialize';
+import type { ServiceResult } from '../services/ServiceResultTypes';
 import { LoopService } from '../services/LoopService';
+import * as LoopLogic from '../logic/LoopLogic';
 
 export type { MetaUpgrade, LoopStatus };
 
 export const useLoopStore = defineStore('loop', () => {
+    const configStore = useConfigStore();
+
     // --- State ---
-    const loopIndex = ref(1);           // Current loop number (1-based)
-    const loopTokens = ref(0);          // Permanent currency: 学园声望
+    const loopIndex = ref(1);
+    const loopTokens = ref(0);
     const loopStatus = ref<LoopStatus>('active');
     const metaUpgrades = ref<MetaUpgrade>({
         startingGold: 0,
@@ -25,8 +27,8 @@ export const useLoopStore = defineStore('loop', () => {
         startingEnergy: 0,
         dailyBonus: 0
     });
-    const currentLoopConfig = ref<any>(null); // Current loop's configuration snapshot
-    const unlockedNarrativeFlags = ref<string[]>([]); // Narrative flags unlocked across loops
+    const currentLoopConfig = ref<any>(null);
+    const unlockedNarrativeFlags = ref<string[]>([]);
 
     // --- Computed ---
     const hasLoopTokens = computed(() => {
@@ -44,9 +46,33 @@ export const useLoopStore = defineStore('loop', () => {
         return unlockedNarrativeFlags.value.length > 0;
     });
 
+    // --- Helper: build deps from configStore ---
+    function _hpDeps() {
+        const m = configStore.loopMultipliers.hpMultiplier;
+        return { table: m.table, overflowBase: m.overflowBase!, overflowGrowth: m.overflowGrowth! };
+    }
+
+    function _rewardDeps() {
+        const m = configStore.loopMultipliers.rewardMultiplier;
+        return { table: m.table, overflowBase: m.overflowBase!, overflowGrowth: m.overflowGrowth!, cap: m.cap! };
+    }
+
+    function _timeDeps() {
+        const m = configStore.loopMultipliers.timeMultiplier;
+        return { table: m.table, overflowValue: m.overflowValue! };
+    }
+
+    function _tokenDeps() {
+        const m = configStore.loopMultipliers.tokenReward;
+        return { table: m.table, overflowBase: m.overflowBase!, overflowGrowth: m.overflowGrowth! };
+    }
+
+    function _metaDeps() {
+        return { metaUpgradeConfigs: configStore.loopMultipliers.metaUpgrades };
+    }
+
     // --- Actions ---
     function buildLoopConfig(loopIndexParam: number) {
-        // Simplified loop config builder
         return {
             loopIndex: loopIndexParam,
             title: getLoopTitle(loopIndexParam),
@@ -65,51 +91,27 @@ export const useLoopStore = defineStore('loop', () => {
     }
 
     function getHpMultiplier(loopIndexParam: number): number {
-        if (loopIndexParam <= 0) return 1.0;
-        if (loopIndexParam <= 8) {
-            const table = [0, 1.00, 1.20, 1.40, 1.65, 1.95, 2.30, 2.70, 3.15];
-            return table[loopIndexParam];
-        }
-        return 3.15 * (1 + 0.16 * (loopIndexParam - 8));
+        return LoopLogic.getHpMultiplier(loopIndexParam, _hpDeps());
     }
 
     function getRewardMultiplier(loopIndexParam: number): number {
-        if (loopIndexParam <= 0) return 1.0;
-        if (loopIndexParam <= 8) {
-            const table = [0, 1.00, 1.10, 1.20, 1.30, 1.40, 1.55, 1.70, 1.85];
-            return table[loopIndexParam];
-        }
-        return Math.min(3.0, 1.85 + 0.12 * (loopIndexParam - 8));
+        return LoopLogic.getRewardMultiplier(loopIndexParam, _rewardDeps());
     }
 
     function getTimeMultiplier(loopIndexParam: number): number {
-        if (loopIndexParam <= 0) return 1.0;
-        if (loopIndexParam <= 8) {
-            const table = [0, 1.00, 0.95, 0.90, 0.88, 0.85, 0.82, 0.80, 0.78];
-            return table[loopIndexParam];
-        }
-        return 0.78;
+        return LoopLogic.getTimeMultiplier(loopIndexParam, _timeDeps());
     }
 
     function getLoopTokenReward(loopIndexParam: number): number {
-        if (loopIndexParam <= 0) return 0;
-        if (loopIndexParam <= 8) {
-            const table = [0, 10, 15, 20, 25, 30, 36, 42, 50];
-            return table[loopIndexParam];
-        }
-        return 50 + 5 * (loopIndexParam - 8);
+        return LoopLogic.getLoopTokenReward(loopIndexParam, _tokenDeps());
     }
 
     function getLoopTitle(loopIndexParam: number): string {
-        const configStore = useConfigStore();
-        const rule = configStore.loopRules[String(loopIndexParam)];
-        return rule?.title || `学园轮回 ${loopIndexParam}`;
+        return LoopLogic.getLoopTitle(loopIndexParam, { loopRules: configStore.loopRules });
     }
 
-    function getSpecialRules(loopIndexParam: number): LoopSpecialRule[] {
-        const configStore = useConfigStore();
-        const rule = configStore.loopRules[String(loopIndexParam)];
-        return rule?.specialRules || [];
+    function getSpecialRules(loopIndexParam: number) {
+        return LoopLogic.getSpecialRules(loopIndexParam, { loopRules: configStore.loopRules });
     }
 
     function getNarrativePackId(loopIndexParam: number): string {
@@ -117,82 +119,38 @@ export const useLoopStore = defineStore('loop', () => {
     }
 
     function calculateLoopRewards(loopIndexParam: number, summary: LoopSummary) {
-        const baseReward = getLoopTokenReward(loopIndexParam);
-        let bonusTokens = 0;
-
-        // Collection incremental bonus: +1 token per new item discovered this loop
-        if (summary && summary.newDiscoveries) {
-            bonusTokens += summary.newDiscoveries;
-        }
-
-        // Achievement bonus
-        if (summary && summary.achievementsUnlocked) {
-            bonusTokens += summary.achievementsUnlocked * 2;
-        }
-
-        return {
-            loopTokens: baseReward + bonusTokens,
-            baseTokens: baseReward,
-            bonusTokens
-        };
+        return LoopLogic.calculateLoopRewards(loopIndexParam, summary, {
+            tokenRewardConfig: _tokenDeps(),
+            achievementTokenBonus: configStore.boardEconomy.achievementTokenBonus,
+        });
     }
 
     function getMetaUpgradeCost(upgradeId: keyof MetaUpgrade, currentLevel: number): number {
-        const baseCosts = {
-            startingGold: 10,
-            startingDiamonds: 20,
-            startingEnergy: 15,
-            dailyBonus: 25
-        };
-        const base = baseCosts[upgradeId] || 10;
-        return base + currentLevel * Math.ceil(base * 0.8); // Scaling cost
+        return LoopLogic.getMetaUpgradeCost(upgradeId, currentLevel, _metaDeps());
     }
 
     function getMetaUpgradeEffect(upgradeId: keyof MetaUpgrade, level: number): number {
-        switch (upgradeId) {
-            case 'startingGold': return level * 50;
-            case 'startingDiamonds': return level * 5;
-            case 'startingEnergy': return level * 20;
-            case 'dailyBonus': return level * 0.05;
-            default: return 0;
-        }
+        return LoopLogic.getMetaUpgradeEffect(upgradeId, level, _metaDeps());
     }
 
     function getMetaUpgradeMaxLevel(upgradeId: keyof MetaUpgrade): number {
-        const maxLevels = {
-            startingGold: 10,
-            startingDiamonds: 5,
-            startingEnergy: 8,
-            dailyBonus: 10
-        };
-        return maxLevels[upgradeId] || 10;
+        return LoopLogic.getMetaUpgradeMaxLevel(upgradeId, _metaDeps());
     }
 
-    function purchaseMetaUpgrade(upgradeId: keyof MetaUpgrade): boolean {
-        const currentLevel = metaUpgrades.value[upgradeId] || 0;
-        const maxLevel = getMetaUpgradeMaxLevel(upgradeId);
-        if (currentLevel >= maxLevel) return false;
-
-        const cost = getMetaUpgradeCost(upgradeId, currentLevel);
-        if (loopTokens.value < cost) return false;
-
-        loopTokens.value -= cost;
-        metaUpgrades.value[upgradeId] = currentLevel + 1;
-        
-        // Emit event for UI updates
-        globalBus.emit('loop:metaUpgradePurchased', {
-            upgradeId,
-            level: currentLevel + 1,
-            cost
+    function purchaseMetaUpgrade(upgradeId: keyof MetaUpgrade): ServiceResult {
+        return LoopService.resolvePurchaseMetaUpgrade(upgradeId, {
+            currentLevel: metaUpgrades.value[upgradeId] || 0,
+            loopTokens: loopTokens.value,
+            metaUpgradeConfigs: configStore.loopMultipliers.metaUpgrades,
         });
-
-        return true;
     }
 
     function getStartingGold(): number {
-        return (currentLoopConfig.value ? currentLoopConfig.value.rewardMultiplier : 1.0) *
-               100 + // Default starting gold
-               getMetaUpgradeEffect('startingGold', metaUpgrades.value.startingGold || 0);
+        return LoopLogic.getStartingGold(
+            currentLoopConfig.value ? currentLoopConfig.value.rewardMultiplier : 1.0,
+            metaUpgrades.value.startingGold || 0,
+            { startingGoldBase: configStore.loopMultipliers.startingGoldBase, metaUpgradeConfigs: configStore.loopMultipliers.metaUpgrades },
+        );
     }
 
     function getStartingDiamonds(): number {
@@ -210,11 +168,7 @@ export const useLoopStore = defineStore('loop', () => {
     function unlockNarrativeFlag(flag: string): void {
         if (!unlockedNarrativeFlags.value.includes(flag)) {
             unlockedNarrativeFlags.value.push(flag);
-            
-            // Emit event for UI updates
-            globalBus.emit('loop:narrativeFlagUnlocked', {
-                flag
-            });
+            globalBus.emit('loop:narrativeFlagUnlocked', { flag });
         }
     }
 
@@ -239,31 +193,6 @@ export const useLoopStore = defineStore('loop', () => {
 
     function syncLoopStatus(status: LoopStatus): void {
         loopStatus.value = status;
-    }
-
-    function completeLoop(): void {
-        const collectionStore = useCollectionStore();
-        const achievementStore = useAchievementStore();
-        const configStore = useConfigStore();
-        const result = LoopService.resolveCompleteLoop({
-            loopIndex: loopIndex.value,
-            getNewDiscoveriesCountThisLoop: () => collectionStore.getNewDiscoveriesCountThisLoop(),
-            getUnlockedCountThisLoop: () => achievementStore.getUnlockedCountThisLoop(),
-            getLoopTokenReward: getLoopTokenReward,
-            achievementTokenBonus: configStore.boardEconomy.achievementTokenBonus,
-        });
-
-        if (result.applyTo.loop?.incrementLoopIndex) {
-            const inc = result.applyTo.loop.incrementLoopIndex;
-            if (inc.addLoopTokens) loopTokens.value += inc.addLoopTokens;
-            loopIndex.value++;
-        }
-        if (result.applyTo.collection?.resetLoopDiscoveries) {
-            collectionStore.resetLoopDiscoveries();
-        }
-        if (result.applyTo.achievement?.resetLoopAchievements) {
-            achievementStore.resetLoopAchievements();
-        }
     }
 
     // --- Serialization ---
@@ -296,7 +225,6 @@ export const useLoopStore = defineStore('loop', () => {
     }
 
     return {
-        // State
         loopIndex,
         loopTokens,
         loopStatus,
@@ -304,12 +232,10 @@ export const useLoopStore = defineStore('loop', () => {
         currentLoopConfig,
         unlockedNarrativeFlags,
         
-        // Computed
         hasLoopTokens,
         totalMetaUpgrades,
         hasUnlockedNarratives,
         
-        // Actions
         buildLoopConfig,
         applyLoopConfig,
         getHpMultiplier,
@@ -334,9 +260,7 @@ export const useLoopStore = defineStore('loop', () => {
         transitionToSettling,
         transitionToCompleted,
         syncLoopStatus,
-        completeLoop,
         
-        // Serialization
         serialize,
         deserialize
     };

@@ -1,0 +1,6 @@
+{
+  "energy": { "reward": 20, "dailyLimit": null, "cooldownMs": 0, "emoji": "⚡" },
+  "gold": { "reward": 50, "dailyLimit": 3, "cooldownMs": 0, "emoji": "💰" },
+  "diamonds": { "reward": 50, "dailyLimit": 3, "cooldownMs": 0, "emoji": "💎", "betaBenefit": true },
+  "freePull": { "dailyLimit": 1, "cooldownMs": 0, "maxRarity": "SR", "emoji": "🃏" }
+}

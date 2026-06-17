@@ -86,7 +86,7 @@ function openShop() {
   border: 1.5px solid rgba(0,0,0,0.06);
   border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .affection-card:hover {
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -154,7 +154,7 @@ function openShop() {
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--interactive-transition);
 }
 .affection-shop-btn:active {
   transform: scale(0.95);

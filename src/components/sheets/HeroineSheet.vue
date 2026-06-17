@@ -72,8 +72,10 @@ function canAfford(upgrade: HeroineUpgrade): boolean {
 }
 
 function purchaseUpgrade(upgrade: HeroineUpgrade) {
-  const { resolveResult } = heroineStore.purchaseUpgrade(upgrade.id)
-  applyResolveResult(resolveResult, applyDeps)
+  const result = heroineStore.purchaseUpgrade(upgrade.id)
+  if (result.ok) {
+    applyResolveResult(result.resolveResult, applyDeps)
+  }
 }
 </script>
 
@@ -95,7 +97,7 @@ function purchaseUpgrade(upgrade: HeroineUpgrade) {
   border: 1px solid rgba(221, 170, 139, 0.3);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
 }
 
 .heroine-upgrade-item:hover {
@@ -144,7 +146,7 @@ function purchaseUpgrade(upgrade: HeroineUpgrade) {
   cursor: pointer;
   background: rgba(0, 0, 0, 0.06);
   color: rgba(0, 0, 0, 0.25);
-  transition: all 0.2s ease;
+  transition: var(--interactive-transition);
 }
 
 .upgrade-buy-btn:disabled {

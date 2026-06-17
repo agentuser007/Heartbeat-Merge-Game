@@ -1,4 +1,6 @@
-import type { ResolveResult } from './ServiceResultTypes';
+import type { ResolveResult, ServiceResult } from './ServiceResultTypes';
+import { okResult, failResult } from './ServiceResultTypes';
+import type { MetaUpgradeConfig } from '@/types/game';
 
 export interface LoopServiceDeps {
     loopIndex: number;
@@ -8,25 +10,19 @@ export interface LoopServiceDeps {
     achievementTokenBonus: number;
 }
 
-function calculateLoopRewards(loopIndexParam: number, summary: { newDiscoveries: number; achievementsUnlocked: number }, getLoopTokenReward: (idx: number) => number, achievementTokenBonus: number) {
-    const baseReward = getLoopTokenReward(loopIndexParam);
-    let bonusTokens = 0;
-    if (summary.newDiscoveries) bonusTokens += summary.newDiscoveries;
-    if (summary.achievementsUnlocked) bonusTokens += summary.achievementsUnlocked * achievementTokenBonus;
-    return baseReward + bonusTokens;
+export interface PurchaseMetaUpgradeDeps {
+    currentLevel: number;
+    loopTokens: number;
+    metaUpgradeConfigs: Record<string, MetaUpgradeConfig>;
 }
 
 export const LoopService = {
     resolveCompleteLoop(deps: LoopServiceDeps): ResolveResult {
-        const addLoopTokens = calculateLoopRewards(
-            deps.loopIndex,
-            {
-                newDiscoveries: deps.getNewDiscoveriesCountThisLoop(),
-                achievementsUnlocked: deps.getUnlockedCountThisLoop(),
-            },
-            deps.getLoopTokenReward,
-            deps.achievementTokenBonus,
-        );
+        const newDiscoveries = deps.getNewDiscoveriesCountThisLoop();
+        const achievementsUnlocked = deps.getUnlockedCountThisLoop();
+        const addLoopTokens = deps.getLoopTokenReward(deps.loopIndex)
+            + newDiscoveries
+            + achievementsUnlocked * deps.achievementTokenBonus;
 
         return {
             applyTo: {
@@ -35,5 +31,33 @@ export const LoopService = {
                 achievement: { resetLoopAchievements: true },
             },
         };
+    },
+
+    resolvePurchaseMetaUpgrade(
+        upgradeId: string,
+        deps: PurchaseMetaUpgradeDeps,
+    ): ServiceResult {
+        const config = deps.metaUpgradeConfigs[upgradeId];
+        if (!config) return failResult('Unknown upgrade: ' + upgradeId);
+
+        const maxLevel = config.maxLevel;
+        if (deps.currentLevel >= maxLevel) return failResult('Upgrade already maxed: ' + upgradeId);
+
+        const cost = config.baseCost + deps.currentLevel * Math.ceil(config.baseCost * config.costScale);
+        if (deps.loopTokens < cost) return failResult('Not enough loop tokens');
+
+        const newLevel = deps.currentLevel + 1;
+        return okResult({
+            applyTo: {
+                loop: {
+                    spendLoopTokens: cost,
+                    setMetaUpgradeLevel: { upgradeId, level: newLevel },
+                },
+            },
+            events: [{
+                name: 'loop:metaUpgradePurchased',
+                data: { upgradeId, level: newLevel, cost },
+            }],
+        });
     },
 };

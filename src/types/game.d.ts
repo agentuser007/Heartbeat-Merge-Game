@@ -186,7 +186,6 @@ export interface GachaPoolData {
   rarityConfig: Record<string, GachaRarityConfig>;
   gachaCost: GachaCostConfig;
   subWeights: GachaSubWeights;
-  recycleEnergy: Record<string, number>;
   fragmentToGenerator: number;
   fragmentToStory: number;
   chains: ChainId[];
@@ -348,7 +347,7 @@ export interface GameSettingsConfig {
   ENERGY_REGEN_INTERVAL: number;
   ENERGY_REGEN_AMOUNT: number;
   ENERGY_COST_PER_SPAWN: number;
-  STARTING_GOLD: number;
+  ENERGY_REGEN_DOWN_MULTIPLIER: number;
 }
 
 export interface HeroineUpgradeLevel {
@@ -385,6 +384,7 @@ export interface UIAnimationConfig {
   swipeCloseThreshold: number;
   swipeHandleArea: number;
   timerWarningThreshold: number;
+  interactiveTransition: number;
 }
 
 export interface UIColorsConfig {
@@ -433,6 +433,16 @@ export interface UITimerConfig {
   paradeStepInterval: number;
   gachaRevealDelay: number;
   gachaCardFlipDuration: number;
+  toastFadeOut: number;
+  bgmFadeIn: number;
+  bgmResumeFade: number;
+  affectionToastDisplay: number;
+  affectionLevelUpToastDisplay: number;
+  touchDialogueDisplay: number;
+  vnTitleDisplay: number;
+  bgmSwitchDelay: number;
+  itemUseDelay: number;
+  sparkleStartDelay: number;
 }
 
 export interface UIColorThemeConfig {
@@ -648,7 +658,7 @@ export interface FSMStateChangedEvent {
 
 export interface GameEvents {
   // --- Boss ---
-  'boss:defeated': { levelIdx: number };
+  'boss:defeated': { levelIdx: number; bossId: string; loopIndex: number };
   'boss:gameComplete': void;
   'boss:hpChanged': { currentHp: number; totalHp: number; pct: number };
   'boss:levelLoaded': {
@@ -733,6 +743,7 @@ export interface GameEvents {
   // --- Daily Buff ---
   'dailyBuff:rolled': { buff: { id: string; icon: string; nameKey: string; descKey: string } };
   'dailyBuff:activated': { buff: { id: string; icon: string; nameKey: string; descKey: string } };
+  'dailyBuff:expired': { buff: { id: string; icon: string; nameKey: string; descKey: string } };
 
   // --- Daily Orders ---
   'dailyOrders:updated': { orders: DailyOrder[] };
@@ -862,9 +873,15 @@ export interface BossProgressionTierEntry {
   boost: number;
 }
 
+export interface TimedOrdersUpConfig {
+  defaultTimeLimit: number;
+  timeMultiplier: number;
+}
+
 export interface BossProgressionConfig {
   orderTierBoost: BossProgressionTierEntry[];
   maxItemTier: number;
+  timedOrdersUp: TimedOrdersUpConfig;
 }
 
 // ============================================================
@@ -896,10 +913,13 @@ export interface AffectionCharacterDef {
   background: string;
 }
 
-export type AffectionSourceValue = number | Record<string, number>;
-
 export interface AffectionSourcesConfig {
-  [key: string]: AffectionSourceValue;
+  bossDefeat: { base: number; perLoop: number };
+  vnStorySR: number;
+  vnStorySSR: number;
+  touchBase: { min: number; max: number };
+  dailyOrderBonus: number;
+  specialEvent: { min: number; max: number };
 }
 
 export interface AffectionConfig {
@@ -909,6 +929,7 @@ export interface AffectionConfig {
   sources: AffectionSourcesConfig;
   touchCooldown: number;
   dailyTouchBonus: { threshold: number; bonus: number };
+  giftPreferenceMultipliers?: { loved: number; liked: number };
   affectionCoins: {
     earnRate: number;
     levelUpBonuses: Record<string, number>;
@@ -970,7 +991,80 @@ export interface TouchInteractionsConfig {
 }
 
 // ============================================================
-// Loop summary  (used by loopStore.calculateLoopRewards)
+// Ad config  (assets/data/ad_config.json)
+// ============================================================
+
+export interface AdTypeWithReward {
+  reward: number;
+  dailyLimit: number | null;
+  cooldownMs: number;
+  emoji: string;
+}
+
+export interface AdTypeDiamonds extends AdTypeWithReward {
+  betaBenefit: boolean;
+}
+
+export interface AdTypeFreePull {
+  dailyLimit: number | null;
+  cooldownMs: number;
+  maxRarity: string;
+  emoji: string;
+}
+
+export interface AdConfig {
+  energy: AdTypeWithReward;
+  gold: AdTypeWithReward;
+  diamonds: AdTypeDiamonds;
+  freePull: AdTypeFreePull;
+}
+
+// ============================================================
+// Daily buff config  (assets/data/daily_buff_config.json)
+// ============================================================
+
+export interface DailyBuffTypeConfig {
+  id: string;
+  icon: string;
+  nameKey: string;
+  descKey: string;
+}
+
+export interface DailyBuffConfig {
+  buffDurationMs: number;
+  buffTypes: DailyBuffTypeConfig[];
+}
+
+// ============================================================
+// Loop multipliers config  (assets/data/loop_multipliers.json)
+// ============================================================
+
+export interface LoopMultiplierTable {
+  table: number[];
+  overflowBase?: number;
+  overflowGrowth?: number;
+  cap?: number;
+  overflowValue?: number;
+}
+
+export interface MetaUpgradeConfig {
+  baseCost: number;
+  costScale: number;
+  effectPerLevel: number;
+  maxLevel: number;
+}
+
+export interface LoopMultipliersConfig {
+  hpMultiplier: LoopMultiplierTable;
+  rewardMultiplier: LoopMultiplierTable;
+  timeMultiplier: LoopMultiplierTable;
+  tokenReward: LoopMultiplierTable;
+  startingGoldBase: number;
+  metaUpgrades: Record<string, MetaUpgradeConfig>;
+}
+
+// ============================================================
+// Loop summary  (used by LoopLogic.calculateLoopRewards)
 // ============================================================
 
 export interface LoopSummary {

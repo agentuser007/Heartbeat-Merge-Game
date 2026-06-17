@@ -209,7 +209,7 @@ function useConsumableItem(itemId: string) {
     inventoryStore.useItem(itemId)
     audio.playSound('pop')
     usingItemId.value = null
-  }, 300)
+  }, configStore.uiTimers.itemUseDelay)
 }
 
 // ---- Tooltip ----

@@ -97,6 +97,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useCurrencyStore } from '../../stores/currencyStore'
+import { useConfigStore } from '../../stores/configStore'
 
 import { useBossStore } from '../../stores/bossStore'
 import { useEnergyStore } from '../../stores/energyStore'
@@ -104,14 +105,18 @@ import { useDailyBuffStore, type DailyBuff } from '../../stores/dailyBuffStore'
 import { useI18nStore } from '../../stores/i18nStore'
 import { useSheet } from '../../composables/useSheet'
 import { useFloatingDrag } from '../../composables/useFloatingDrag'
+import { applyResolveResult } from '../../composables/useGameLoop'
+import { useApplyDeps } from '../../composables/useApplyDeps'
 
 const currencyStore = useCurrencyStore()
+const configStore = useConfigStore()
 
 const bossStore = useBossStore()
 const energyStore = useEnergyStore()
 const dailyBuffStore = useDailyBuffStore()
 const i18nStore = useI18nStore()
 const shopSheet = useSheet('shop-sheet')
+const applyDeps = useApplyDeps()
 
 const { isDragging, style: floatingStyle, onPointerDown: onBuffRowPointerDown } = useFloatingDrag({
   storageKey: 'buff-row-pos',
@@ -147,7 +152,8 @@ watch(() => energyStore.current, (newVal) => {
 onMounted(() => {
   timer = setInterval(() => {
     now.value = Date.now()
-    dailyBuffStore.checkBuffExpiry()
+    const expiryResult = dailyBuffStore.checkBuffExpiry()
+    if (expiryResult) applyResolveResult(expiryResult, applyDeps)
     
     // Decrement energy countdown
     if (energyStore.current < energyStore.regenCap) {
@@ -157,7 +163,7 @@ onMounted(() => {
         energyCountdown.value = Math.floor(energyStore.regenInterval / 1000)
       }
     }
-  }, 1000)
+  }, configStore.uiTimers.orderTimerInterval)
 })
 
 onUnmounted(() => {
@@ -186,7 +192,8 @@ function closePopover() {
 }
 
 function onActivate() {
-  dailyBuffStore.activatePendingBuff()
+  const result = dailyBuffStore.activatePendingBuff()
+  if (result) applyResolveResult(result, applyDeps)
   closePopover()
 }
 

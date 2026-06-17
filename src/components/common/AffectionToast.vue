@@ -31,7 +31,7 @@ bus.on('affection:changed', (data) => {
   message.value = charName ? `💕 ${charName} +${data.delta}` : `💕 +${data.delta}`
   visible.value = true
   if (timer) clearTimeout(timer)
-  timer = setTimeout(() => { visible.value = false }, 2000)
+  timer = setTimeout(() => { visible.value = false }, configStore.uiTimers.affectionToastDisplay)
 })
 
 bus.on('affection:levelUp', (data) => {
@@ -42,7 +42,7 @@ bus.on('affection:levelUp', (data) => {
   message.value = `⬆️ 关系升级！`
   visible.value = true
   if (timer) clearTimeout(timer)
-  timer = setTimeout(() => { visible.value = false }, 3000)
+  timer = setTimeout(() => { visible.value = false }, configStore.uiTimers.affectionLevelUpToastDisplay)
 })
 
 onUnmounted(() => {

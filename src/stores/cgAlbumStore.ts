@@ -6,6 +6,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
+import { resolveTryUnlockNext } from '../services/CGAlbumService';
 import type { StoryChapter } from '@/types/game';
 
 export interface CGData {
@@ -122,30 +123,48 @@ export const useCGAlbumStore = defineStore('cgAlbum', () => {
         if (!cgData.value[cgId]) {
             return false;
         }
-        
+
         const cg = cgData.value[cgId];
         const configStore = useConfigStore();
-        
-        if (cg.memoryFragments < configStore.fragmentToStory) return false;
-        
+        const storyConfig = configStore.cgStories[cgId];
+        const stories = storyConfig?.stories;
+
+        const result = resolveTryUnlockNext({
+            cgId,
+            memoryFragments: cg.memoryFragments,
+            unlockedStories: cg.unlocked,
+            fragmentToStory: configStore.fragmentToStory,
+            totalStories: stories?.length ?? 0,
+        });
+
+        if (!result.ok) return false;
+
+        unlockNextStoryField(cgId);
+        spendMemoryFragmentsField(cgId, configStore.fragmentToStory);
+
+        result.resolveResult.events?.forEach((e: { name: string; data: unknown }) => globalBus.emit(e.name, e.data));
+        return true;
+    }
+
+    function unlockNextStoryField(cgId: string): void {
+        if (!cgData.value[cgId]) {
+            cgData.value[cgId] = {
+                unlocked: [],
+                memoryFragments: 0,
+                title: '',
+                maleLeadId: '',
+                ssrId: ''
+            };
+        }
+        const cg = cgData.value[cgId];
         const nextIndex = cg.unlocked.length;
-        const cgStoryConfig = configStore.cgStories[cgId];
-        const stories = cgStoryConfig?.stories;
-        if (stories && nextIndex >= stories.length) return false;
-        
-        if (cg.unlocked.includes(nextIndex)) return false;
-        
         cg.unlocked.push(nextIndex);
         unlockedCGs.value.add(cgId);
-        
-        cg.memoryFragments = Math.max(0, cg.memoryFragments - configStore.fragmentToStory);
-        
-        globalBus.emit('cg:nextUnlocked', {
-            cgId,
-            storyIndex: nextIndex
-        });
-        
-        return true;
+    }
+
+    function spendMemoryFragmentsField(cgId: string, amount: number): void {
+        if (!cgData.value[cgId]) return;
+        cgData.value[cgId].memoryFragments = Math.max(0, cgData.value[cgId].memoryFragments - amount);
     }
 
     function isStoryUnlocked(cgId: string, storyIndex: number): boolean {
@@ -245,6 +264,8 @@ export const useCGAlbumStore = defineStore('cgAlbum', () => {
         getCGList,
         addMemoryFragments,
         tryUnlockNext,
+        unlockNextStoryField,
+        spendMemoryFragmentsField,
         isStoryUnlocked,
         getUnlockedStories,
         getStoriesForCG,

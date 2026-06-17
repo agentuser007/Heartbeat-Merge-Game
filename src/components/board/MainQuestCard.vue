@@ -57,6 +57,8 @@ import { useInventoryStore } from '../../stores/inventoryStore';
 import { useLoopStore } from '../../stores/loopStore';
 import { useSaveStore } from '../../stores/saveStore';
 import { useSheet } from '../../composables/useSheet';
+import { applyResolveResult } from '../../composables/useGameLoop';
+import { useApplyDeps } from '../../composables/useApplyDeps';
 
 interface OrderSlot {
   itemId: string;
@@ -179,7 +181,10 @@ const onSubmit = () => {
     currencyStore.addDiamonds(reward);
   }
 
-  bossStore.submitOrder(order.damage || 10);
+  const result = bossStore.resolveSubmitOrder(order.damage || 10);
+  if (result.ok) {
+    applyResolveResult(result.resolveResult, useApplyDeps());
+  }
   saveStore.saveAll();
 };
 </script>
