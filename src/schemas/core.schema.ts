@@ -231,3 +231,28 @@ export const LevelDataSchema = z.object({
     totalHp: z.number().int().positive(),
     orders: z.array(LevelOrderSchema),
 })
+
+export const AudioConfigSchema = z.object({
+    defaults: z.object({
+        masterVolume: z.number().min(0).max(1),
+        bgmVolume: z.number().min(0).max(1),
+        sfxVolume: z.number().min(0).max(1),
+    }),
+    fade: z.object({
+        bgmFadeIn: z.number().nonnegative(),
+        bgmFadeOut: z.number().nonnegative(),
+        bgmResumeFade: z.number().nonnegative(),
+        bgmCrossfade: z.number().nonnegative(),
+        bgmSwitchDelay: z.number().nonnegative(),
+    }),
+    sfxRegistry: z.record(z.string(), z.object({
+        file: z.string(),
+        volume: z.number().min(0).max(1),
+        enabled: z.boolean().optional(),
+        triggerEvent: z.string().optional(),
+    })),
+    bgmRegistry: z.record(z.string(), z.object({
+        file: z.string(),
+        volume: z.number().min(0).max(1),
+    })),
+})

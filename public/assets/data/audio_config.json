@@ -1,0 +1,25 @@
+{
+  "defaults": {
+    "masterVolume": 1.0,
+    "bgmVolume": 0.3,
+    "sfxVolume": 0.8
+  },
+  "fade": {
+    "bgmFadeIn": 800,
+    "bgmFadeOut": 500,
+    "bgmResumeFade": 500,
+    "bgmCrossfade": 600,
+    "bgmSwitchDelay": 50
+  },
+  "sfxRegistry": {
+    "btn_click": { "file": "btn_click.ogg", "volume": 0.8, "enabled": true },
+    "merge": { "file": "merge.ogg", "volume": 1.0, "enabled": true },
+    "pop": { "file": "pop.ogg", "volume": 0.9, "enabled": true },
+    "reward": { "file": "reward.ogg", "volume": 1.0, "enabled": true, "triggerEvent": "boss:defeated" },
+    "task_complete": { "file": "task_complete.ogg", "volume": 1.0, "enabled": true, "triggerEvent": "dailyOrders:fulfilled" }
+  },
+  "bgmRegistry": {
+    "game_bgm": { "file": "game_bgm.ogg", "volume": 1.0 },
+    "story_bgm": { "file": "story_bgm.ogg", "volume": 1.0 }
+  }
+}

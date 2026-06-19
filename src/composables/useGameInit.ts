@@ -23,6 +23,7 @@ import { useDailyBuffStore } from '@/stores/dailyBuffStore';
 import { useSaveStore } from '@/stores/saveStore';
 import { useAudio } from './useAudio';
 import { useEventBus } from './useEventBus';
+import { globalBus } from '@/core/EventBus';
 import { LoopService } from '@/services/LoopService';
 import * as LoopLogic from '@/logic/LoopLogic';
 import { applyResolveResult } from '@/composables/useGameLoop';
@@ -98,6 +99,7 @@ export function useGameInit() {
         // 5. Init audio — preload all SFX
         try {
             const audio = useAudio();
+            audio.init(configStore.audioConfig, globalBus);
             audio.preloadAll();
         } catch (e) {
             console.warn('[useGameInit] Audio preload failed', e);

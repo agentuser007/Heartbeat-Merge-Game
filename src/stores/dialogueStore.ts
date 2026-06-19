@@ -19,6 +19,7 @@ export const useDialogueStore = defineStore('dialogue', () => {
     const portraitUrl = ref('');
     const portraitEmoji = ref('');
     const isTyping = ref(false);
+    const skipBGM = ref(false);
     const dialogueQueue = ref<Array<{
         npcName: string;
         npcText: string;
@@ -73,6 +74,7 @@ export const useDialogueStore = defineStore('dialogue', () => {
         }
 
         pendingOnClose = options?.onClose ?? null;
+        skipBGM.value = options?.skipBGM ?? false;
     }
 
     function close() {
@@ -83,6 +85,7 @@ export const useDialogueStore = defineStore('dialogue', () => {
         playerText.value = '';
         portraitUrl.value = '';
         portraitEmoji.value = '';
+        skipBGM.value = false;
         
         // Emit event for UI components
         globalBus.emit('dialogue:closed');
@@ -165,6 +168,7 @@ export const useDialogueStore = defineStore('dialogue', () => {
         portraitEmoji,
         isTyping,
         dialogueQueue,
+        skipBGM,
         
         // Computed
         hasPlayerText,

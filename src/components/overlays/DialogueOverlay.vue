@@ -143,12 +143,13 @@ watch(
       displayedNpcText.value = '';
       displayedPlayerText.value = '';
 
-      // Handle BGM: pause game_bgm, play story_bgm
-      if (audio.getCurrentBGM() === 'game_bgm') {
-        audio.pauseBGM(500);
-        bgmWasPaused = true;
+      // Handle BGM: play story_bgm unless skipBGM is true
+      if (!dialogueStore.skipBGM) {
+        if (audio.getCurrentBGM() === 'game_bgm') {
+          bgmWasPaused = true;
+        }
+        audio.playBGM('story_bgm');
       }
-      audio.playBGM('story_bgm');
 
       // Start NPC typewriter (30ms per character, matching original)
       await typewrite(dialogueStore.npcText, displayedNpcText, isNpcTyping, configStore.dialogueConfig.typewriterSpeedNormal);
@@ -170,13 +171,14 @@ watch(
       isPlayerTyping.value = false;
       skipRequested.value = false;
 
-      // Restore BGM
-      if (audio.getCurrentBGM() === 'story_bgm') {
-        audio.pauseBGM(500);
-      }
-      if (bgmWasPaused) {
-        audio.playBGM('game_bgm');
-        bgmWasPaused = false;
+      // Restore BGM unless skipBGM is true
+      if (!dialogueStore.skipBGM) {
+        if (bgmWasPaused) {
+          audio.playBGM('game_bgm');
+          bgmWasPaused = false;
+        } else if (audio.getCurrentBGM() === 'story_bgm') {
+          audio.pauseBGM();
+        }
       }
     }
   },

@@ -44,6 +44,7 @@ import type {
     LoopMultipliersConfig,
     AdConfig,
     DailyBuffConfig,
+    AudioConfig,
 } from '@/types/game';
 import { validateConfig, type ConfigKey } from '@/schemas';
 import { deepMerge } from '@/core/deepMerge';
@@ -100,6 +101,7 @@ export const useConfigStore = defineStore('config', () => {
     const boardEconomy = ref<BoardEconomyConfig>({} as BoardEconomyConfig);
     const bossProgression = ref<BossProgressionConfig>({} as BossProgressionConfig);
     const gachaConfig = ref<GachaSimpleConfig>({} as GachaSimpleConfig);
+    const audioConfig = ref<AudioConfig>({} as AudioConfig);
     
     // Shop items
     const shopItems = ref<ShopItem[]>([]);
@@ -251,7 +253,7 @@ export const useConfigStore = defineStore('config', () => {
             affectionShop.value = validatedAffectionShop;
 
             // Load pluggable config files
-            const [itemEffectsData, boardEconomyData, bossProgressionData, gachaConfigData, shopItemsData, loopMultipliersData, adConfigData, dailyBuffConfigData] = await Promise.all([
+            const [itemEffectsData, boardEconomyData, bossProgressionData, gachaConfigData, shopItemsData, loopMultipliersData, adConfigData, dailyBuffConfigData, audioConfigData] = await Promise.all([
                 fetch(`${basePath}/data/item_effects.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/board_economy.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/boss_progression.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
@@ -260,6 +262,7 @@ export const useConfigStore = defineStore('config', () => {
                 fetch(`${basePath}/data/loop_multipliers.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/ad_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
                 fetch(`${basePath}/data/daily_buff_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
+                fetch(`${basePath}/data/audio_config.json${cacheBust}`).then(r => r.json()).catch(() => ({})),
             ]);
 
             itemEffects.value = validateConfig('itemEffects', itemEffectsData);
@@ -270,6 +273,16 @@ export const useConfigStore = defineStore('config', () => {
             loopMultipliers.value = validateConfig('loopMultipliers', loopMultipliersData) as LoopMultipliersConfig;
             adConfig.value = validateConfig('adConfig', adConfigData) as AdConfig;
             dailyBuffConfig.value = validateConfig('dailyBuffConfig', dailyBuffConfigData) as DailyBuffConfig;
+            
+            const validatedAudioConfig = audioConfigData && Object.keys(audioConfigData).length > 0
+                ? validateConfig('audioConfig', audioConfigData)
+                : {
+                    defaults: { masterVolume: 1.0, bgmVolume: 0.3, sfxVolume: 0.8 },
+                    fade: { bgmFadeIn: 800, bgmFadeOut: 500, bgmResumeFade: 500, bgmCrossfade: 600, bgmSwitchDelay: 50 },
+                    sfxRegistry: {},
+                    bgmRegistry: {}
+                  };
+            audioConfig.value = validatedAudioConfig as AudioConfig;
 
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -326,6 +339,7 @@ export const useConfigStore = defineStore('config', () => {
         boardEconomy,
         bossProgression,
         gachaConfig,
+        audioConfig,
         loopMultipliers,
         adConfig,
         dailyBuffConfig,

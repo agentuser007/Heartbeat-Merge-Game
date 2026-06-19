@@ -26,6 +26,7 @@ import { useDailyOrderStore } from './dailyOrderStore';
 import { useAffectionStore } from './affectionStore';
 import { useTouchInteractionStore } from './touchInteractionStore';
 import { useVNReaderStore } from './vnReaderStore';
+import { useAudio } from '../composables/useAudio';
 import { globalBus } from '../core/EventBus';
 import { SaveService, CURRENT_VERSION } from '../services/SaveService';
 
@@ -48,6 +49,18 @@ const migrations: Record<number, (data: Record<string, unknown>) => Record<strin
             }
         }
         data.version = 4;
+        return data;
+    },
+    4: (data: Record<string, unknown>) => {
+        if (!data.audio) {
+            data.audio = {
+                masterVolume: 1.0,
+                bgmVolume: 0.3,
+                sfxVolume: 0.8,
+                muted: false
+            };
+        }
+        data.version = 5;
         return data;
     }
 };
@@ -97,6 +110,7 @@ export const useSaveStore = defineStore('save', () => {
             const dailyBuffStore = useDailyBuffStore();
             const affectionStore = useAffectionStore();
             const touchInteractionStore = useTouchInteractionStore();
+            const audioStore = useAudio();
 
             const data = SaveService.serializeMeta({
                 loop: loopStore,
@@ -111,6 +125,7 @@ export const useSaveStore = defineStore('save', () => {
                 dailyBuff: dailyBuffStore,
                 affection: affectionStore,
                 touchData: touchInteractionStore,
+                audio: audioStore,
             });
 
             localStorage.setItem(SAVE_KEY_META, JSON.stringify(data));
@@ -155,6 +170,7 @@ export const useSaveStore = defineStore('save', () => {
         const dailyBuffStore = useDailyBuffStore();
         const affectionStore = useAffectionStore();
         const touchInteractionStore = useTouchInteractionStore();
+        const audioStore = useAudio();
 
         const result = SaveService.resolveApplyMetaData(data, {
             currentGold: currencyStore.gold,
@@ -164,7 +180,7 @@ export const useSaveStore = defineStore('save', () => {
         SaveService.applyMetaResult(result, {
             loopStore, heroineStore, gachaStore, fragmentStore, cgAlbumStore,
             collectionStore, achievementStore, currencyStore, adStore, dailyBuffStore,
-            affectionStore, touchInteractionStore,
+            affectionStore, touchInteractionStore, audioStore,
             energyStore: useEnergyStore(), boardStore: useBoardStore(),
             bossStore: useBossStore(), inventoryStore: useInventoryStore(),
             dailyOrderStore: useDailyOrderStore(), vnReaderStore: useVNReaderStore(),

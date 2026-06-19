@@ -458,6 +458,30 @@ export interface UIColorThemeConfig {
   energyGradientLow: string;
 }
 
+export interface AudioRegistryEntry {
+  file: string;
+  volume: number;
+  enabled?: boolean;
+  triggerEvent?: string;
+}
+
+export interface AudioConfig {
+  defaults: {
+    masterVolume: number;
+    bgmVolume: number;
+    sfxVolume: number;
+  };
+  fade: {
+    bgmFadeIn: number;
+    bgmFadeOut: number;
+    bgmResumeFade: number;
+    bgmCrossfade: number;
+    bgmSwitchDelay: number;
+  };
+  sfxRegistry: Record<string, AudioRegistryEntry>;
+  bgmRegistry: Record<string, Omit<AudioRegistryEntry, 'triggerEvent' | 'enabled'>>;
+}
+
 export interface UILayoutConfig {
   unlockPopupMinOffset: number;
   unlockParticleCount: number;

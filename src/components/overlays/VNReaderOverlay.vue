@@ -267,9 +267,7 @@ watch(
       displayedText.value = '';
 
       // Switch back to game BGM
-      setTimeout(() => {
-        audio.playBGM('game_bgm');
-      }, configStore.uiTimers.bgmSwitchDelay);
+      audio.playBGM('game_bgm');
     }
   },
 );

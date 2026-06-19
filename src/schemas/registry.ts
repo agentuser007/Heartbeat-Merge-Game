@@ -4,6 +4,7 @@ import {
     GameItemSchema,
     GeneratorConfigSchema,
     LevelDataSchema,
+    AudioConfigSchema,
 } from './core.schema'
 import {
     ItemEffectsConfigSchema,
@@ -65,6 +66,7 @@ export const CONFIG_SCHEMAS = {
     loopMultipliers:     LoopMultipliersSchema,
     adConfig:            AdConfigSchema,
     dailyBuffConfig:     DailyBuffConfigSchema,
+    audioConfig:         AudioConfigSchema,
 }
 
 export type ConfigKey = keyof typeof CONFIG_SCHEMAS

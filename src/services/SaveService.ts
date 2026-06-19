@@ -18,6 +18,7 @@ import type {
     InventorySerializeData,
     DailyOrderSerializeData,
     VNReaderSerializeData,
+    AudioSerializeData,
 } from '../types/serialize';
 
 // ============================================================
@@ -27,7 +28,7 @@ import type {
 // saveStore calls these and handles localStorage I/O + reactive state.
 // ============================================================
 
-export const CURRENT_VERSION = 4;
+export const CURRENT_VERSION = 5;
 
 // --- Serialization (pure read) ---
 
@@ -44,6 +45,7 @@ export interface SerializeMetaDeps {
     dailyBuff: { serialize(): DailyBuffSerializeData };
     affection: { serialize(): AffectionSerializeData };
     touchData: { serialize(): TouchSerializeData };
+    audio: { getState(): AudioSerializeData };
 }
 
 export function serializeMeta(deps: SerializeMetaDeps): Record<string, unknown> {
@@ -62,6 +64,7 @@ export function serializeMeta(deps: SerializeMetaDeps): Record<string, unknown> 
         dailyBuff: deps.dailyBuff.serialize(),
         affection: deps.affection.serialize(),
         touchData: deps.touchData.serialize(),
+        audio: deps.audio.getState(),
     };
 }
 
@@ -116,6 +119,7 @@ export interface MetaApplyResult {
     dailyBuff?: DailyBuffSerializeData;
     affection?: AffectionSerializeData;
     touchData?: TouchSerializeData;
+    audio?: AudioSerializeData;
 }
 
 export function resolveApplyMetaData(data: Record<string, unknown>, deps: ApplyMetaDataDeps): MetaApplyResult {
@@ -153,6 +157,7 @@ export function resolveApplyMetaData(data: Record<string, unknown>, deps: ApplyM
     if (data.dailyBuff) result.dailyBuff = data.dailyBuff as DailyBuffSerializeData;
     if (data.affection) result.affection = data.affection as AffectionSerializeData;
     if (data.touchData) result.touchData = data.touchData as TouchSerializeData;
+    if (data.audio) result.audio = data.audio as AudioSerializeData;
 
     return result;
 }
@@ -229,6 +234,7 @@ export interface ApplySaveDeps {
     dailyOrderStore: { deserialize(data: unknown): void };
     vnReaderStore: { deserialize(data: unknown): void };
     showToast?: (message: string, type: string) => void;
+    audioStore?: { restoreState(state: any): void };
 }
 
 export function applyMetaResult(result: MetaApplyResult, deps: ApplySaveDeps): void {
@@ -251,6 +257,7 @@ export function applyMetaResult(result: MetaApplyResult, deps: ApplySaveDeps): v
     if (result.dailyBuff) deps.dailyBuffStore.deserialize(result.dailyBuff);
     if (result.affection) deps.affectionStore.deserialize(result.affection);
     if (result.touchData) deps.touchInteractionStore.deserialize(result.touchData);
+    if (result.audio && deps.audioStore) deps.audioStore.restoreState(result.audio);
 }
 
 export function applyRunResult(result: RunApplyResult, deps: ApplySaveDeps): void {

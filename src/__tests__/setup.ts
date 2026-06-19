@@ -7,7 +7,7 @@ beforeEach(() => {
 })
 
 vi.stubGlobal('AudioContext', class {
-  createGain() { return { gain: { value: 1, linearRampToValueAtTime: vi.fn() }, connect: vi.fn(), disconnect: vi.fn() } }
+  createGain() { return { gain: { value: 1, setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() }, connect: vi.fn(), disconnect: vi.fn() } }
   createBufferSource() { return { buffer: null, connect: vi.fn(), start: vi.fn(), stop: vi.fn(), disconnect: vi.fn() } }
   decodeAudioData() { return Promise.resolve({}) }
   close() {}

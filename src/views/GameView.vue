@@ -21,7 +21,7 @@
   <!-- Main Game UI (shown after init completes) -->
   <div v-else id="game-container">
     <!-- Top status bar: time, currency, rank -->
-    <StatusBar @open-map="showMap = true" />
+    <StatusBar @open-map="showMap = true" @open-settings="showSettings = true" />
 
     <!-- Board grid (includes BossHeader inside) -->
     <BoardGrid />
@@ -55,6 +55,10 @@
       :visible="showMap"
       @close="showMap = false"
       @switch-board="onSwitchBoard"
+    />
+    <SettingsOverlay
+      :visible="showSettings"
+      @close="showSettings = false"
     />
     <ParadeOverlay
       :visible="showParade"
@@ -121,6 +125,7 @@ import ParadeOverlay from '@/components/overlays/ParadeOverlay.vue'
 import GameCompleteOverlay from '@/components/overlays/GameCompleteOverlay.vue'
 import VNReaderOverlay from '@/components/overlays/VNReaderOverlay.vue'
 import TouchOverlay from '@/components/overlays/TouchOverlay.vue'
+import SettingsOverlay from '@/components/overlays/SettingsOverlay.vue'
 
 // Sheet components
 import InventorySheet from '@/components/sheets/InventorySheet.vue'
@@ -150,6 +155,7 @@ const effects = useEffects()
 const loopStore = useLoopStore()
 const applyDeps = useApplyDeps()
 const showMap = ref(false)
+const showSettings = ref(false)
 
 // --- Info bar logic (wired to board selection) ---
 const hint = computed(() => {

@@ -153,3 +153,10 @@ export interface DialogueSerializeData {
     portraitEmoji: string;
     dialogueQueue: Array<{ npcName: string; npcText: string; playerText: string; portraitUrl?: string; portraitEmoji?: string }>;
 }
+
+export interface AudioSerializeData {
+    masterVolume: number;
+    bgmVolume: number;
+    sfxVolume: number;
+    muted: boolean;
+}

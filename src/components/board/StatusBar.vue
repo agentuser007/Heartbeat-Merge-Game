@@ -26,6 +26,12 @@
     </div>
 
     <div class="status-right">
+      <button class="settings-circle-btn" @click="$emit('open-settings')">
+        <svg class="settings-btn-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#DDAA8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
       <button class="shop-circle-btn" @click="shopSheet.open()">
         <img class="shop-btn-icon-img" src="/assets/items/shop.svg" alt="shop" />
       </button>
@@ -131,6 +137,7 @@ function onBuffClick(id: string) {
 
 defineEmits<{
   (e: 'open-map'): void
+  (e: 'open-settings'): void
 }>()
 
 const now = ref(Date.now())
@@ -387,6 +394,34 @@ const formattedEnergyCountdown = computed(() => {
 }
 
 .shop-btn-icon-img {
+  width: 4.48cqw;
+  height: 4.48cqw;
+}
+
+.settings-circle-btn {
+  position: absolute;
+  top: calc(12.94cqw + env(safe-area-inset-top, 0px));
+  right: 39.5cqw;
+  width: 7.96cqw;
+  height: 7.96cqw;
+  border-radius: 50%;
+  background: #FAF5F8;
+  border: none;
+  box-shadow: 5px 5px 10px rgba(170, 170, 204, 0.5), -5px -5px 10px #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.settings-circle-btn:active {
+  transform: scale(0.9);
+}
+
+.settings-btn-icon-svg {
   width: 4.48cqw;
   height: 4.48cqw;
 }
