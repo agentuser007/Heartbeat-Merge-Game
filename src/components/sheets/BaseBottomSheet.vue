@@ -21,12 +21,16 @@
       @touchend="onTouchEnd"
     >
       <div class="sheet-header-new">
-        <button class="sheet-back-btn sheet-close" @click="close">↩</button>
+        <button class="sheet-back-btn sheet-close" @click="close" aria-label="返回">
+          <img src="/assets/figma/refund-back.png" alt="" />
+        </button>
         <div class="sheet-title-pill">
           <span v-if="icon" class="sheet-title-icon">{{ icon }}</span>
           <span class="sheet-title-text">{{ title }}</span>
         </div>
-        <button class="sheet-help-btn" @click="emit('help')">?</button>
+        <button class="sheet-help-btn" @click="emit('help')" aria-label="帮助">
+          <img src="/assets/figma/question.png" alt="" />
+        </button>
       </div>
       <div v-if="subtitle" class="sheet-sub">{{ subtitle }}</div>
       <div class="sheet-body">
@@ -108,29 +112,29 @@ watch(
 .bottom-sheet-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(90, 62, 43, 0.45);
+  background: rgba(50, 34, 26, 0.16);
   z-index: var(--z-sheet);
   opacity: 1;
   pointer-events: auto;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 /* ---- Bottom Sheet ---- */
 .bottom-sheet {
   position: absolute;
-  top: 50%;
+  top: calc(31.7% + env(safe-area-inset-top, 0px) * 0.3);
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: calc(100% - 32px);
-  max-width: 370px;
-  height: 82%;
-  max-height: 720px;
-  background: #FFF5EE;
+  transform: translate(-50%, 0);
+  width: min(93.3cqw, 375px);
+  max-width: calc(100% - 20px);
+  height: min(54.8cqh, 479px);
+  max-height: calc(100% - 40px);
+  background: #FFDFC8;
   z-index: var(--z-sheet);
-  border-radius: 24px;
-  border: 3.5px solid var(--warm-border, #CDA080);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 3px solid #fff;
+  box-shadow: 0 0 5.8px rgba(0, 0, 0, 0.78), 0 22px 28px rgba(96, 25, 15, 0.34);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -142,7 +146,7 @@ watch(
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px 8px;
+  padding: 12px 8px 8px;
   width: 100%;
   box-sizing: border-box;
   flex-shrink: 0;
@@ -152,19 +156,24 @@ watch(
 .sheet-help-btn {
   width: 32px;
   height: 32px;
-  background: #fff;
-  border: 2px solid var(--warm-border, #CDA080);
+  background: #F5F5FA;
+  border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  color: var(--warm-border, #CDA080);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 5px 10px rgba(170, 170, 204, 0.45), -5px -5px 10px #fff;
   transition: transform 0.15s ease;
   padding: 0;
   line-height: 1;
+}
+
+.sheet-back-btn img,
+.sheet-help-btn img {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .sheet-back-btn:active,
@@ -173,14 +182,18 @@ watch(
 }
 
 .sheet-title-pill {
-  background: #FFF;
-  border: 3px solid var(--warm-border, #CDA080);
-  border-radius: 99px;
-  padding: 6px 36px;
-  font-size: 15px;
-  font-weight: 900;
-  color: var(--warm-border, #CDA080);
-  box-shadow: 0 4px 8px rgba(181, 147, 116, 0.15);
+  flex: 1;
+  min-width: 0;
+  height: 25px;
+  margin: 0 7px;
+  background: #F5F5FA;
+  border: none;
+  border-radius: 13px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #DDAA8B;
+  box-shadow: 0px 4px 2px rgba(0,0,0,0.25);
   text-align: center;
   line-height: 1;
   display: flex;
@@ -189,8 +202,7 @@ watch(
 }
 
 .sheet-title-icon {
-  font-size: 15px;
-  line-height: 1;
+  display: none;
 }
 
 /* ---- Subtitle ---- */
@@ -205,7 +217,7 @@ watch(
 
 /* ---- Sheet Body ---- */
 .sheet-body {
-  padding: 10px;
+  padding: 1px 38px 14px;
   overflow-y: auto;
   overflow-x: hidden;
   flex: 1;
@@ -233,13 +245,13 @@ watch(
 .sheet-slide-enter-from,
 .sheet-slide-leave-to {
   opacity: 0;
-  transform: translate(-50%, -42%) scale(0.93);
+  transform: translate(-50%, 12px) scale(0.98);
 }
 
 .sheet-slide-enter-to,
 .sheet-slide-leave-from {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, 0) scale(1);
 }
 
 /* ---- Bottom Layout Styles ---- */
@@ -305,4 +317,3 @@ watch(
   font-weight: 600;
 }
 </style>
-

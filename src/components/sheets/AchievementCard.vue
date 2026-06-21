@@ -40,7 +40,6 @@
       </div>
       <div class="card-divider" />
       <div class="card-rewards">
-        <span v-if="hasReward" class="gift-icon">🎁</span>
         <span v-if="achievement.reward.diamonds" class="reward-badge">💎{{ achievement.reward.diamonds }}</span>
         <span v-if="achievement.reward.energy" class="reward-badge">⚡{{ achievement.reward.energy }}</span>
         <span v-if="achievement.reward.gold" class="reward-badge">🪙{{ achievement.reward.gold }}</span>
@@ -224,11 +223,6 @@ const hasReward = computed(() => {
   gap: 4px;
   flex-wrap: wrap;
   justify-content: flex-end;
-}
-
-.gift-icon {
-  font-size: 10px;
-  line-height: 1;
 }
 
 .reward-badge {

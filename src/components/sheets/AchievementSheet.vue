@@ -27,10 +27,6 @@
       </template>
     </div>
 
-    <div class="ach-bottom-bar">
-      点击道具，在这里查看它的信息
-    </div>
-
     <div class="claim-all-container">
       <button
         class="claim-all-btn"
@@ -189,24 +185,6 @@ function getAchievementProgress(ach: Achievement): number {
   width: 2px;
   height: 12px;
   background: var(--ach-connector, #e3cec0);
-  flex-shrink: 0;
-}
-
-/* ---- Bottom Info Bar ---- */
-.ach-bottom-bar {
-  background: var(--ach-bottom-bg, #ffe1cc);
-  border: 3px solid var(--ach-bottom-border, #ddaa8b);
-  border-radius: 16px;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-family: 'Jiangcheng Yuanti', sans-serif;
-  font-weight: 400;
-  color: var(--text-muted);
-  padding: 8px 12px;
-  margin-top: 6px;
   flex-shrink: 0;
 }
 

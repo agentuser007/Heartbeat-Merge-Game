@@ -4,7 +4,7 @@
     <div class="inventory-entry">
       <div class="inventory-label">仓库</div>
       <button class="inventory-btn" @click="openInventory">
-        <span class="inventory-icon">🍩</span>
+        <img class="inventory-icon-img" src="/assets/figma/donut.png" alt="" />
         <span v-if="inventoryCount > 0" class="inventory-badge">{{ inventoryCount }}</span>
       </button>
     </div>
@@ -70,8 +70,8 @@ const openInventory = () => {
   background: linear-gradient(
     to bottom,
     rgba(221, 170, 139, 0) 0%,
-    rgba(255, 234, 195, 0.51) 50%,
-    #DDAA8B 100%
+    rgba(255, 234, 195, 0.48) 50%,
+    rgba(221, 170, 139, 0.92) 100%
   ) !important;
   z-index: -1 !important;
   pointer-events: none !important;
@@ -159,9 +159,11 @@ const openInventory = () => {
   transform: scale(0.95);
 }
 
-.inventory-icon {
-  font-size: 28px;
-  line-height: 1;
+.inventory-icon-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  filter: drop-shadow(0px 1px 3.7px #60190F);
 }
 
 .inventory-badge {
@@ -210,8 +212,7 @@ const openInventory = () => {
   .inventory-entry { top: 28px; width: 40px; height: 80px; }
   .inventory-label { width: 40px; height: 30px; font-size: 9px; }
   .inventory-btn { margin-top: 6px; width: 40px; height: 40px; border-radius: 8px; border-width: 3px; }
-  .inventory-icon { font-size: 22px; }
+  .inventory-icon-img { width: 40px; height: 40px; }
   .inventory-badge { top: -5px; left: 22px; width: 20px; height: 14px; font-size: 8px; }
 }
 </style>
-

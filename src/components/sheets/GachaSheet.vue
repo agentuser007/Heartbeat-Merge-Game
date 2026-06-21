@@ -5,23 +5,15 @@
     title="扭蛋"
     icon="✨"
   >
-    <!-- Rates header -->
-    <div class="gacha-rates-pills">
-      <span class="rate-pill r-rate">R : {{ gachaRateR }}%</span>
-      <span class="rate-pill sr-rate">SR : {{ gachaRateSR }}%</span>
-      <span class="rate-pill ssr-rate">SSR : {{ gachaRateSSR }}%</span>
-    </div>
-
     <div class="gacha-outer-frame">
       <div class="gacha-inner-frame">
-        <!-- Grid Results Area (Charcoal Box) -->
         <div class="gacha-result-container">
-          <div v-if="gachaStore.results.length === 0" class="gacha-welcome-screen">
-            <span class="welcome-egg">✨</span>
-            <span class="welcome-title">{{ i18nStore.t('gacha.panelTitle') || '心动扭蛋机' }}</span>
-            <span class="welcome-subtitle">{{ i18nStore.t('gacha.hint') || '抽取随机合成器与实用道具！' }}</span>
+          <div class="gacha-rates-pills">
+            <span class="rate-pill r-rate">R : {{ gachaRateR }}%</span>
+            <span class="rate-pill sr-rate">SR : {{ gachaRateSR }}%</span>
+            <span class="rate-pill ssr-rate">SSR : {{ gachaRateSSR }}%</span>
           </div>
-          <div v-else id="gacha-result" class="gacha-grid-results">
+          <div id="gacha-result" class="gacha-grid-results">
             <div
               v-for="(card, i) in gachaGridCards"
               :key="card.id || i"
@@ -29,23 +21,21 @@
               :class="[card.placeholder ? 'placeholder' : getRarityTag(card)]"
             >
               <template v-if="!card.placeholder">
-                <!-- Card Rarity Badge (Top Right) -->
-                <span class="card-rarity-badge">{{ getRarityTag(card) }}</span>
-                
-                <!-- Card Emoji / Image Portrait -->
-                <div class="card-content-area">
-                  <span class="card-icon-emoji">{{ card.icon }}</span>
-                </div>
+                <!-- Rarity-specific background layer -->
+                <div class="gacha-card-bg" :style="getCardBgStyle(card)"></div>
 
-                <!-- Card Level / Affection Heart (Bottom) -->
-                <div class="card-footer-badge">
+                <span class="card-rarity-badge">{{ getRarityTag(card) }}</span>
+                <div class="card-content-area">
+                  <img class="card-icon-img" :src="getCardAsset(card)" alt="" />
+                  <span v-if="!getCardAsset(card)" class="card-icon-emoji">{{ card.icon }}</span>
+                </div>
+                <div class="card-footer-badge" :class="getRarityTag(card)">
                   <span class="lvl-label">Lv.{{ card.value?.level || 1 }}</span>
                 </div>
               </template>
               <template v-else>
-                <!-- Clean empty slot visual -->
                 <div class="gacha-card-empty-slot">
-                  <span class="empty-slot-mark">?</span>
+                  <img class="empty-slot-img" :src="baseUrl + 'assets/figma/food-icon.png'" alt="" />
                 </div>
               </template>
             </div>
@@ -56,28 +46,36 @@
         <div class="gacha-redesign-controls">
           <div class="gacha-pull-option">
             <div class="gacha-diamond-container">
-              <button class="gacha-diamond-btn" @click="singlePull">
+              <button
+                class="gacha-diamond-btn"
+                :style="{ '--btn-bg': `url(${baseUrl}assets/figma/onepull.svg)` }"
+                @click="singlePull"
+              >
                 <div class="diamond-btn-content">
                   <span class="pull-text">单抽</span>
                 </div>
               </button>
             </div>
             <div class="gacha-cost-badge">
-              <span class="cost-icon">💎</span>
+              <img class="cost-icon-img" :src="baseUrl + 'assets/figma/gacha-diamond.png'" alt="" />
               <span class="cost-value">x{{ singleCost }}</span>
             </div>
           </div>
 
           <div class="gacha-pull-option">
             <div class="gacha-diamond-container">
-              <button class="gacha-diamond-btn ten" @click="tenPull">
+              <button
+                class="gacha-diamond-btn ten"
+                :style="{ '--btn-bg': `url(${baseUrl}assets/figma/tenpull.svg)` }"
+                @click="tenPull"
+              >
                 <div class="diamond-btn-content">
                   <span class="pull-text">十连抽</span>
                 </div>
               </button>
             </div>
             <div class="gacha-cost-badge">
-              <span class="cost-icon">💎</span>
+              <img class="cost-icon-img" :src="baseUrl + 'assets/figma/gacha-diamond.png'" alt="" />
               <span class="cost-value">x{{ tenCost }}</span>
             </div>
           </div>
@@ -90,7 +88,7 @@
             :disabled="!gachaStore.canFreePull"
             @click="freePull"
           >
-            <span class="video-icon">📹</span>
+            <img class="video-icon" :src="baseUrl + 'assets/figma/video-camera.png'" alt="" />
             <span class="free-text">免费 {{ gachaStore.freePullsLeft }}/1</span>
           </button>
         </div>
@@ -122,6 +120,8 @@ const i18nStore = useI18nStore()
 const effects = useEffects()
 const applyDeps = useApplyDeps()
 
+const baseUrl = import.meta.env.BASE_URL
+
 const singleCost = computed(() => configStore.gachaCost?.singleCost ?? 100)
 const tenCost = computed(() => configStore.gachaCost?.tenCost ?? 900)
 const gachaRateR = computed(() => (configStore.gachaRarityConfig?.R?.probability ?? 0.74) * 100)
@@ -140,7 +140,34 @@ const gachaGridCards = computed<GachaGridCard[]>(() => {
 });
 
 function getRarityTag(result: GachaGridCard) {
-  return result.rarity || 'R';
+  const rarity = String(result.rarity || 'R').toUpperCase();
+  if (rarity === 'SSR' || rarity === 'SR' || rarity === 'R') return rarity;
+  return 'R';
+}
+
+function getCardBgStyle(result: GachaGridCard) {
+  if (result.placeholder) return {};
+  const rarity = getRarityTag(result);
+  let bgFile = 'r-bg.svg';
+  if (rarity === 'SR') bgFile = 'sr-bg.svg';
+  else if (rarity === 'SSR') bgFile = 'ssr-bg.svg';
+
+  return {
+    backgroundImage: `url(${import.meta.env.BASE_URL}assets/figma/${bgFile})`
+  };
+}
+
+function getCardAsset(result: GachaGridCard) {
+  if (result.placeholder) return '';
+  const rarity = getRarityTag(result);
+  if (result.id?.startsWith('preview-')) {
+    if (rarity === 'SSR') return import.meta.env.BASE_URL + 'assets/figma/character-card-art.png';
+    return import.meta.env.BASE_URL + 'assets/figma/float.png';
+  }
+  if (result.icon && /^https?:\/|^\//.test(result.icon)) return result.icon;
+  if (rarity === 'SSR') return import.meta.env.BASE_URL + 'assets/figma/character-card-art.png';
+  if (rarity === 'SR') return import.meta.env.BASE_URL + 'assets/figma/group75.png';
+  return import.meta.env.BASE_URL + 'assets/figma/float.png';
 }
 
 function singlePull() {
@@ -188,34 +215,44 @@ function freePull() {
 <style scoped>
 /* ---- Rates header pills ---- */
 .gacha-rates-pills {
+  position: absolute;
+  top: -9px;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin: 0;
   flex-shrink: 0;
+  z-index: 3;
 }
 
 .rate-pill {
   font-size: 10px;
   font-weight: 800;
-  padding: 2px 10px;
-  border-radius: 12px;
+  min-width: 58px;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .r-rate {
-  background: #EAE5C9;
-  color: #8A7E55;
+  background: #C4D388;
+  color: #5B6A31;
 }
 
 .sr-rate {
-  background: #CBE2F4;
-  color: #4A698A;
+  background: #ADCBE3;
+  color: #4B6B8A;
 }
 
 .ssr-rate {
-  background: #FCE9D9;
-  color: #C97E4A;
+  background: #F8D388;
+  color: #B37D22;
 }
 
 /* ---- Double Framing Container ---- */
@@ -236,48 +273,47 @@ function freePull() {
   padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  align-items: center;
   box-sizing: border-box;
   min-height: 0;
+  gap: 2px;
 }
 
-/* ---- Charcoal Chocolate Results Box ---- */
 .gacha-result-container {
-  background: #FFF5EE;
-  border: 3px solid var(--warm-border, #CDA080);
-  border-radius: 18px;
-  padding: 10px;
-  flex: 1;
-  min-height: 180px;
-  max-height: 280px;
+  position: relative;
+  margin-top: 42px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  padding: 12px 8px 12px;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 2px 6px rgba(160, 120, 80, 0.1);
-  margin-bottom: 12px;
-  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(140, 130, 135, 0.08);
+  overflow: visible;
   box-sizing: border-box;
 }
 
-/* ---- Grid Layout for Draw Results ---- */
 .gacha-grid-results {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, 1fr);
-  gap: 6px;
+  gap: 12px 8px;
   width: 100%;
   height: 100%;
-  padding: 4px;
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* ---- Gacha Result Card ---- */
 .gacha-card {
-  aspect-ratio: 0.78;
-  background: var(--off-white);
-  border-radius: 8px;
-  border: 2px solid #FEDAB2;
-  box-shadow: 0 3px 6px rgba(160, 120, 80, 0.1);
+  width: 50px;
+  height: 68px;
+  background: rgba(109, 104, 117, 0.05);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -285,27 +321,52 @@ function freePull() {
   justify-content: space-between;
   padding: 3px;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .gacha-card.placeholder {
-  background: #ECE5E0;
-  border-color: #D2C8C0;
-  opacity: 0.85;
+  background: rgba(109, 104, 117, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  opacity: 0.78;
+}
+
+.gacha-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+}
+
+.card-rarity-badge,
+.card-content-area,
+.card-footer-badge {
+  position: relative;
+  z-index: 2;
 }
 
 .card-rarity-badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 8px;
+  top: -5px;
+  right: -3px;
+  min-width: 22px;
+  height: 12px;
+  font-size: 7px;
   font-weight: 900;
-  background: var(--warm-brown-icon);
-  color: var(--text-primary);
-  padding: 0 4px;
-  border-radius: 4px;
+  color: #fff;
+  padding: 1px 4px 0;
+  border-radius: 5px;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  line-height: 1.2;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.25);
 }
 
 .card-content-area {
@@ -314,24 +375,30 @@ function freePull() {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 4px 0;
+  padding: 1px 0 0;
+}
+
+.card-icon-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.2));
 }
 
 .card-icon-emoji {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1;
 }
 
 .card-footer-badge {
-  background: rgba(221, 170, 139, 0.15);
-  border-radius: 4px;
-  padding: 1px 4px;
-  width: 90%;
+  border-radius: 0 0 4px 4px;
+  padding: 2px 4px;
+  width: calc(100% + 6px);
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1px;
+  margin: 0 -3px -3px;
 }
 
 .placeholder .card-footer-badge {
@@ -341,64 +408,65 @@ function freePull() {
 .lvl-label {
   font-size: 7px;
   font-weight: 800;
-  color: var(--warm-brown-icon);
+  color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* Rarity variants */
-.gacha-card.N {
-  background: var(--off-white);
-}
-
 .gacha-card.R {
-  background: var(--off-white);
-  border-color: #B8DCF0;
+  border-color: #A3B574;
 }
 .gacha-card.R .card-rarity-badge {
-  background: var(--rarity-r);
+  background: #759247;
+}
+.card-footer-badge.R {
+  background: rgba(117, 146, 71, 0.85);
 }
 
 .gacha-card.SR {
-  background: var(--off-white);
-  border-color: #E4D2EC;
+  border-color: #A4C5DE;
 }
 .gacha-card.SR .card-rarity-badge {
-  background: var(--rarity-sr);
+  background: #3B6A97;
+}
+.card-footer-badge.SR {
+  background: rgba(59, 106, 151, 0.85);
 }
 
 .gacha-card.SSR {
-  background: var(--off-white);
-  border-color: #FCEBB3;
+  border-color: #F7D488;
 }
 .gacha-card.SSR .card-rarity-badge {
-  background: var(--rarity-ssr);
+  background: #D88E23;
 }
-
-
+.card-footer-badge.SSR {
+  background: rgba(216, 142, 35, 0.85);
+}
 
 /* ---- Pull Controls Rhombus Section ---- */
 .gacha-redesign-controls {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  width: 100%;
-  margin: 10px 0;
+  width: min(100%, 250px);
+  margin: 12px 0 4px;
   padding: 0;
   box-sizing: border-box;
   flex-shrink: 0;
+  gap: 41px;
 }
 
 .gacha-pull-option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 0;
 }
 
 .gacha-diamond-container {
-  width: 88px;
-  height: 88px;
+  width: 95px;
+  height: 74px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,28 +475,32 @@ function freePull() {
 
 /* ---- Rhombus Pull Buttons ---- */
 .gacha-diamond-btn {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #FFF9F3 0%, #DFC0A5 100%);
-  border: 2.5px solid var(--off-white);
-  border-radius: 12px;
+  width: 63px;
+  height: 63px;
+  background-image: var(--btn-bg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  border: 2px solid #C4C9D3;
+  border-radius: 8px;
   transform: rotate(45deg);
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(181, 147, 116, 0.25), inset 0 0 8px rgba(255, 255, 255, 0.8);
-  transition: transform 0.15s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .gacha-diamond-btn.ten {
-  background: linear-gradient(135deg, #FFF6E6 0%, #E8BE88 100%);
-  box-shadow: 0 6px 16px rgba(232, 190, 136, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.8);
+  border-color: #FFAEAE;
 }
 
 .gacha-diamond-btn:active {
-  transform: rotate(45deg) scale(0.93);
+  transform: rotate(45deg) scale(0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .diamond-btn-content {
@@ -439,30 +511,41 @@ function freePull() {
 }
 
 .pull-text {
-  font-size: 13px;
-  font-weight: 900;
-  color: var(--text-heading);
+  font-size: 12px;
+  font-weight: 800;
+  color: #5C5254;
   white-space: nowrap;
   font-family: 'Jiangcheng Yuanti', sans-serif;
 }
 
 /* ---- Cost Pill Capsules ---- */
 .gacha-cost-badge {
-  background: #3E322D;
-  border: 2px solid var(--off-white);
+  width: 95px;
+  height: 22px;
+  margin-top: -10px;
+  background: #9A8D99;
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 99px;
-  padding: 3px 14px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  color: var(--text-primary);
-  font-size: 11px;
+  color: #fff;
+  font-size: 13px;
   font-weight: 800;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   pointer-events: none;
   line-height: 1;
   font-family: 'Plus Jakarta Sans', sans-serif;
+  z-index: 2;
+}
+
+.cost-icon-img {
+  width: 22px;
+  height: 19px;
+  object-fit: contain;
+  margin-left: -4px;
 }
 
 /* ---- Free Pull Container ---- */
@@ -472,23 +555,26 @@ function freePull() {
   align-items: center;
   width: 100%;
   flex-shrink: 0;
+
 }
 
 .gacha-free-pull-btn {
-  background: rgba(62, 50, 45, 0.9);
-  border: 2px solid var(--off-white);
+  width: 110px;
+  height: 24px;
+  background: rgba(140, 130, 135, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 99px;
-  padding: 6px 24px;
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  color: var(--text-primary);
+  gap: 5px;
+  color: #fff;
   font-size: 12px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, background 0.15s ease;
   line-height: 1;
 }
 
@@ -497,13 +583,18 @@ function freePull() {
   cursor: not-allowed;
 }
 
-.gacha-free-pull-btn:active {
+.gacha-free-pull-btn:hover:not(:disabled) {
+  background: rgba(140, 130, 135, 0.85);
+}
+
+.gacha-free-pull-btn:active:not(:disabled) {
   transform: scale(0.94);
 }
 
 .video-icon {
-  font-size: 13px;
-  line-height: 1;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .free-text {
@@ -550,16 +641,29 @@ function freePull() {
   justify-content: center;
   width: 100%;
   height: 100%;
-  border: 1.5px dashed rgba(160, 120, 80, 0.25);
+  border: none;
   border-radius: 6px;
   box-sizing: border-box;
 }
 
-.empty-slot-mark {
-  font-size: 16px;
-  font-weight: 800;
-  color: rgba(160, 120, 80, 0.2);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+.empty-slot-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 0.92;
+  filter: grayscale(0.15);
+}
+
+@media (max-height: 760px) {
+  .gacha-result-container {
+    margin-top: 20px;
+    transform: scale(0.9);
+    transform-origin: top center;
+  }
+
+  .gacha-redesign-controls {
+    margin-top: -12px;
+    transform: scale(0.9);
+  }
 }
 </style>
-

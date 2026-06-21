@@ -29,11 +29,11 @@ export const useEnergyStore = defineStore('energy', () => {
 
     const configStore = useConfigStore();
     const logic = new EnergyLogic({
-        ENERGY_REGEN_CAP: configStore.gameConfig.ENERGY_REGEN_CAP,
-        MAX_ENERGY: configStore.gameConfig.MAX_ENERGY,
-        ENERGY_REGEN_INTERVAL: configStore.gameConfig.ENERGY_REGEN_INTERVAL,
-        ENERGY_REGEN_AMOUNT: configStore.gameConfig.ENERGY_REGEN_AMOUNT,
-        ENERGY_COST_PER_SPAWN: configStore.gameConfig.ENERGY_COST_PER_SPAWN
+        ENERGY_REGEN_CAP: configStore.gameConfig.ENERGY_REGEN_CAP ?? 100,
+        MAX_ENERGY: configStore.gameConfig.MAX_ENERGY ?? 100,
+        ENERGY_REGEN_INTERVAL: configStore.gameConfig.ENERGY_REGEN_INTERVAL ?? 120000,
+        ENERGY_REGEN_AMOUNT: configStore.gameConfig.ENERGY_REGEN_AMOUNT ?? 1,
+        ENERGY_COST_PER_SPAWN: configStore.gameConfig.ENERGY_COST_PER_SPAWN ?? 1
     });
 
     // Initialize state from logic

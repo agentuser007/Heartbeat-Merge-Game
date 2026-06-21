@@ -127,14 +127,14 @@ body.cg-platform #landscape-warning {
   margin: auto;
   display: flex;
   flex-direction: column;
-  border-radius: clamp(0px, calc(64px * var(--figma-scale)), 64px);
+  border-radius: clamp(0px, calc(54px * var(--figma-scale)), 54px);
   background:
-    linear-gradient(0deg, rgba(250, 245, 248, 0.74) 0%, rgba(250, 245, 248, 0.36) 18%, rgba(250, 245, 248, 0) 35%),
-    linear-gradient(180deg, rgba(221, 170, 139, 0.3) 0%, rgba(255, 234, 195, 0.15) 25%, rgba(224, 177, 90, 0) 45%),
-    linear-gradient(0deg, rgba(224, 177, 90, 0.2) 80%, rgba(255, 234, 195, 0.1) 90%, transparent 100%),
-    url('@/assets/bg/overlay.png') center / cover no-repeat;
-  background-color: #9F9E8B;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 223, 200, 0.42) 26%, rgba(150, 129, 115, 0.08) 56%),
+    linear-gradient(0deg, rgba(255, 234, 195, 0.6) 0%, rgba(255, 223, 200, 0.26) 24%, rgba(255, 223, 200, 0) 48%),
+    url('/assets/figma/top-scene.png') center top / 100% auto no-repeat,
+    url('/assets/ui/screen.png') center / cover no-repeat;
+  background-color: #B8C7A0;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.34);
   position: relative;
   overflow: hidden;
   padding: 0;
@@ -148,7 +148,7 @@ body.cg-platform #landscape-warning {
   inset: auto 0 0 0;
   height: 28%;
   background: url('/assets/ui/screen.png') center bottom / cover no-repeat;
-  opacity: 0.62;
+  opacity: 0.42;
   pointer-events: none;
   z-index: 0;
 }
