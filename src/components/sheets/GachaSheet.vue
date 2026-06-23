@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import BaseBottomSheet from './BaseBottomSheet.vue'
 import { useSheet } from '../../composables/useSheet'
 import { useGachaStore } from '../../stores/gachaStore'
@@ -114,6 +114,10 @@ type GachaGridCard = Partial<GachaItem> & { id: string; placeholder?: boolean };
 
 const { isOpen } = useSheet('gacha-sheet')
 const gachaStore = useGachaStore()
+
+watch(isOpen, (open) => {
+  if (!open) gachaStore.resetResults()
+})
 const configStore = useConfigStore()
 const currencyStore = useCurrencyStore()
 const i18nStore = useI18nStore()

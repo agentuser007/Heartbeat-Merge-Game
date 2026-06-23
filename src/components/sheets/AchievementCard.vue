@@ -38,12 +38,14 @@
           未完成
         </button>
       </div>
-      <div class="card-divider" />
-      <div class="card-rewards">
-        <span v-if="achievement.reward.diamonds" class="reward-badge">💎{{ achievement.reward.diamonds }}</span>
-        <span v-if="achievement.reward.energy" class="reward-badge">⚡{{ achievement.reward.energy }}</span>
-        <span v-if="achievement.reward.gold" class="reward-badge">🪙{{ achievement.reward.gold }}</span>
-      </div>
+      <template v-if="hasReward">
+        <div class="card-divider" />
+        <div class="card-rewards">
+          <span v-if="achievement.reward.diamonds" class="reward-badge">💎{{ achievement.reward.diamonds }}</span>
+          <span v-if="achievement.reward.energy" class="reward-badge">⚡{{ achievement.reward.energy }}</span>
+          <span v-if="achievement.reward.gold" class="reward-badge">🪙{{ achievement.reward.gold }}</span>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -66,6 +68,8 @@ const hasReward = computed(() => {
   const r = props.achievement.reward
   return (r.diamonds ?? 0) > 0 || (r.energy ?? 0) > 0 || (r.gold ?? 0) > 0
 })
+
+
 </script>
 
 <style scoped>
