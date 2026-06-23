@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heartbeat Merge 配置编辑器</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --sidebar-w: 220px;
+  --toolbar-h: 44px;
+  --status-h: 28px;
+  --bg: #1e1e1e;
+  --sidebar-bg: #252526;
+  --border: #333;
+  --text: #ccc;
+  --text-dim: #888;
+  --accent: #0078d4;
+  --accent-hover: #1a8ae8;
+  --danger: #dc2626;
+  --warn: #d97706;
+  --success: #16a34a;
+  --group-bg: #2d2d2d;
+}
+html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+
+#app { display: flex; flex-direction: column; height: 100%; }
+
+/* Top Bar */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px; height: 48px; min-height: 48px;
+  background: #181818; border-bottom: 1px solid var(--border);
+}
+.topbar__title { font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; }
+.topbar__spacer { flex: 1; }
+.topbar__pat { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.topbar__pat input {
+  width: 220px; padding: 4px 8px; background: #333; border: 1px solid #555;
+  border-radius: 4px; color: #fff; font-size: 12px; font-family: monospace;
+}
+.topbar__pat input::placeholder { color: #666; }
+
+/* Main Layout */
+.main { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: var(--sidebar-bg); border-right: 1px solid var(--border);
+  overflow-y: auto; overflow-x: hidden;
+}
+.sidebar__group {}
+.sidebar__group-header {
+  padding: 8px 12px; font-size: 11px; font-weight: 700;
+  color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;
+  cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px;
+}
+.sidebar__group-header:hover { background: rgba(255,255,255,0.05); }
+.sidebar__group-header::before { content: '▾'; font-size: 10px; transition: transform 0.15s; }
+.sidebar__group-header.collapsed::before { transform: rotate(-90deg); }
+.sidebar__group-items { padding: 0; }
+.sidebar__group-header.collapsed + .sidebar__group-items { display: none; }
+.sidebar__item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px 5px 24px; font-size: 12px; cursor: pointer;
+  color: var(--text); transition: background 0.1s;
+}
+.sidebar__item:hover { background: rgba(255,255,255,0.08); }
+.sidebar__item.active { background: var(--accent); color: #fff; }
+.sidebar__item--dirty::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--warn); margin-left: auto; flex-shrink: 0;
+}
+.sidebar__item--preview::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success); flex-shrink: 0;
+}
+
+/* Editor Area */
+.editor-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.editor-area__filename {
+  padding: 4px 16px; font-size: 12px; color: var(--text-dim);
+  background: #181818; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.editor-area__filename .dirty-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--warn);
+}
+#monaco-container { flex: 1; overflow: hidden; }
+
+/* Toolbar */
+.toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 12px; height: var(--toolbar-h); min-height: var(--toolbar-h);
+  background: #181818; border-top: 1px solid var(--border);
+}
+.toolbar__btn {
+  padding: 4px 12px; font-size: 12px; border: 1px solid #555; border-radius: 4px;
+  cursor: pointer; background: #333; color: var(--text); transition: background 0.15s;
+  white-space: nowrap;
+}
+.toolbar__btn:hover { background: #444; }
+.toolbar__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.toolbar__btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.toolbar__btn--primary:hover { background: var(--accent-hover); }
+.toolbar__btn--danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.toolbar__btn--danger:hover { background: #ef4444; }
+.toolbar__btn--ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
+.toolbar__btn--ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+
+/* Status Bar */
+.statusbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 12px; height: var(--status-h); min-height: var(--status-h);
+  background: #181818; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-dim);
+}
+.statusbar__dot { width: 6px; height: 6px; border-radius: 50%; }
+.statusbar__dot--ok { background: var(--success); }
+.statusbar__dot--err { background: var(--danger); }
+.statusbar__dot--warn { background: var(--warn); }
+
+/* Empty State */
+.empty-state {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim); font-size: 14px;
+}
+
+/* Toast */
+.toast-container { position: fixed; top: 16px; right: 16px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; }
+.toast {
+  padding: 8px 16px; border-radius: 6px; font-size: 13px; color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4); animation: toast-in 0.25s ease;
+  max-width: 360px;
+}
+.toast--success { background: var(--success); }
+.toast--error { background: var(--danger); }
+.toast--info { background: var(--accent); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <span class="topbar__title">Heartbeat Merge 配置编辑器</span>
+    <div class="topbar__spacer"></div>
+    <div class="topbar__pat">
+      <span>GitHub PAT:</span>
+      <input type="password" id="pat-input" placeholder="ghp_xxxx 或 github_pat_xxxx" />
+    </div>
+    <button class="toolbar__btn toolbar__btn--primary" id="btn-save-all" disabled>Save All</button>
+  </div>
+
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="editor-area">
+      <div class="editor-area__filename" id="filename-bar">选择左侧配置文件开始编辑</div>
+      <div id="monaco-container"></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="toolbar__btn toolbar__btn--primary" id="btn-preview" disabled>Preview</button>
+    <button class="toolbar__btn toolbar__btn--primary" id="btn-save" disabled>Save to GitHub</button>
+    <button class="toolbar__btn" id="btn-reset" disabled>Reset</button>
+    <button class="toolbar__btn" id="btn-format" disabled>Format JSON</button>
+    <button class="toolbar__btn toolbar__btn--ghost" id="btn-export-csv" disabled>Export CSV</button>
+    <button class="toolbar__btn toolbar__btn--danger" id="btn-clear-all">Clear All Previews</button>
+  </div>
+
+  <div class="statusbar">
+    <span class="statusbar__dot statusbar__dot--ok" id="status-dot"></span>
+    <span id="status-text">就绪</span>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // ─── Constants ───
+  const GITHUB_OWNER = 'agentuser007';
+  const GITHUB_REPO = 'untitled-merge-game';
+  const CONFIG_PATH_PREFIX = 'public/assets/data';
+  const OVERRIDE_KEY_PREFIX = 'config_override:';
+  const PAT_SESSION_KEY = 'gh_pat';
+
+  const FILE_GROUPS = [
+    { label: '合并核心', files: ['settings', 'board_economy', 'item_effects'] },
+    { label: '物品/生成器', files: ['items', 'generators'] },
+    { label: '抽卡', files: ['gacha_pool', 'gacha_config'] },
+    { label: '循环/进度', files: ['loop_rules', 'loop_multipliers', 'loop_events', 'loop_narratives', 'boss_progression'] },
+    { label: '关卡/Boss', files: ['levels'] },
+    { label: '角色/好感', files: ['character_profiles', 'affection_config', 'touch_interactions', 'affection_shop'] },
+    { label: '剧情', files: ['cg_stories'] },
+    { label: '日常/经济', files: ['daily_orders', 'daily_buff_config'] },
+    { label: '商店/广告', files: ['shop_items', 'ad_config'] },
+    { label: '成就', files: ['achievements'] },
+    { label: '音频', files: ['audio_config'] },
+  ];
+
+  const ALL_FILES = FILE_GROUPS.flatMap(g => g.files);
+
+  // ─── State ───
+  let editor = null;
+  let currentFile = null;
+  const originalContents = new Map();
+  const dirtyFiles = new Set();
+  const previewFiles = new Set();
+  let isLoading = false;
+
+  // ─── DOM refs ───
+  const sidebar = document.getElementById('sidebar');
+  const filenameBar = document.getElementById('filename-bar');
+  const patInput = document.getElementById('pat-input');
+  const btnPreview = document.getElementById('btn-preview');
+  const btnSave = document.getElementById('btn-save');
+  const btnSaveAll = document.getElementById('btn-save-all');
+  const btnReset = document.getElementById('btn-reset');
+  const btnFormat = document.getElementById('btn-format');
+  const btnExportCsv = document.getElementById('btn-export-csv');
+  const btnClearAll = document.getElementById('btn-clear-all');
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+
+  // ─── Restore PAT ───
+  patInput.value = sessionStorage.getItem(PAT_SESSION_KEY) || '';
+  patInput.addEventListener('input', () => {
+    sessionStorage.setItem(PAT_SESSION_KEY, patInput.value);
+  });
+
+  // ─── Toast ───
+  function showToast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = `toast toast--${type}`;
+    el.textContent = msg;
+    document.getElementById('toast-container').appendChild(el);
+    const duration = type === 'error' ? 8000 : 3000;
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, duration);
+  }
+
+  // ─── Status ───
+  function setStatus(text, level = 'ok') {
+    statusText.textContent = text;
+    statusDot.className = `statusbar__dot statusbar__dot--${level}`;
+  }
+
+  // ─── Sidebar ───
+  function buildSidebar() {
+    sidebar.innerHTML = '';
+    for (const group of FILE_GROUPS) {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'sidebar__group';
+
+      const header = document.createElement('div');
+      header.className = 'sidebar__group-header';
+      header.textContent = group.label;
+      header.addEventListener('click', () => header.classList.toggle('collapsed'));
+
+      const items = document.createElement('div');
+      items.className = 'sidebar__group-items';
+
+      for (const file of group.files) {
+        const item = document.createElement('div');
+        item.className = 'sidebar__item';
+        item.dataset.file = file;
+        item.textContent = file;
+        item.addEventListener('click', () => selectFile(file));
+        items.appendChild(item);
+      }
+
+      groupEl.appendChild(header);
+      groupEl.appendChild(items);
+      sidebar.appendChild(groupEl);
+    }
+  }
+
+  function updateSidebar() {
+    for (const item of sidebar.querySelectorAll('.sidebar__item')) {
+      const file = item.dataset.file;
+      item.classList.toggle('active', file === currentFile);
+      item.classList.toggle('sidebar__item--dirty', dirtyFiles.has(file));
+      item.classList.toggle('sidebar__item--preview', previewFiles.has(file) && !dirtyFiles.has(file));
+    }
+  }
+
+  // ─── File Loading ───
+  function getConfigUrl(filename) {
+    const base = document.querySelector('base')?.getAttribute('href') || '../';
+    return `${base}assets/data/${filename}.json`;
+  }
+
+  async function fetchConfig(filename) {
+    const url = getConfigUrl(filename);
+    const resp = await fetch(url + '?v=' + Date.now());
+    if (!resp.ok) throw new Error(`Failed to fetch ${filename}: ${resp.status}`);
+    return resp.text();
+  }
+
+  async function loadFile(filename) {
+    if (!originalContents.has(filename)) {
+      try {
+        const text = await fetchConfig(filename);
+        originalContents.set(filename, text);
+      } catch (e) {
+        showToast(`加载 ${filename}.json 失败: ${e.message}`, 'error');
+        originalContents.set(filename, '{}');
+      }
+    }
+  }
+
+  // ─── Select File ───
+  async function selectFile(filename) {
+    if (isLoading) return;
+    if (currentFile && editor) {
+      saveEditorToState();
+    }
+    isLoading = true;
+    setStatus(`加载 ${filename}.json...`, 'warn');
+
+    try {
+      await loadFile(filename);
+      currentFile = filename;
+
+      if (editor) {
+        const override = localStorage.getItem(OVERRIDE_KEY_PREFIX + filename);
+        const content = override || originalContents.get(filename) || '{}';
+        editor.setValue(content);
+        const model = editor.getModel();
+        if (model) monaco.editor.setModelLanguage(model, 'json');
+      }
+
+      filenameBar.innerHTML = `${filename}.json` + (dirtyFiles.has(filename) ? ' <span class="dirty-dot"></span>' : '');
+      updateButtons();
+      updateSidebar();
+      setStatus(`${filename}.json`, 'ok');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      showToast(`切换 ${filename}.json 失败: ${msg}`, 'error');
+      console.error('[selectFile]', e);
+      setStatus('错误: ' + msg, 'err');
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  function saveEditorToState() {
+    if (!editor || !currentFile) return;
+    const content = editor.getValue();
+    const original = originalContents.get(currentFile) || '';
+    const isDirty = content !== original;
+    if (isDirty) {
+      dirtyFiles.add(currentFile);
+    } else {
+      dirtyFiles.delete(currentFile);
+    }
+  }
+
+  // ─── Buttons ───
+  function updateButtons() {
+    const hasFile = !!currentFile;
+    const hasDirty = dirtyFiles.size > 0;
+    btnPreview.disabled = !hasFile;
+    btnSave.disabled = !hasFile || !dirtyFiles.has(currentFile);
+    btnSaveAll.disabled = !hasDirty;
+    btnReset.disabled = !hasFile || !dirtyFiles.has(currentFile);
+    btnFormat.disabled = !hasFile;
+    btnExportCsv.disabled = !hasFile;
+  }
+
+  // ─── Preview ───
+  function doPreview() {
+    if (!currentFile || !editor) return;
+    saveEditorToState();
+    const content = editor.getValue();
+    try {
+      JSON.parse(content);
+    } catch (e) {
+      showToast(`JSON 语法错误: ${e.message}`, 'error');
+      return;
+    }
+    localStorage.setItem(OVERRIDE_KEY_PREFIX + currentFile, content);
+    previewFiles.add(currentFile);
+    updateSidebar();
+
+    if (typeof BroadcastChannel !== 'undefined') {
+      const ch = new BroadcastChannel('config-editor');
+      ch.postMessage({ type: 'preview', filename: currentFile });
+      ch.close();
+    }
+
+    showToast(`预览已发送: ${currentFile}.json — 请切换到游戏 tab 查看`, 'success');
+    setStatus(`预览: ${currentFile}.json`, 'ok');
+
+    const watchedFile = currentFile;
+    let polls = 0;
+    const pollInterval = setInterval(() => {
+      polls++;
+      const stillExists = localStorage.getItem(OVERRIDE_KEY_PREFIX + watchedFile) !== null;
+      if (!stillExists) {
+        clearInterval(pollInterval);
+        previewFiles.delete(watchedFile);
+        showToast('Preview 失败: ' + watchedFile + '.json 校验不通过，已回退到原始配置', 'error');
+        updateSidebar();
+        updateButtons();
+      } else if (polls >= 30) {
+        clearInterval(pollInterval);
+      }
+    }, 500);
+  }
+
+  // ─── Save to GitHub ───
+  function getPat() {
+    return patInput.value.trim();
+  }
+
+  async function saveFileToGithub(filename, content) {
+    const pat = getPat();
+    if (!pat) {
+      showToast('请先输入 GitHub PAT', 'error');
+      patInput.focus();
+      return false;
+    }
+
+    setStatus(`保存 ${filename}.json 到 GitHub...`, 'warn');
+
+    const path = `${CONFIG_PATH_PREFIX}/${filename}.json`;
+    const apiBase = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+
+    try {
+      const getResp = await fetch(apiBase, {
+        headers: { Authorization: `Bearer ${pat}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (getResp.status === 401) { showToast('PAT 无效或已过期', 'error'); return false; }
+      if (!getResp.ok && getResp.status !== 404) {
+        const err = await getResp.json();
+        throw new Error(err.message || `GET failed: ${getResp.status}`);
+      }
+      const existing = getResp.status === 404 ? null : await getResp.json();
+      const sha = existing ? existing.sha : undefined;
+
+      const body = {
+        message: `config: update ${filename}.json via config-editor`,
+        content: btoa(unescape(encodeURIComponent(content))),
+        branch: 'main',
+      };
+      if (sha) body.sha = sha;
+
+      const putResp = await fetch(apiBase, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${pat}`, Accept: 'application/vnd.github.v3+json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!putResp.ok) {
+        const err = await putResp.json();
+        if (err.message?.includes('conflict')) {
+          showToast(`${filename}.json 有冲突，请 Reset 后重试`, 'error');
+        } else {
+          throw new Error(err.message || `PUT failed: ${putResp.status}`);
+        }
+        return false;
+      }
+
+      localStorage.removeItem(OVERRIDE_KEY_PREFIX + filename);
+      previewFiles.delete(filename);
+      originalContents.set(filename, content);
+      dirtyFiles.delete(filename);
+      return true;
+    } catch (e) {
+      showToast(`保存 ${filename}.json 失败: ${e.message}`, 'error');
+      return false;
+    }
+  }
+
+  async function doSave() {
+    if (!currentFile || !editor) return;
+    saveEditorToState();
+    const content = editor.getValue();
+    try { JSON.parse(content); } catch (e) { showToast(`JSON 语法错误: ${e.message}`, 'error'); return; }
+
+    const ok = await saveFileToGithub(currentFile, content);
+    if (ok) {
+      showToast(`已保存 ${currentFile}.json 到 GitHub`, 'success');
+      setStatus(`${currentFile}.json 已保存`, 'ok');
+      updateSidebar();
+      updateButtons();
+      filenameBar.innerHTML = `${currentFile}.json`;
+    }
+  }
+
+  async function doSaveAll() {
+    if (dirtyFiles.size === 0) return;
+    if (editor) saveEditorToState();
+
+    const files = [...dirtyFiles];
+    setStatus(`保存 ${files.length} 个文件...`, 'warn');
+    let success = 0;
+    for (const file of files) {
+      const content = (file === currentFile && editor) ? editor.getValue() : localStorage.getItem(OVERRIDE_KEY_PREFIX + file) || originalContents.get(file) || '{}';
+      if (await saveFileToGithub(file, content)) success++;
+    }
+    showToast(`已保存 ${success}/${files.length} 个文件`, success === files.length ? 'success' : 'info');
+    setStatus(`保存完成: ${success}/${files.length}`, success === files.length ? 'ok' : 'warn');
+    updateSidebar();
+    updateButtons();
+  }
+
+  // ─── Reset ───
+  function doReset() {
+    if (!currentFile || !editor) return;
+    const original = originalContents.get(currentFile) || '{}';
+    editor.setValue(original);
+    dirtyFiles.delete(currentFile);
+    localStorage.removeItem(OVERRIDE_KEY_PREFIX + currentFile);
+    previewFiles.delete(currentFile);
+    updateSidebar();
+    updateButtons();
+    filenameBar.innerHTML = `${currentFile}.json`;
+    showToast(`已重置 ${currentFile}.json`, 'info');
+  }
+
+  // ─── Format ───
+  function doFormat() {
+    if (!editor) return;
+    editor.getAction('editor.action.formatDocument')?.run();
+  }
+
+  // ─── Clear All ───
+  function doClearAll() {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(OVERRIDE_KEY_PREFIX)) keys.push(key);
+    }
+    for (const key of keys) localStorage.removeItem(key);
+    previewFiles.clear();
+    updateSidebar();
+    showToast(`已清除 ${keys.length} 个预览`, 'info');
+    if (typeof BroadcastChannel !== 'undefined') {
+      const ch = new BroadcastChannel('config-editor');
+      ch.postMessage({ type: 'clear' });
+      ch.close();
+    }
+  }
+
+  // ─── Init Preview State ───
+  function initPreviewState() {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(OVERRIDE_KEY_PREFIX)) {
+        previewFiles.add(key.replace(OVERRIDE_KEY_PREFIX, ''));
+      }
+    }
+  }
+
+  // ─── Button Bindings ───
+  btnPreview.addEventListener('click', doPreview);
+  btnSave.addEventListener('click', doSave);
+  btnSaveAll.addEventListener('click', doSaveAll);
+  btnReset.addEventListener('click', doReset);
+  btnFormat.addEventListener('click', doFormat);
+  btnExportCsv.addEventListener('click', () => showToast('CSV 导出功能开发中', 'info'));
+  btnClearAll.addEventListener('click', doClearAll);
+
+  // ─── Monaco Init ───
+  function initMonaco() {
+    require.config({
+      paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' }
+    });
+
+    require(['vs/editor/editor.main'], function() {
+      monaco.editor.defineTheme('config-dark', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#1e1e1e',
+          'editor.lineHighlightBackground': '#2a2a2a',
+        }
+      });
+
+      editor = monaco.editor.create(document.getElementById('monaco-container'), {
+        value: '// 选择左侧配置文件开始编辑',
+        language: 'json',
+        theme: 'config-dark',
+        fontSize: 13,
+        lineNumbers: 'on',
+        minimap: { enabled: false },
+        scrollBeyondLastLine: false,
+        wordWrap: 'on',
+        tabSize: 2,
+        automaticLayout: true,
+        formatOnPaste: true,
+        formatOnType: true,
+      });
+
+      editor.onDidChangeModelContent(() => {
+        if (!currentFile) return;
+        const content = editor.getValue();
+        const original = originalContents.get(currentFile) || '';
+        const isDirty = content !== original;
+        if (isDirty) {
+          dirtyFiles.add(currentFile);
+        } else {
+          dirtyFiles.delete(currentFile);
+        }
+        updateButtons();
+        updateSidebar();
+        filenameBar.innerHTML = `${currentFile}.json` + (isDirty ? ' <span class="dirty-dot"></span>' : '');
+      });
+
+      monaco.editor.setModelLanguage(editor.getModel(), 'json');
+
+      monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        validate: true,
+        allowComments: false,
+        schemaValidation: 'error',
+      });
+
+      setStatus('就绪', 'ok');
+    });
+  }
+
+  // ─── Bootstrap ───
+  buildSidebar();
+  initPreviewState();
+  updateSidebar();
+  initMonaco();
+
+  // Preload all files in background
+  Promise.all(ALL_FILES.map(f => loadFile(f))).then(() => {
+    setStatus('所有配置文件已加载', 'ok');
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,12 +1,14 @@
 <template>
   <GameView :style="uiCssVars" />
   <DevPanel />
+  <ConfigOverrideBanner />
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import GameView from './views/GameView.vue'
 import DevPanel from './components/common/DevPanel.vue'
+import ConfigOverrideBanner from './components/common/ConfigOverrideBanner.vue'
 import { useConfigStore } from './stores/configStore'
 
 const configStore = useConfigStore()
