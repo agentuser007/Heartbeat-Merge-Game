@@ -2,7 +2,7 @@ name: Deploy to Pages
 
 on:
   push:
-    branches: [""]
+    branches: [ "main", "ui_dev" ]
 
 permissions:
   pages: write
