@@ -5,7 +5,7 @@
 // events, and optional ui instructions. No Vue dependency.
 // ============================================================
 
-import type { InventoryItemMeta, Rarity, LoopStatus, DailyOrderState } from '../types/game';
+import type { InventoryItemMeta, Rarity, LoopStatus, DailyOrderState, VNChoice } from '../types/game';
 import type { GachaItem } from '../logic/GachaLogic';
 
 export type ToastType = 'info' | 'sr' | 'ssr' | 'error';
@@ -41,6 +41,7 @@ export interface ResolveResult {
             updateShopPurchase?: { itemId: string; date: string };
             updateGiftHistory?: { characterId: string; giftId: string };
             recordTouch?: { characterId: string; zoneId: string };
+            addDarkness?: Array<{ characterId: string; amount: number }>;
         };
         heroine?: {
             setUpgradeLevels?: Array<{ upgradeId: string; level: number }>;
@@ -57,6 +58,8 @@ export interface ResolveResult {
             incrementLoopIndex?: { addLoopTokens?: number };
             spendLoopTokens?: number;
             setMetaUpgradeLevel?: { upgradeId: string; level: number };
+            setControlLevel?: number;
+            addNarrativeFlags?: string[];
         };
         collection?: { resetLoopDiscoveries?: boolean; markChainCompleted?: string };
         dailyOrders?: {
@@ -101,6 +104,11 @@ export interface ResolveResult {
         touch?: {
             setTouchCooldown?: { characterId: string; zoneId: string; timestamp: number };
             incrementDailyTouchCount?: string;
+        };
+        narrative?: {
+            setCurrentSceneId?: string;
+            setMode?: 'cg' | 'scene';
+            setPendingChoice?: VNChoice | null;
         };
     };
     events?: Array<{ name: string; data: unknown }>;
@@ -262,6 +270,7 @@ export function mergeResolveResult(target: ResolveResult, source: ResolveResult)
             updateShopPurchase: sa.affection.updateShopPurchase ?? ta.affection?.updateShopPurchase,
             updateGiftHistory: sa.affection.updateGiftHistory ?? ta.affection?.updateGiftHistory,
             recordTouch: sa.affection.recordTouch ?? ta.affection?.recordTouch,
+            addDarkness: mergeArr(ta.affection?.addDarkness, sa.affection.addDarkness),
         };
     }
 
@@ -287,6 +296,8 @@ export function mergeResolveResult(target: ResolveResult, source: ResolveResult)
             incrementLoopIndex: sa.loop.incrementLoopIndex ?? ta.loop?.incrementLoopIndex,
             spendLoopTokens: sumOrUndef(ta.loop?.spendLoopTokens, sa.loop.spendLoopTokens),
             setMetaUpgradeLevel: sa.loop.setMetaUpgradeLevel ?? ta.loop?.setMetaUpgradeLevel,
+            setControlLevel: sa.loop.setControlLevel ?? ta.loop?.setControlLevel,
+            addNarrativeFlags: mergeArr(ta.loop?.addNarrativeFlags, sa.loop.addNarrativeFlags),
         };
     }
 
@@ -350,6 +361,14 @@ export function mergeResolveResult(target: ResolveResult, source: ResolveResult)
         ta.touch = {
             setTouchCooldown: sa.touch.setTouchCooldown ?? ta.touch?.setTouchCooldown,
             incrementDailyTouchCount: sa.touch.incrementDailyTouchCount ?? ta.touch?.incrementDailyTouchCount,
+        };
+    }
+
+    if (sa.narrative) {
+        ta.narrative = {
+            setCurrentSceneId: sa.narrative.setCurrentSceneId ?? ta.narrative?.setCurrentSceneId,
+            setMode: sa.narrative.setMode ?? ta.narrative?.setMode,
+            setPendingChoice: sa.narrative.setPendingChoice !== undefined ? sa.narrative.setPendingChoice : ta.narrative?.setPendingChoice,
         };
     }
 

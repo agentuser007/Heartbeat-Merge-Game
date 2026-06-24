@@ -29,6 +29,7 @@ export const useLoopStore = defineStore('loop', () => {
     });
     const currentLoopConfig = ref<any>(null);
     const unlockedNarrativeFlags = ref<string[]>([]);
+    const controlLevel = ref(0);
 
     // --- Computed ---
     const hasLoopTokens = computed(() => {
@@ -176,6 +177,18 @@ export const useLoopStore = defineStore('loop', () => {
         return unlockedNarrativeFlags.value.includes(flag);
     }
 
+    function addNarrativeFlag(flag: string): void {
+        unlockNarrativeFlag(flag);
+    }
+
+    function setControlLevel(level: number): void {
+        controlLevel.value = Math.min(100, Math.max(0, level));
+    }
+
+    function addControlLevel(delta: number): void {
+        setControlLevel(controlLevel.value + delta);
+    }
+
     function hasRule(rule: string): boolean {
         return currentLoopConfig.value?.specialRules?.includes(rule) ?? false;
     }
@@ -203,7 +216,8 @@ export const useLoopStore = defineStore('loop', () => {
             loopStatus: loopStatus.value,
             metaUpgrades: { ...metaUpgrades.value },
             currentLoopConfig: currentLoopConfig.value ? { ...currentLoopConfig.value } : null,
-            unlockedNarrativeFlags: [...unlockedNarrativeFlags.value]
+            unlockedNarrativeFlags: [...unlockedNarrativeFlags.value],
+            controlLevel: controlLevel.value,
         };
     }
 
@@ -222,6 +236,7 @@ export const useLoopStore = defineStore('loop', () => {
         };
         currentLoopConfig.value = d.currentLoopConfig || null;
         unlockedNarrativeFlags.value = d.unlockedNarrativeFlags || [];
+        controlLevel.value = (d as any).controlLevel ?? 0;
     }
 
     return {
@@ -231,6 +246,7 @@ export const useLoopStore = defineStore('loop', () => {
         metaUpgrades,
         currentLoopConfig,
         unlockedNarrativeFlags,
+        controlLevel,
         
         hasLoopTokens,
         totalMetaUpgrades,
@@ -255,7 +271,10 @@ export const useLoopStore = defineStore('loop', () => {
         getStartingEnergyBonus,
         getDailyBonusMultiplier,
         unlockNarrativeFlag,
+        addNarrativeFlag,
         hasNarrativeFlag,
+        setControlLevel,
+        addControlLevel,
         hasRule,
         transitionToSettling,
         transitionToCompleted,

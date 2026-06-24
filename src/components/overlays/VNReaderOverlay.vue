@@ -59,6 +59,24 @@
         </div>
       </div>
 
+      <!-- Choice Panel (scene mode only) -->
+      <Transition name="vn-choice-fade">
+        <div
+          v-if="vnStore.pendingChoice"
+          class="vn-choice-panel"
+          @click.stop
+        >
+          <div class="vn-choice-prompt">{{ vnStore.pendingChoice.prompt }}</div>
+          <button
+            v-for="(opt, idx) in vnStore.pendingChoice.options"
+            :key="idx"
+            :disabled="!isOptionAvailable(opt)"
+            class="vn-choice-btn"
+            @click.stop="onSelectChoice(idx)"
+          >{{ opt.text }}</button>
+        </div>
+      </Transition>
+
       <!-- Bottom Controls (Skip / Auto) -->
       <div class="vn-bottom-controls">
         <button
@@ -124,11 +142,17 @@ import { useVNReaderStore } from '../../stores/vnReaderStore';
 import { useI18nStore } from '../../stores/i18nStore';
 import { useAudio } from '../../composables/useAudio';
 import { useConfigStore } from '../../stores/configStore';
+import { useAffectionStore } from '../../stores/affectionStore';
+import { useLoopStore } from '../../stores/loopStore';
+import { checkChoiceCondition } from '../../services/NarrativeService';
+import type { VNChoiceOption } from '@/types/game';
 
 const vnStore = useVNReaderStore();
 const i18nStore = useI18nStore();
 const audio = useAudio();
 const configStore = useConfigStore();
+const affectionStore = useAffectionStore();
+const loopStore = useLoopStore();
 
 // --- Typewriter state ---
 const displayedText = ref('');
@@ -211,6 +235,7 @@ function clearAllTimers() {
 async function showCurrentLine() {
   const line = vnStore.currentLine;
   if (!line) {
+    if (vnStore.mode === 'scene') return;
     vnStore.showEnd();
     return;
   }
@@ -235,8 +260,19 @@ async function showCurrentLine() {
 watch(
   () => vnStore.currentIndex,
   async () => {
-    if (vnStore.isOpen && !vnStore.ended) {
+    if (vnStore.isOpen && !vnStore.ended && !vnStore.pendingChoice) {
       clearAllTimers();
+      await showCurrentLine();
+    }
+  },
+);
+
+watch(
+  () => vnStore.lines,
+  async () => {
+    if (vnStore.isOpen && !vnStore.ended && !vnStore.pendingChoice && vnStore.mode === 'scene') {
+      clearAllTimers();
+      await nextTick();
       await showCurrentLine();
     }
   },
@@ -343,7 +379,21 @@ function onToggleAuto() {
 }
 
 function onToggleSkip() {
-  vnStore.toggleSkip();
+    vnStore.toggleSkip();
+}
+
+function isOptionAvailable(opt: VNChoiceOption): boolean {
+    if (!opt.condition) return true;
+    return checkChoiceCondition(opt, {
+        affection: { ...affectionStore.affection },
+        darkness: { ...affectionStore.darkness },
+        controlLevel: loopStore.controlLevel,
+        flags: [...loopStore.unlockedNarrativeFlags],
+    });
+}
+
+function onSelectChoice(idx: number) {
+    vnStore.selectChoice(idx);
 }
 
 // --- Cleanup on unmount ---
@@ -646,6 +696,63 @@ onBeforeUnmount(() => {
   font-style: italic;
 }
 
+/* ===== Choice Panel ===== */
+.vn-choice-panel {
+  position: relative;
+  z-index: 6;
+  width: 90vw;
+  max-width: 420px;
+  margin-bottom: 2vh;
+  padding: 16px 20px;
+  background: rgba(15,12,41,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  border: 1px solid rgba(123,104,238,0.3);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+}
+
+.vn-choice-prompt {
+  color: rgba(255,255,255,0.85);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.vn-choice-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(123,104,238,0.4);
+  background: linear-gradient(135deg, rgba(123,104,238,0.15), rgba(123,104,238,0.05));
+  color: rgba(255,255,255,0.9);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.vn-choice-btn:last-child {
+  margin-bottom: 0;
+}
+
+.vn-choice-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(123,104,238,0.3), rgba(123,104,238,0.15));
+  border-color: rgba(123,104,238,0.7);
+}
+
+.vn-choice-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.vn-choice-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 /* ===== Transitions ===== */
 .vn-fade-enter-active,
 .vn-fade-leave-active {
@@ -664,6 +771,17 @@ onBeforeUnmount(() => {
 }
 .vn-title-enter-from,
 .vn-title-leave-to {
+  opacity: 0;
+}
+
+.vn-choice-fade-enter-active {
+  transition: opacity 0.3s ease;
+}
+.vn-choice-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.vn-choice-fade-enter-from,
+.vn-choice-fade-leave-to {
   opacity: 0;
 }
 </style>

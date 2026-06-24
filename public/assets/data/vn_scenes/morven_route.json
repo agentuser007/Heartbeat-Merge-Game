@@ -1,0 +1,60 @@
+{
+  "characterId": "morven",
+  "scenes": {
+    "morven_ch1_entry": {
+      "lines": [
+        { "speakerId": null, "text": "走廊里静悄悄的。" },
+        { "speakerId": "morven", "text": "你来了。", "expression": "冷淡" }
+      ],
+      "choice": {
+        "prompt": "你要怎么做？",
+        "options": [
+          {
+            "text": "坦白身份",
+            "nextScene": "morven_ch1_confess",
+            "effects": { "darkness": { "morven": -5 }, "flags": ["morven_confessed"] }
+          },
+          {
+            "text": "继续隐瞒",
+            "nextScene": "morven_ch1_hide",
+            "effects": { "darkness": { "morven": 5 }, "flags": ["morven_hid_identity"] }
+          }
+        ]
+      }
+    },
+    "morven_ch1_confess": {
+      "lines": [
+        { "speakerId": "morven", "text": "……我知道了。", "expression": "复杂" }
+      ],
+      "nextScene": "morven_ch2_entry"
+    },
+    "morven_ch1_hide": {
+      "lines": [
+        { "speakerId": "morven", "text": "你在隐瞒什么。", "expression": "怀疑" }
+      ],
+      "nextScene": "morven_ch2_entry"
+    },
+    "morven_ch2_entry": {
+      "lines": [
+        { "speakerId": null, "text": "第二章开始。（占位）" }
+      ]
+    }
+  },
+  "endings": [
+    {
+      "endingId": "morven_trust",
+      "priority": 1,
+      "condition": {
+        "affectionRange": { "morven": [70, 100] },
+        "darknessRange": { "morven": [0, 30] },
+        "requiredFlags": ["morven_confessed"]
+      }
+    },
+    {
+      "endingId": "morven_fallback",
+      "priority": 99,
+      "condition": {},
+      "isFallback": true
+    }
+  ]
+}

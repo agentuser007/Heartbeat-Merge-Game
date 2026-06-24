@@ -37,6 +37,7 @@ export const useAffectionStore = defineStore('affection', () => {
     const shopPurchaseHistory = ref<Record<string, ShopPurchaseRecord>>({});
     const giftHistory = ref<Record<string, Record<string, number>>>({});
     const lastTouchTime = ref<Record<string, Record<string, number>>>({});
+    const darkness = ref<Record<string, number>>({});
     const _selectedCharacterId = ref<string>('morven');
 
     // ============================================================
@@ -211,6 +212,15 @@ export const useAffectionStore = defineStore('affection', () => {
         lastTouchTime.value[characterId][zoneId] = Date.now();
     }
 
+    function addDarkness(characterId: string, amount: number): void {
+        const old = darkness.value[characterId] || 0;
+        darkness.value[characterId] = Math.max(0, old + amount);
+    }
+
+    function setDarkness(characterId: string, value: number): void {
+        darkness.value[characterId] = Math.max(0, value);
+    }
+
     function resetDailyPurchases(): void {
         const todayStr = _getTodayStr(Date.now());
         for (const itemId of Object.keys(shopPurchaseHistory.value)) {
@@ -234,18 +244,20 @@ export const useAffectionStore = defineStore('affection', () => {
             affectionCoins: affectionCoins.value,
             shopPurchaseHistory: { ...shopPurchaseHistory.value },
             giftHistory: { ...giftHistory.value },
-            lastTouchTime: { ...lastTouchTime.value }
+            lastTouchTime: { ...lastTouchTime.value },
+            darkness: { ...darkness.value },
         };
     }
 
     function deserialize(data: unknown) {
         if (!data) return;
-        const d = data as { affection?: Record<string, number>; affectionCoins?: number; shopPurchaseHistory?: Record<string, ShopPurchaseRecord>; giftHistory?: Record<string, Record<string, number>>; lastTouchTime?: Record<string, Record<string, number>> };
+        const d = data as { affection?: Record<string, number>; affectionCoins?: number; shopPurchaseHistory?: Record<string, ShopPurchaseRecord>; giftHistory?: Record<string, Record<string, number>>; lastTouchTime?: Record<string, Record<string, number>>; darkness?: Record<string, number> };
         affection.value = d.affection || {};
         affectionCoins.value = d.affectionCoins ?? 0;
         shopPurchaseHistory.value = d.shopPurchaseHistory || {};
         giftHistory.value = d.giftHistory || {};
         lastTouchTime.value = d.lastTouchTime || {};
+        darkness.value = d.darkness || {};
     }
 
     return {
@@ -254,6 +266,7 @@ export const useAffectionStore = defineStore('affection', () => {
         shopPurchaseHistory,
         giftHistory,
         lastTouchTime,
+        darkness,
         _selectedCharacterId,
 
         getPoints,
@@ -277,6 +290,8 @@ export const useAffectionStore = defineStore('affection', () => {
         updateShopPurchase,
         updateGiftHistory,
         recordTouch,
+        addDarkness,
+        setDarkness,
         resetDailyPurchases,
 
         serialize,

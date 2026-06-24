@@ -27,6 +27,7 @@ import { useI18nStore } from '@/stores/i18nStore';
 import { useHeroineStore } from '@/stores/heroineStore';
 import { useDialogueStore } from '@/stores/dialogueStore';
 import { useBossStore } from '@/stores/bossStore';
+import { useVNReaderStore } from '@/stores/vnReaderStore';
 import { useEventBus } from '@/composables/useEventBus';
 import { useConfigStore } from '@/stores/configStore';
 import type { ApplyDeps } from '@/composables/applyResolveResult';
@@ -52,6 +53,7 @@ export function useApplyDeps(): ApplyDeps {
         bossStore: useBossStore(),
         heroineStore: useHeroineStore(),
         dialogueStore: useDialogueStore(),
+        vnReaderStore: useVNReaderStore(),
         effects: useEffects(),
         i18nStore: useI18nStore(),
         bus: useEventBus(),

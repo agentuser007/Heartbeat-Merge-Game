@@ -12,6 +12,12 @@ import { globalBus } from '../core/EventBus';
 import { useConfigStore } from './configStore';
 import { useI18nStore } from './i18nStore';
 import type { VNReaderSerializeData } from '../types/serialize';
+import type { VNChoice, VNScene } from '@/types/game';
+import { resolveChoiceEffect, resolveEndingCheck } from '../services/NarrativeService';
+import * as NarrativeLogic from '../logic/NarrativeLogic';
+import { useAffectionStore } from './affectionStore';
+import { useLoopStore } from './loopStore';
+import type { ResolveResult } from '../services/ServiceResultTypes';
 
 // --- Character info derived from configStore.characterProfiles ---
 export interface CharacterInfo {
@@ -91,6 +97,13 @@ export const useVNReaderStore = defineStore('vnReader', () => {
     const ended = ref(false);
     const showingTitle = ref(false);
 
+    const mode = ref<'cg' | 'scene'>('cg');
+    const currentSceneId = ref<string | null>(null);
+    const routeKey = ref<string | null>(null);
+    const sceneData = ref<Record<string, VNScene> | null>(null);
+    const pendingChoice = ref<VNChoice | null>(null);
+    const choiceHistory = ref<Array<{ sceneId: string; optionIndex: number }>>([]);
+
     // --- Computed ---
     const currentLine = computed<VNLine | null>(() => {
         if (currentIndex.value >= lines.value.length) return null;
@@ -164,6 +177,12 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         history.value = [];
         showingHistory.value = false;
         currentSpeaker.value = null;
+        mode.value = 'cg';
+        currentSceneId.value = null;
+        routeKey.value = null;
+        sceneData.value = null;
+        pendingChoice.value = null;
+        choiceHistory.value = [];
         isOpen.value = true;
         showingTitle.value = true;
 
@@ -178,19 +197,205 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         showingHistory.value = false;
         showingTitle.value = false;
         currentSpeaker.value = null;
+        pendingChoice.value = null;
 
         globalBus.emit('vn:closed');
     }
 
     function advance() {
         if (showingHistory.value) return;
+        if (pendingChoice.value) return;
         if (isTyping.value) {
             isTyping.value = false;
             return;
         }
-        currentIndex.value++;
-        if (currentIndex.value >= lines.value.length) {
+        const nextIndex = currentIndex.value + 1;
+        if (nextIndex >= lines.value.length) {
+            if (mode.value === 'scene') {
+                onSceneLinesEnd();
+            } else {
+                currentIndex.value = nextIndex;
+                showEnd();
+            }
+        } else {
+            currentIndex.value = nextIndex;
+        }
+    }
+
+    function onSceneLinesEnd() {
+        if (!sceneData.value || !currentSceneId.value) {
             showEnd();
+            return;
+        }
+        const scene = sceneData.value[currentSceneId.value];
+        if (!scene) {
+            showEnd();
+            return;
+        }
+
+        if (scene.choice) {
+            pendingChoice.value = scene.choice;
+            return;
+        }
+
+        if (scene.nextScene) {
+            const nextScene = sceneData.value[scene.nextScene];
+            if (nextScene) {
+                const conditionDeps = buildConditionDeps();
+                if (nextScene.condition && !NarrativeLogic.checkCondition(nextScene.condition, conditionDeps)) {
+                    if (nextScene.fallbackScene && sceneData.value[nextScene.fallbackScene]) {
+                        loadScene(nextScene.fallbackScene);
+                    } else {
+                        triggerEndingCheck();
+                    }
+                } else {
+                    loadScene(scene.nextScene);
+                }
+            } else {
+                triggerEndingCheck();
+            }
+        } else {
+            triggerEndingCheck();
+        }
+    }
+
+    function buildConditionDeps(): NarrativeLogic.CheckConditionDeps {
+        const affectionStore = useAffectionStore();
+        const loopStore = useLoopStore();
+        return {
+            affection: { ...affectionStore.affection },
+            darkness: { ...affectionStore.darkness },
+            controlLevel: loopStore.controlLevel,
+            flags: [...loopStore.unlockedNarrativeFlags],
+        };
+    }
+
+    function openScene(routeKeyParam: string, startSceneId: string) {
+        const configStore = useConfigStore();
+        const route = configStore.vnScenes[routeKeyParam];
+        if (!route) return;
+
+        mode.value = 'scene';
+        routeKey.value = routeKeyParam;
+        sceneData.value = route.scenes;
+        choiceHistory.value = [];
+        pendingChoice.value = null;
+        autoMode.value = false;
+        skipMode.value = false;
+        ended.value = false;
+        history.value = [];
+        showingHistory.value = false;
+        currentSpeaker.value = null;
+        isOpen.value = true;
+        showingTitle.value = true;
+
+        loadScene(startSceneId);
+
+        globalBus.emit('vn:opened', { ssrId: routeKeyParam, storyIndex: 0 });
+    }
+
+    function loadScene(sceneId: string) {
+        if (!sceneData.value) return;
+        const scene = sceneData.value[sceneId];
+        if (!scene) {
+            triggerEndingCheck();
+            return;
+        }
+
+        const conditionDeps = buildConditionDeps();
+        if (scene.condition && !NarrativeLogic.checkCondition(scene.condition, conditionDeps)) {
+            if (scene.fallbackScene && sceneData.value[scene.fallbackScene]) {
+                loadScene(scene.fallbackScene);
+            } else {
+                triggerEndingCheck();
+            }
+            return;
+        }
+
+        currentSceneId.value = sceneId;
+        lines.value = scene.lines || [];
+        currentIndex.value = 0;
+        pendingChoice.value = null;
+
+        globalBus.emit('narrative:sceneEntered', { routeKey: routeKey.value, sceneId });
+    }
+
+    function selectChoice(optionIndex: number) {
+        if (!pendingChoice.value) return;
+        const option = pendingChoice.value.options[optionIndex];
+        if (!option) return;
+
+        const configStore = useConfigStore();
+        const affectionStore = useAffectionStore();
+        const loopStore = useLoopStore();
+
+        const effectResult = resolveChoiceEffect(option, {
+            affection: { ...affectionStore.affection },
+            darkness: { ...affectionStore.darkness },
+            controlLevel: loopStore.controlLevel,
+            narrativeConfig: configStore.narrativeConfig!,
+        });
+
+        applyLocalResult(effectResult);
+
+        choiceHistory.value.push({ sceneId: currentSceneId.value!, optionIndex });
+        pendingChoice.value = null;
+
+        loadScene(option.nextScene);
+    }
+
+    function triggerEndingCheck() {
+        if (!routeKey.value) return;
+        const configStore = useConfigStore();
+        const route = configStore.vnScenes[routeKey.value];
+        if (!route || !route.endings) {
+            showEnd();
+            return;
+        }
+
+        const result = resolveEndingCheck(route.endings, buildConditionDeps());
+        if (result.ok) {
+            applyLocalResult(result.resolveResult);
+        }
+        showEnd();
+    }
+
+    function applyLocalResult(result: ResolveResult) {
+        const affectionStore = useAffectionStore();
+        const loopStore = useLoopStore();
+
+        if (result.applyTo.affection?.addAffections) {
+            for (const aff of result.applyTo.affection.addAffections) {
+                affectionStore.addPoints(aff.characterId, aff.amount);
+            }
+        }
+        if (result.applyTo.affection?.addDarkness) {
+            for (const d of result.applyTo.affection.addDarkness) {
+                affectionStore.addDarkness(d.characterId, d.amount);
+            }
+        }
+        if (result.applyTo.loop?.setControlLevel !== undefined) {
+            loopStore.setControlLevel(result.applyTo.loop.setControlLevel);
+        }
+        if (result.applyTo.loop?.addNarrativeFlags) {
+            for (const flag of result.applyTo.loop.addNarrativeFlags) {
+                loopStore.addNarrativeFlag(flag);
+            }
+        }
+        if (result.applyTo.narrative?.setCurrentSceneId !== undefined) {
+            currentSceneId.value = result.applyTo.narrative.setCurrentSceneId;
+        }
+        if (result.applyTo.narrative?.setMode !== undefined) {
+            mode.value = result.applyTo.narrative.setMode;
+        }
+        if (result.applyTo.narrative?.setPendingChoice !== undefined) {
+            pendingChoice.value = result.applyTo.narrative.setPendingChoice;
+        }
+
+        if (result.events) {
+            for (const e of result.events) {
+                globalBus.emit(e.name, e.data);
+            }
         }
     }
 
@@ -254,6 +459,18 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         return ci?.color || '#888';
     }
 
+    function setCurrentSceneId(id: string): void {
+        currentSceneId.value = id;
+    }
+
+    function setMode(m: 'cg' | 'scene'): void {
+        mode.value = m;
+    }
+
+    function setPendingChoice(c: VNChoice | null): void {
+        pendingChoice.value = c;
+    }
+
     // --- Subscribe to events ---
     globalBus.on('cg:readRequested', (data: { cgId: string }) => {
         if (data?.cgId) {
@@ -281,6 +498,11 @@ export const useVNReaderStore = defineStore('vnReader', () => {
             showingHistory: showingHistory.value,
             currentSpeaker: currentSpeaker.value,
             history: [...history.value],
+            mode: mode.value,
+            currentSceneId: currentSceneId.value,
+            routeKey: routeKey.value,
+            pendingChoiceIndex: null,
+            choiceHistory: [...choiceHistory.value],
         };
     }
 
@@ -296,8 +518,23 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         showingHistory.value = d.showingHistory ?? false;
         currentSpeaker.value = d.currentSpeaker || null;
         history.value = d.history || [];
+        mode.value = d.mode || 'cg';
+        currentSceneId.value = d.currentSceneId ?? null;
+        routeKey.value = d.routeKey ?? null;
+        choiceHistory.value = d.choiceHistory || [];
 
-        if (d.ssrId && d.isOpen) {
+        if (d.mode === 'scene' && d.routeKey && d.currentSceneId) {
+            const configStore = useConfigStore();
+            const route = configStore.vnScenes[d.routeKey];
+            if (route) {
+                sceneData.value = route.scenes;
+                const scene = route.scenes[d.currentSceneId];
+                if (scene && d.isOpen) {
+                    lines.value = scene.lines;
+                    isOpen.value = true;
+                }
+            }
+        } else if (d.ssrId && d.isOpen) {
             const configStore = useConfigStore();
             const cg = configStore.cgStories[d.ssrId] as VNCGEntry | undefined;
             if (cg) {
@@ -330,6 +567,12 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         currentSpeaker,
         ended,
         showingTitle,
+        mode,
+        currentSceneId,
+        routeKey,
+        sceneData,
+        pendingChoice,
+        choiceHistory,
 
         // Computed
         currentLine,
@@ -344,11 +587,18 @@ export const useVNReaderStore = defineStore('vnReader', () => {
         close,
         advance,
         showEnd,
+        openScene,
+        loadScene,
+        selectChoice,
+        triggerEndingCheck,
         toggleAuto,
         toggleSkip,
         toggleHistory,
         onLineShown,
         getCharacterColor,
+        setCurrentSceneId,
+        setMode,
+        setPendingChoice,
 
         // Serialization
         serialize,

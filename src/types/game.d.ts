@@ -100,6 +100,63 @@ export interface CGStory {
 }
 
 // ============================================================
+// Branching VN types (scene-based narrative routes)
+// ============================================================
+
+export interface VNCondition {
+  affectionRange?: Record<string, [number, number]>;
+  darknessRange?: Record<string, [number, number]>;
+  controlRange?: [number, number];
+  requiredFlags?: string[];
+  excludedFlags?: string[];
+}
+
+export interface VNChoiceEffects {
+  affection?: Record<string, number>;
+  darkness?: Record<string, number>;
+  controlLevel?: number;
+  flags?: string[];
+}
+
+export interface VNChoiceOption {
+  text: string;
+  nextScene: string;
+  effects: VNChoiceEffects;
+  condition?: VNCondition;
+}
+
+export interface VNChoice {
+  prompt: string;
+  options: VNChoiceOption[];
+}
+
+export interface VNScene {
+  lines: StoryLine[];
+  choice?: VNChoice;
+  nextScene?: string;
+  condition?: VNCondition;
+  fallbackScene?: string;
+}
+
+export interface VNEnding {
+  endingId: string;
+  priority: number;
+  condition: VNCondition;
+  isFallback?: boolean;
+}
+
+export interface VNRoute {
+  characterId: string;
+  scenes: Record<string, VNScene>;
+  endings: VNEnding[];
+}
+
+export interface NarrativeConfig {
+  controlLevelModifier: Record<string, number>;
+  characterWeights: Record<string, { affection: number; darkness: number }>;
+}
+
+// ============================================================
 // Level / Boss types  (assets/data/levels.json)
 // ============================================================
 
@@ -758,6 +815,11 @@ export interface GameEvents {
   'cg:readRequested': { cgId: string };
   'cg:memoryFragmentsAdded': { cgId: string; count: number; total: number };
   'cg:nextUnlocked': { cgId: string; storyIndex: number };
+
+  // --- Narrative (branching VN) ---
+  'narrative:choiceSelected': { optionText: string; nextScene: string };
+  'narrative:endingResolved': { endingId: string };
+  'narrative:sceneEntered': { routeKey: string | null; sceneId: string };
 
   // --- Collection ---
   'collection:itemDiscovered': { itemId: string };

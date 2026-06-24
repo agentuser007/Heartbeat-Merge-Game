@@ -30,6 +30,8 @@ import {
     DailyOrderPoolDataSchema,
     AchievementDataSchema,
     CGStorySchema,
+    VNRouteSchema,
+    NarrativeConfigSchema,
 } from './loop.schema'
 
 const ItemsSchema = z.record(z.string(), GameItemSchema)
@@ -67,6 +69,8 @@ export const CONFIG_SCHEMAS = {
     adConfig:            AdConfigSchema,
     dailyBuffConfig:     DailyBuffConfigSchema,
     audioConfig:         AudioConfigSchema,
+    vnRoutes:            z.record(z.string(), VNRouteSchema),
+    narrativeConfig:     NarrativeConfigSchema,
 }
 
 export type ConfigKey = keyof typeof CONFIG_SCHEMAS

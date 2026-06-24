@@ -142,6 +142,11 @@ export interface VNReaderSerializeData {
     showingHistory: boolean;
     currentSpeaker: string | null;
     history: Array<{ speaker: string; speakerId: string | null; text: string }>;
+    mode: 'cg' | 'scene';
+    currentSceneId: string | null;
+    routeKey: string | null;
+    pendingChoiceIndex: number | null;
+    choiceHistory: Array<{ sceneId: string; optionIndex: number }>;
 }
 
 export interface DialogueSerializeData {

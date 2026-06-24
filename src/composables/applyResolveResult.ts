@@ -6,7 +6,7 @@
 // ============================================================
 
 import type { GachaItem } from '@/logic/GachaLogic';
-import type { DailyOrderState, InventoryItemMeta, LoopStatus } from '@/types/game';
+import type { DailyOrderState, InventoryItemMeta, LoopStatus, VNChoice } from '@/types/game';
 import type { SinglePullData } from '@/services/GachaService';
 import type { ResolveResult, ServiceResultWithData } from '@/services/ServiceResultTypes';
 import { useCurrencyStore } from '@/stores/currencyStore';
@@ -28,6 +28,7 @@ import { useCGAlbumStore } from '@/stores/cgAlbumStore';
 import { useBossStore } from '@/stores/bossStore';
 import { useHeroineStore } from '@/stores/heroineStore';
 import { useDialogueStore } from '@/stores/dialogueStore';
+import { useVNReaderStore } from '@/stores/vnReaderStore';
 import { useEffects } from '@/composables/useEffects';
 import { useI18nStore } from '@/stores/i18nStore';
 import { useEventBus } from '@/composables/useEventBus';
@@ -44,9 +45,9 @@ export interface ApplyResolveResultDeps {
     boardStore: { placeItem: (idx: number, itemId: string) => void; clearCell: (idx: number) => void; scissorActive: boolean; activateDoubleGen: (n: number) => void; resetAllGenerators: () => void; upgradeActive: boolean; findEmptyCell: () => number | null; cells: unknown[]; getCell: (i: number) => unknown; findAllItemsByLevel: (level: number) => unknown[]; rerollItems: (count: number, items: Record<string, any>) => void; _setCell: (index: number, id: string) => void; _initGeneratorState: (index: number, itemId: string) => void; _incrementGeneratorClicks: (index: number) => void; decrementDoubleGenTurns: () => void };
     inventoryStore: { addItem: (itemId: string, count?: number, meta?: InventoryItemMeta) => void };
     achievementStore: { incrementStat: (key: string, amount: number) => void; checkAll: () => void; resetLoopAchievements: () => void; unlockField: (id: string) => void };
-    affectionStore: { getPoints: (characterId: string) => number; resolveAddAffection: (characterId: string, amount: number, source: string) => ResolveResult; addPoints: (characterId: string, amount: number) => void; addCoins: (amount: number) => void; deductCoins: (amount: number) => void; updateShopPurchase: (itemId: string, date: string) => void; updateGiftHistory: (characterId: string, giftId: string) => void; recordTouch: (characterId: string, zoneId: string) => void };
+    affectionStore: { getPoints: (characterId: string) => number; resolveAddAffection: (characterId: string, amount: number, source: string) => ResolveResult; addPoints: (characterId: string, amount: number) => void; addCoins: (amount: number) => void; deductCoins: (amount: number) => void; updateShopPurchase: (itemId: string, date: string) => void; updateGiftHistory: (characterId: string, giftId: string) => void; recordTouch: (characterId: string, zoneId: string) => void; addDarkness: (characterId: string, amount: number) => void };
     gachaStore: { singlePull: (rarity?: 'R' | 'SR' | 'SSR') => ServiceResultWithData<SinglePullData>; setResultsField: (items: GachaItem[]) => void; markSsrOwnedField: (ids: string[]) => void; decrementFreePullsField: () => void; setLastFreePullDateField: (date: string) => void };
-    loopStore: { syncLoopStatus: (s: LoopStatus) => void; loopTokens: number; loopIndex: number; metaUpgrades: Record<string, number>; hasRule: (rule: string) => boolean };
+    loopStore: { syncLoopStatus: (s: LoopStatus) => void; loopTokens: number; loopIndex: number; metaUpgrades: Record<string, number>; hasRule: (rule: string) => boolean; setControlLevel: (level: number) => void; addNarrativeFlag: (flag: string) => void };
     heroineStore: { setUpgradeLevel: (upgradeId: string, level: number) => void };
     collectionStore: { resetLoopDiscoveries: () => void; discover: (itemId: string) => void; collectGacha: (cardId: string) => void; markChainCompletedField: (chainId: string) => void };
     dailyOrderStore: { rollNewOrders: (b: boolean) => void; frozenOrders: DailyOrderState[] | null; _setActiveOrders: (orders: DailyOrderState[]) => void; _setCompletedCount: (n: number) => void; _setLastRollDate: (d: string) => void };
@@ -57,6 +58,7 @@ export interface ApplyResolveResultDeps {
     cgAlbumStore: { unlockCG: (cgId: string, storyIndex: number) => void; unlockNextStoryField: (cgId: string) => void; spendMemoryFragmentsField: (cgId: string, amount: number) => void };
     bossStore: { setLevelIdx: (idx: number) => void; setHp: (hp: number) => void; setTotalHp: (hp: number) => void; setBossNameField: (name: string) => void; setBossAvatarField: (avatar: string) => void; setFsmStateField: (state: string) => void; setOrdersField: (orders: Array<{ required: Array<{ itemId: string; count: number }>; damage: number; isTimed?: boolean; timeLimit?: number; diamondReward?: number; affectionReward?: number }>) => void; setCurrentOrderIdxField: (idx: number) => void; setTimerRemainingField: (remaining: number) => void; currentLevelIdx: number; resolveDefeatTransition: () => ResolveResult };
     touchInteractionStore: { setTouchCooldownField: (characterId: string, zoneId: string, timestamp: number) => void; incrementDailyTouchCountField: (characterId: string) => void };
+    vnReaderStore: { currentSceneId: string | null; mode: 'cg' | 'scene'; pendingChoice: unknown; setCurrentSceneId: (id: string) => void; setMode: (m: 'cg' | 'scene') => void; setPendingChoice: (c: VNChoice | null) => void };
     effects: { showToast: (message: string, type: 'info' | 'sr' | 'ssr' | 'error') => void };
     i18nStore: { t: (key: string, params?: Record<string, unknown>) => string };
     bus: { emit: (event: string, data?: unknown) => void };
@@ -83,6 +85,7 @@ export interface ApplyDeps extends ApplyResolveResultDeps {
     bossStore: ReturnType<typeof useBossStore>;
     heroineStore: ReturnType<typeof useHeroineStore>;
     dialogueStore: ReturnType<typeof useDialogueStore>;
+    vnReaderStore: ReturnType<typeof useVNReaderStore>;
     effects: ReturnType<typeof useEffects>;
     i18nStore: ReturnType<typeof useI18nStore>;
     bus: ReturnType<typeof useEventBus>;
@@ -213,6 +216,11 @@ export function applyResolveResult(result: ResolveResult, deps: ApplyResolveResu
         const rt = applyTo.affection.recordTouch;
         deps.affectionStore.recordTouch(rt.characterId, rt.zoneId);
     }
+    if (applyTo.affection?.addDarkness) {
+        for (const d of applyTo.affection.addDarkness) {
+            deps.affectionStore.addDarkness(d.characterId, d.amount);
+        }
+    }
 
     if (applyTo.boss?.setCurrentLevelIdx !== undefined) deps.bossStore.setLevelIdx(applyTo.boss.setCurrentLevelIdx);
     if (applyTo.boss?.setCurrentHp !== undefined) deps.bossStore.setHp(applyTo.boss.setCurrentHp);
@@ -249,6 +257,14 @@ export function applyResolveResult(result: ResolveResult, deps: ApplyResolveResu
     if (applyTo.loop?.setMetaUpgradeLevel) {
         const { upgradeId, level } = applyTo.loop.setMetaUpgradeLevel;
         deps.loopStore.metaUpgrades[upgradeId] = level;
+    }
+    if (applyTo.loop?.setControlLevel !== undefined) {
+        deps.loopStore.setControlLevel(applyTo.loop.setControlLevel);
+    }
+    if (applyTo.loop?.addNarrativeFlags) {
+        for (const flag of applyTo.loop.addNarrativeFlags) {
+            deps.loopStore.addNarrativeFlag(flag);
+        }
     }
 
     if (applyTo.heroine?.setUpgradeLevels) {
@@ -325,6 +341,18 @@ export function applyResolveResult(result: ResolveResult, deps: ApplyResolveResu
         }
         if (applyTo.touch.incrementDailyTouchCount) {
             deps.touchInteractionStore.incrementDailyTouchCountField(applyTo.touch.incrementDailyTouchCount);
+        }
+    }
+
+    if (applyTo.narrative) {
+        if (applyTo.narrative.setCurrentSceneId !== undefined) {
+            deps.vnReaderStore.setCurrentSceneId(applyTo.narrative.setCurrentSceneId);
+        }
+        if (applyTo.narrative.setMode !== undefined) {
+            deps.vnReaderStore.setMode(applyTo.narrative.setMode);
+        }
+        if (applyTo.narrative.setPendingChoice !== undefined) {
+            deps.vnReaderStore.setPendingChoice(applyTo.narrative.setPendingChoice);
         }
     }
 

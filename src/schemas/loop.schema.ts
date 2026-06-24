@@ -119,3 +119,65 @@ export const CGStorySchema = z.object({
     maleLeadId: z.string(),
     stories: z.array(StoryChapterSchema),
 })
+
+// ============================================================
+// Branching VN schemas
+// ============================================================
+
+const RangeSchema = z.tuple([z.number(), z.number()])
+
+export const VNConditionSchema = z.object({
+    affectionRange: z.record(z.string(), RangeSchema).optional(),
+    darknessRange: z.record(z.string(), RangeSchema).optional(),
+    controlRange: RangeSchema.optional(),
+    requiredFlags: z.array(z.string()).optional(),
+    excludedFlags: z.array(z.string()).optional(),
+})
+
+export const VNChoiceEffectsSchema = z.object({
+    affection: z.record(z.string(), z.number()).optional(),
+    darkness: z.record(z.string(), z.number()).optional(),
+    controlLevel: z.number().optional(),
+    flags: z.array(z.string()).optional(),
+})
+
+export const VNChoiceOptionSchema = z.object({
+    text: z.string(),
+    nextScene: z.string(),
+    effects: VNChoiceEffectsSchema,
+    condition: VNConditionSchema.optional(),
+})
+
+export const VNChoiceSchema = z.object({
+    prompt: z.string(),
+    options: z.array(VNChoiceOptionSchema),
+})
+
+export const VNSceneSchema = z.object({
+    lines: z.array(StoryLineSchema),
+    choice: VNChoiceSchema.optional(),
+    nextScene: z.string().optional(),
+    condition: VNConditionSchema.optional(),
+    fallbackScene: z.string().optional(),
+})
+
+export const VNEndingSchema = z.object({
+    endingId: z.string(),
+    priority: z.number().int().nonnegative(),
+    condition: VNConditionSchema,
+    isFallback: z.boolean().optional(),
+})
+
+export const VNRouteSchema = z.object({
+    characterId: z.string(),
+    scenes: z.record(z.string(), VNSceneSchema),
+    endings: z.array(VNEndingSchema),
+})
+
+export const NarrativeConfigSchema = z.object({
+    controlLevelModifier: z.record(z.string(), z.number()),
+    characterWeights: z.record(z.string(), z.object({
+        affection: z.number(),
+        darkness: z.number(),
+    })),
+})

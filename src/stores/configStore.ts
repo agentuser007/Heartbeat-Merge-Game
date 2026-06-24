@@ -45,6 +45,8 @@ import type {
     AdConfig,
     DailyBuffConfig,
     AudioConfig,
+    VNRoute,
+    NarrativeConfig,
 } from '@/types/game';
 import { validateConfig, type ConfigKey } from '@/schemas';
 import { deepMerge } from '@/core/deepMerge';
@@ -123,6 +125,10 @@ export const useConfigStore = defineStore('config', () => {
     
     // Shop items
     const shopItems = ref<ShopItem[]>([]);
+
+    // VN scene routes + narrative config
+    const vnScenes = ref<Record<string, VNRoute>>({});
+    const narrativeConfig = ref<NarrativeConfig | null>(null);
 
     // Loading state
     const isLoading = ref(false);
@@ -394,6 +400,35 @@ export const useConfigStore = defineStore('config', () => {
                 } as AudioConfig;
             }
 
+            // Load VN scene routes
+            const vnRouteFiles = ['morven_route'];
+            const vnRouteData = await Promise.all(
+                vnRouteFiles.map(name =>
+                    fetch(`${basePath}/data/vn_scenes/${name}.json${cacheBust}`)
+                        .then(r => r.json())
+                        .catch(() => null)
+                )
+            );
+            const vnRoutesMap: Record<string, VNRoute> = {};
+            for (let i = 0; i < vnRouteFiles.length; i++) {
+                if (vnRouteData[i]) {
+                    try {
+                        vnRoutesMap[vnRouteFiles[i].replace('_route', '')] = validateConfig('vnRoutes', { [vnRouteFiles[i]]: vnRouteData[i] })[vnRouteFiles[i]] as VNRoute;
+                    } catch {
+                        vnRoutesMap[vnRouteFiles[i].replace('_route', '')] = vnRouteData[i] as VNRoute;
+                    }
+                }
+            }
+            vnScenes.value = vnRoutesMap;
+
+            // Load narrative config
+            try {
+                const ncRaw = await fetch(`${basePath}/data/narrative_config.json${cacheBust}`).then(r => r.json());
+                narrativeConfig.value = validateConfig('narrativeConfig', ncRaw) as NarrativeConfig;
+            } catch {
+                narrativeConfig.value = null;
+            }
+
             // Notify config editor about fallbacks
             if (_fallbackWarnings.length > 0 && typeof BroadcastChannel !== 'undefined') {
                 const ch = new BroadcastChannel('config-editor');
@@ -472,6 +507,8 @@ export const useConfigStore = defineStore('config', () => {
         loopMultipliers,
         adConfig,
         dailyBuffConfig,
+        vnScenes,
+        narrativeConfig,
         isLoading,
         loadError,
         isDataReady,

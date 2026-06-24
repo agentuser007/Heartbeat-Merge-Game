@@ -1,0 +1,16 @@
+{
+  "controlLevelModifier": {
+    "0": 0.0,
+    "20": 0.1,
+    "40": 0.2,
+    "60": 0.4,
+    "80": 0.6,
+    "100": 0.8
+  },
+  "characterWeights": {
+    "morven": { "affection": 1.0, "darkness": 1.2 },
+    "daniel": { "affection": 1.0, "darkness": 0.8 },
+    "vincent": { "affection": 1.0, "darkness": 1.5 },
+    "leo": { "affection": 1.0, "darkness": 0.6 }
+  }
+}
